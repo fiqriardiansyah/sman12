@@ -7,9 +7,9 @@ import { Link } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
 import { STAFF_PATH } from "utils/constant";
 
-function MasterDataSiswa() {
-    const getStudents = httpsCallable(functionInstance, "getStudents");
+const getStudents = httpsCallable(functionInstance, "getStudents");
 
+function MasterDataSiswa() {
     const studentQuery = useQuery(["get-student"], async () => {
         return (await getStudents()).data as Siswa[];
     });

@@ -1,8 +1,13 @@
-import { Card, Descriptions, Space, Tabs, TabsProps } from "antd";
+import { Alert, Card, Descriptions, Skeleton, Space, Tabs, TabsProps } from "antd";
+import StateRender from "components/common/state";
+import { httpsCallable } from "firebase/functions";
+import { Siswa } from "modules/datasiswa/table";
 import TableDetailSpp from "modules/sppsiswa/class-month-table";
 import { useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
-import { Link } from "react-router-dom";
+import { useQuery } from "react-query";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { functionInstance } from "service/firebase-instance";
 import { CLASSES, STAFF_PATH } from "utils/constant";
 
 export type DetailSpp = {
@@ -39,15 +44,36 @@ const dummySpp: Spp = {
     },
 };
 
+const getDataUser = httpsCallable(functionInstance, "getUserWithId");
+
 function InfoSiswaSppEdit() {
-    const currentClass = "X";
-    const [tabClass, setTabClass] = useState<string>(currentClass);
-    const [spp, setSpp] = useState<Spp | {}>({ ...dummySpp });
+    const { id } = useParams();
+    const navigate = useNavigate();
+
+    const [tabClass, setTabClass] = useState<string>("");
+
+    const splitStrKelas = (str: any) => {
+        const regex = /([a-zA-Z]+)(\d+)/;
+        const splitStr = str?.match(regex) as any;
+        return splitStr[1];
+    };
+
+    const dataUserQuery = useQuery(
+        ["detail-student", id],
+        async () => {
+            return (await getDataUser({ id })).data as Siswa;
+        },
+        {
+            onSuccess(data) {
+                setTabClass(splitStrKelas(data.kelas));
+            },
+        }
+    );
 
     const items: TabsProps["items"] = CLASSES.map((cls) => ({
         key: cls,
         label: `Kelas ${cls}`,
-        children: <TableDetailSpp currentCls={currentClass} cls={cls} spp={spp[cls as keyof typeof spp]} />,
+        children: <TableDetailSpp studentId={id} currentCls={splitStrKelas(dataUserQuery.data?.kelas)} cls={cls} />,
     }));
 
     const onChange = (key: string) => {
@@ -64,15 +90,26 @@ function InfoSiswaSppEdit() {
                     <h1 className="m-0">Edit Spp Siswa</h1>
                 </Space>
             </div>
-            <Card>
-                <Descriptions title="Detail Siswa">
-                    <Descriptions.Item label="Nama">Zhou Maomao</Descriptions.Item>
-                    <Descriptions.Item label="NIS">1810000000</Descriptions.Item>
-                    <Descriptions.Item label="NISN">234563456345</Descriptions.Item>
-                    <Descriptions.Item label="Kelas">XII IPA 1</Descriptions.Item>
-                    <Descriptions.Item label="Alamat">No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China</Descriptions.Item>
-                </Descriptions>
-            </Card>
+            <StateRender data={dataUserQuery.data} isLoading={dataUserQuery.isLoading} isError={dataUserQuery.isError}>
+                <StateRender.Data>
+                    <Card>
+                        <Descriptions title="Detail Siswa">
+                            <Descriptions.Item label="Nama">{dataUserQuery?.data?.nama}</Descriptions.Item>
+                            <Descriptions.Item label="NIS">{dataUserQuery.data?.nis}</Descriptions.Item>
+                            <Descriptions.Item label="NISN">{dataUserQuery.data?.nisn}</Descriptions.Item>
+                            <Descriptions.Item label="Kelas">{dataUserQuery.data?.kelas}</Descriptions.Item>
+                            <Descriptions.Item label="Alamat">{dataUserQuery.data?.alamat}</Descriptions.Item>
+                            <Descriptions.Item label="Handphone">{dataUserQuery.data?.hp}</Descriptions.Item>
+                        </Descriptions>
+                    </Card>
+                </StateRender.Data>
+                <StateRender.Loading>
+                    <Skeleton active />
+                </StateRender.Loading>
+                <StateRender.Error>
+                    <Alert type="error" message={(dataUserQuery.error as any)?.message} />
+                </StateRender.Error>
+            </StateRender>
             <Tabs activeKey={tabClass} items={items} onChange={onChange} />
         </div>
     );

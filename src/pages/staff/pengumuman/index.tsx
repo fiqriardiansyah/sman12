@@ -1,23 +1,17 @@
 import { Button } from "antd";
+import { httpsCallable } from "firebase/functions";
 import TablePengumuman, { Pengumuman } from "modules/pengumuman/table";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
+import { functionInstance } from "service/firebase-instance";
 import { STAFF_PATH } from "utils/constant";
 
 function StaffPengumuman() {
-    const pengumuman: Pengumuman[] = [
-        {
-            id: 1,
-            title: "Merdeka",
-            body: "bla bla bla",
-            created_at: "12 may 2000",
-        },
-        {
-            id: 2,
-            title: "Hari guru",
-            body: "asdfasdf asdf asdf",
-            created_at: "14 juni 2000",
-        },
-    ];
+    const getNews = httpsCallable(functionInstance, "getNews");
+
+    const newsQuery = useQuery(["get-news"], async () => {
+        return (await getNews()).data as Pengumuman[];
+    });
 
     return (
         <div className="flex flex-col gap-5">
@@ -27,7 +21,7 @@ function StaffPengumuman() {
                     <Button>Tambah</Button>
                 </Link>
             </div>
-            <TablePengumuman pengumuman={pengumuman} />
+            <TablePengumuman fetcher={newsQuery} />
         </div>
     );
 }

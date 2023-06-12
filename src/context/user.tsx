@@ -8,6 +8,8 @@ import Utils from "utils";
 
 interface User extends UserFirebase {
     role?: "teacher" | "staff" | "student";
+    nama?: string;
+    id?: string;
 }
 
 interface State {

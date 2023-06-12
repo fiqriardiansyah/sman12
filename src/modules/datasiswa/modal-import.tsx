@@ -14,7 +14,7 @@ type Props = {
 };
 
 export const mandatoryHeader = ["nama", "nisn"];
-export const optionHeader = ["nis", "email", "hp", "alamat", "wali"];
+export const optionHeader = ["nis", "hp", "alamat", "wali"];
 
 function ModalImportSiswa({ children, onSave }: Props) {
     const [file, setFile] = useState<File | null>(null);

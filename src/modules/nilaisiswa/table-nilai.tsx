@@ -18,19 +18,19 @@ export function editTableNilai<T extends Nilai>(Component: ComponentType<EditTab
                 title: "Mata Pelajaran",
                 dataIndex: "mata_pelajaran",
                 ...{ editable: true },
-                render: (text) => <p className="m-0 capitalize">{text || "-"}</p>,
+                render: (text) => <p className="m-0 capitalize">{text}</p>,
             },
             {
                 title: "Nilai",
                 dataIndex: "nilai",
                 ...{ editable: true },
-                render: (text) => <p className="m-0">{text || "-"}</p>,
+                render: (text) => <p className="m-0">{text}</p>,
             },
             {
                 title: "Catatan",
                 dataIndex: "catatan",
                 ...{ editable: true },
-                render: (text) => <p className="m-0">{text || "-"}</p>,
+                render: (text) => <p className="m-0">{text}</p>,
             },
         ];
 
@@ -47,6 +47,10 @@ export function editTableNilai<T extends Nilai>(Component: ComponentType<EditTab
                 columns={columns}
                 isEditing={isEditing}
                 findIndexSave={findIndexSave}
+                cellProps={{
+                    maxNumber: 100,
+                    minNumber: 0,
+                }}
             />
         );
     };

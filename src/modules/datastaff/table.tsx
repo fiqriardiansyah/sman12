@@ -1,5 +1,6 @@
 import { Button, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
+import { UseQueryResult } from "react-query";
 import { Link } from "react-router-dom";
 import { STAFF_PATH } from "utils/constant";
 
@@ -10,13 +11,16 @@ export interface Staff {
     email?: string;
     hp?: string;
     alamat?: string;
+    kelamin?: any;
+    posisi?: string;
+    foto?: string;
 }
 
 type Props = {
-    staff: Staff[];
+    fetcher: UseQueryResult<Staff[], unknown>;
 };
 
-function TableStaff({ staff }: Props) {
+function TableStaff({ fetcher }: Props) {
     const columns: ColumnsType<Staff> = [
         {
             title: "Nama",
@@ -46,7 +50,16 @@ function TableStaff({ staff }: Props) {
         },
     ];
 
-    return <Table rowKey={(record) => record.id!} size="small" columns={columns} dataSource={staff || []} className="w-full" />;
+    return (
+        <Table
+            rowKey={(record) => record.id!}
+            size="small"
+            columns={columns}
+            dataSource={fetcher.data || []}
+            loading={fetcher.isLoading}
+            className="w-full"
+        />
+    );
 }
 
 export default TableStaff;

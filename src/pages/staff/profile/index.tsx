@@ -2,7 +2,7 @@ import { Alert, Descriptions, Image, Skeleton } from "antd";
 import StateRender from "components/common/state";
 import { UserContext } from "context/user";
 import { httpsCallable } from "firebase/functions";
-import { StaffProfile } from "models";
+import { Staff } from "modules/datastaff/table";
 import { useContext } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { useQuery } from "react-query";
@@ -17,7 +17,7 @@ function Profile() {
     const profileQuery = useQuery(["profile", state?.user?.uid], async () => {
         return (await (
             await getMyData({ email: state?.user?.email })
-        ).data) as StaffProfile;
+        ).data) as Staff;
     });
 
     return (
@@ -33,19 +33,19 @@ function Profile() {
                     <Image
                         height={200}
                         width={200}
-                        src={profileQuery.data?.photo}
+                        src={profileQuery.data?.foto}
                         className="!rounded-full object-cover"
                         fallback={IMAGE_FALLBACK}
-                        alt={profileQuery.data?.name}
+                        alt={profileQuery.data?.nama}
                     />
                     <Descriptions title="User Info" className="mt-10" bordered>
-                        <Descriptions.Item label="Nama">{profileQuery.data?.name}</Descriptions.Item>
+                        <Descriptions.Item label="Nama">{profileQuery.data?.nama}</Descriptions.Item>
                         <Descriptions.Item label="NUPTK">{profileQuery.data?.nuptk}</Descriptions.Item>
                         <Descriptions.Item label="Email">{profileQuery.data?.email}</Descriptions.Item>
-                        <Descriptions.Item label="Handphone">{profileQuery.data?.phone}</Descriptions.Item>
-                        <Descriptions.Item label="Kelamin">{GENDER.find((el) => el.value === profileQuery?.data?.gender)?.label}</Descriptions.Item>
-                        <Descriptions.Item label="Alamat">{profileQuery.data?.address}</Descriptions.Item>
-                        <Descriptions.Item label="Posisi">{profileQuery.data?.position}</Descriptions.Item>
+                        <Descriptions.Item label="Handphone">{profileQuery.data?.hp}</Descriptions.Item>
+                        <Descriptions.Item label="Kelamin">{GENDER.find((el) => el.value === profileQuery?.data?.kelamin)?.label}</Descriptions.Item>
+                        <Descriptions.Item label="Alamat">{profileQuery.data?.alamat}</Descriptions.Item>
+                        <Descriptions.Item label="Posisi">{profileQuery.data?.posisi}</Descriptions.Item>
                     </Descriptions>
                 </StateRender.Data>
                 <StateRender.Loading>

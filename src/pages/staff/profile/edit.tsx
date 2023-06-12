@@ -3,7 +3,7 @@ import StateRender from "components/common/state";
 import { UserContext } from "context/user";
 import { httpsCallable } from "firebase/functions";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { StaffProfile } from "models";
+import { Staff } from "modules/datastaff/table";
 import React from "react";
 import { AiOutlineUpload } from "react-icons/ai";
 import { BiArrowBack } from "react-icons/bi";
@@ -24,7 +24,7 @@ function ProfileEdit() {
     const profileQuery = useQuery(["profile", state?.user?.uid], async () => {
         return (await (
             await getMyData({ email: state?.user?.email })
-        ).data) as StaffProfile;
+        ).data) as Staff;
     });
 
     const editMutation = useMutation(
@@ -76,7 +76,7 @@ function ProfileEdit() {
                                 const imageToBuffer = await image.arrayBuffer();
                                 const upload = await uploadBytes(pathRef, imageToBuffer, { contentType: image?.type });
                                 const downloadUrl = await getDownloadURL(upload.ref);
-                                editMutation.mutateAsync({ photo: downloadUrl }).then(() => {
+                                editMutation.mutateAsync({ foto: downloadUrl }).then(() => {
                                     profileQuery.refetch();
                                 });
                             }}
@@ -104,14 +104,14 @@ function ProfileEdit() {
             <StateRender data={profileQuery.data} isLoading={profileQuery.isLoading} isError={profileQuery.isError}>
                 <StateRender.Data>
                     <div className="flex items-center gap-x-10 my-5">
-                        {profileQuery.data?.photo && (
+                        {profileQuery.data?.foto && (
                             <Image
                                 height={200}
                                 width={200}
-                                src={profileQuery.data?.photo}
+                                src={profileQuery.data?.foto}
                                 className="!rounded-full object-cover"
                                 fallback={IMAGE_FALLBACK}
-                                alt={profileQuery.data?.name}
+                                alt={profileQuery.data?.nama}
                             />
                         )}
                         <Upload {...uploadProps}>
@@ -122,11 +122,11 @@ function ProfileEdit() {
                     </div>
                     <Form initialValues={profileQuery.data} onFinish={onFinish} autoComplete="off" layout="vertical" requiredMark={false}>
                         <div className="grid w-full grid-cols-3 gap-x-5">
-                            <Form.Item label="Nama" name="name" rules={[{ required: true, message: "Nama harus diisi!" }]}>
+                            <Form.Item label="Nama" name="nama" rules={[{ required: true, message: "Nama harus diisi!" }]}>
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Handphone" name="phone" rules={[{ required: true, message: "HP harus diisi!" }]}>
+                            <Form.Item label="Handphone" name="hp" rules={[{ required: true, message: "HP harus diisi!" }]}>
                                 <Input />
                             </Form.Item>
 
@@ -134,15 +134,15 @@ function ProfileEdit() {
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Alamat" name="address" rules={[{ required: true, message: "Alamat harus diisi!" }]}>
+                            <Form.Item label="Alamat" name="alamat" rules={[{ required: true, message: "Alamat harus diisi!" }]}>
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Posisi" name="position" rules={[{ required: true, message: "Posisi harus diisi!" }]}>
+                            <Form.Item label="Posisi" name="posisi" rules={[{ required: true, message: "Posisi harus diisi!" }]}>
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Kelamin" name="gender" rules={[{ required: true, message: "Kelamin harus diisi!" }]}>
+                            <Form.Item label="Kelamin" name="kelamin" rules={[{ required: true, message: "Kelamin harus diisi!" }]}>
                                 <Select options={GENDER} />
                             </Form.Item>
                         </div>

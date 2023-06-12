@@ -1,14 +1,15 @@
 import { Button, Space, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Siswa } from "modules/datasiswa/table";
+import { UseQueryResult } from "react-query";
 import { Link } from "react-router-dom";
 import { STAFF_PATH } from "utils/constant";
 
 type Props = {
-    siswa: Siswa[];
+    fetcher: UseQueryResult<Siswa[], unknown>;
 };
 
-function TableNilaiSiswa({ siswa }: Props) {
+function TableNilaiSiswa({ fetcher }: Props) {
     const columns: ColumnsType<Siswa> = [
         {
             title: "Nama",
@@ -43,7 +44,16 @@ function TableNilaiSiswa({ siswa }: Props) {
         },
     ];
 
-    return <Table rowKey={(record) => record.id!} size="small" columns={columns} dataSource={siswa || []} className="w-full" />;
+    return (
+        <Table
+            rowKey={(record) => record.id!}
+            size="small"
+            columns={columns}
+            dataSource={fetcher.data || []}
+            loading={fetcher.isLoading}
+            className="w-full"
+        />
+    );
 }
 
 export default TableNilaiSiswa;

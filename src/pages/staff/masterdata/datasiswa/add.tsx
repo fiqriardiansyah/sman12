@@ -25,21 +25,7 @@ function MasterDataSiswaAdd() {
             return (await createStudents(data)).data;
         },
         {
-            onSuccess(failedData: any, data) {
-                if (failedData?.failed.length) {
-                    if (failedData?.failed.length === data.length) {
-                        message.warning("Semua data gagal ditambahkan");
-                    } else {
-                        message.warning(`Berhasil menambahkan beberapa data, ${failedData?.failed.length} gagal`);
-                    }
-                    message.warning(`Berhasil menambahkan beberapa data, ${failedData?.failed.length} gagal`);
-                    Utils.JsonToCSV({
-                        json: failedData?.failed,
-                        title: "Daftar data gagal (data mungkin sudah terdaftar sebelumnya)",
-                        showLabel: true,
-                    });
-                    return;
-                }
+            onSuccess() {
                 navigate(-1);
                 message.success("Berhasil menambahkan semua data");
             },

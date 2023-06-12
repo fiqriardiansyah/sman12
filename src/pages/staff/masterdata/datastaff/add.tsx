@@ -1,14 +1,37 @@
-import { Button, Form, Input, Select, Space } from "antd";
+import { Button, Form, Input, Select, Space, message } from "antd";
 import Layout from "components/common/layout";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Siswa } from "modules/datasiswa/table";
 import { IoMdArrowBack } from "react-icons/io";
 import { GENDER, STAFF_PATH } from "utils/constant";
+import { httpsCallable } from "firebase/functions";
+import { functionInstance } from "service/firebase-instance";
+import { useMutation } from "react-query";
+import { Staff } from "modules/datastaff/table";
 
 function MasterDataStaffAdd() {
-    const onSaveGuru = (values: Siswa) => {
-        console.log("Success:", values);
+    const createStaff = httpsCallable(functionInstance, "createStaff");
+    const navigate = useNavigate();
+
+    const createStaffMutation = useMutation(
+        ["create-staff"],
+        async (data: Partial<Staff>) => {
+            return (await createStaff({ ...data })).data;
+        },
+        {
+            onSuccess(data) {
+                navigate(-1);
+                message.success("Berhasil menambahkan data");
+            },
+            onError(error: any) {
+                message.error(error?.message);
+            },
+        }
+    );
+
+    const onSaveStaff = (values: Staff) => {
+        createStaffMutation.mutate(values);
     };
 
     return (
@@ -21,34 +44,34 @@ function MasterDataStaffAdd() {
                     <h1 className="m-0">Tambah Staff</h1>
                 </Space>
             </div>
-            <Form onFinish={onSaveGuru} autoComplete="off" layout="vertical" requiredMark={false}>
+            <Form disabled={createStaffMutation.isLoading} onFinish={onSaveStaff} autoComplete="off" layout="vertical" requiredMark={false}>
                 <div className="grid w-full grid-cols-3 gap-x-5">
                     <Form.Item label="Nama" name="nama" rules={[{ required: true, message: "Nama harus diisi!" }]}>
                         <Input />
-                    </Form.Item>
-
-                    <Form.Item label="Email" name="email" rules={[{ required: true, message: "Email harus diisi!" }]}>
-                        <Input />
-                    </Form.Item>
-
-                    <Form.Item label="Kelamin" name="kelamin" rules={[{ required: true, message: "Kelamin harus diisi!" }]}>
-                        <Select options={GENDER} />
                     </Form.Item>
 
                     <Form.Item label="NUPTK" name="nuptk" rules={[{ required: true, message: "NUPTK harus diisi!" }]}>
                         <Input />
                     </Form.Item>
 
-                    <Form.Item label="Alamat" name="alamat" rules={[{ required: true, message: "Alamat harus diisi!" }]}>
+                    <Form.Item label="Kelamin" name="kelamin">
+                        <Select options={GENDER} />
+                    </Form.Item>
+
+                    <Form.Item label="Alamat" name="alamat">
                         <Input />
                     </Form.Item>
 
-                    <Form.Item label="Handphone" name="hp" rules={[{ required: true, message: "HP harus diisi!" }]}>
+                    <Form.Item label="Handphone" name="hp">
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item label="Posisi" name="posisi">
                         <Input />
                     </Form.Item>
                 </div>
                 <Form.Item>
-                    <Button type="primary" htmlType="submit">
+                    <Button loading={createStaffMutation.isLoading} type="primary" htmlType="submit">
                         Submit
                     </Button>
                 </Form.Item>

@@ -12,6 +12,8 @@ export interface Guru {
     hp?: string;
     alamat?: string;
     foto?: string;
+    kelas?: string;
+    kelas_id?: string;
 }
 
 type Props = {
@@ -28,6 +30,11 @@ function TableGuru({ fetcher }: Props) {
         {
             title: "NUPTK",
             dataIndex: "nuptk",
+            render: (text) => <p className="m-0">{text || "-"}</p>,
+        },
+        {
+            title: "Wali kelas",
+            dataIndex: "kelas",
             render: (text) => <p className="m-0">{text || "-"}</p>,
         },
         {

@@ -59,14 +59,3 @@ export interface RegisterResponse {
         name: string;
     };
 }
-
-export interface StaffProfile {
-    name: string;
-    email: string;
-    nuptk?: string;
-    phone?: string;
-    gender?: number;
-    address?: string;
-    position?: string;
-    photo?: string;
-}

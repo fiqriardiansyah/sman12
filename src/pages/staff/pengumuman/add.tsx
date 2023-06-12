@@ -1,13 +1,43 @@
-import { Button, Form, Input, Space } from "antd";
-import { Link } from "react-router-dom";
+import { Button, Form, Input, Space, message } from "antd";
+import { Link, useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import { IoMdArrowBack } from "react-icons/io";
 import { STAFF_PATH } from "utils/constant";
 import "react-quill/dist/quill.snow.css";
+import { httpsCallable } from "firebase/functions";
+import { functionInstance } from "service/firebase-instance";
+import { useMutation } from "react-query";
+import { useContext } from "react";
+import { UserContext } from "context/user";
 
 function StaffPengumumanAdd() {
+    const { state } = useContext(UserContext);
+
+    const navigate = useNavigate();
+    const createNews = httpsCallable(functionInstance, "createNews");
+
+    const createNewsMutate = useMutation(["create-news"], async (data: any) => {
+        return (await createNews(data)).data;
+    });
+
     const onSavePengumuman = (values: any) => {
-        console.log("Success:", values);
+        if (values.body) {
+            message.error("Konten tidak boleh kosong");
+            return;
+        }
+        createNewsMutate
+            .mutateAsync({
+                ...values,
+                tanggal_dibuat: new Date().getTime(),
+                dibuat_oleh: state?.user?.nama,
+            })
+            .then(() => {
+                navigate(-1);
+                message.success("Berhasil menambah data");
+            })
+            .catch((e: any) => {
+                message.error(e?.message);
+            });
     };
 
     return (
@@ -24,11 +54,11 @@ function StaffPengumumanAdd() {
                 <Form.Item label="Judul" name="judul" rules={[{ required: true, message: "judul harus diisi!" }]}>
                     <Input />
                 </Form.Item>
-                <Form.Item label="Konten" name="content" rules={[{ required: true, message: "Konten harus diisi!" }]}>
+                <Form.Item label="Konten" name="isi" rules={[{ required: true, message: "Konten harus diisi!" }]}>
                     <ReactQuill theme="snow" className="bg-white h-[200px]" />
                 </Form.Item>
                 <Form.Item className="mt-16">
-                    <Button type="primary" htmlType="submit">
+                    <Button loading={createNewsMutate.isLoading} type="primary" htmlType="submit">
                         Submit
                     </Button>
                 </Form.Item>

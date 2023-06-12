@@ -1,12 +1,18 @@
-import { Button, Form, Input, Popconfirm, Select, Space } from "antd";
+import { Alert, Button, Form, Input, Popconfirm, Select, Skeleton, Space, message } from "antd";
 import { ColumnsType } from "antd/es/table";
 import Layout from "components/common/layout";
+import StateRender from "components/common/state";
 import TableTransfer from "components/common/table-transfer";
+import { httpsCallable } from "firebase/functions";
+import { Guru } from "modules/dataguru/table";
+import { Kelas } from "modules/datakelas/table";
 import { Siswa } from "modules/datasiswa/table";
 import { useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
-import { Link } from "react-router-dom";
-import { STAFF_PATH } from "utils/constant";
+import { useMutation, useQuery } from "react-query";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { functionInstance } from "service/firebase-instance";
+import { CLASS_OPTION, NUMBER_CLASS_OPTION, STAFF_PATH } from "utils/constant";
 
 const columns: ColumnsType<Siswa> = [
     {
@@ -27,56 +33,83 @@ const columns: ColumnsType<Siswa> = [
 ];
 
 function MasterDataKelasEdit() {
+    const { id } = useParams();
+    const navigate = useNavigate();
+
+    const getStudents = httpsCallable(functionInstance, "getStudents");
+    const getTeachers = httpsCallable(functionInstance, "getTeachers");
+    const detailClass = httpsCallable(functionInstance, "detailClass");
+    const editClass = httpsCallable(functionInstance, "editClass");
+
     const [targetKeys, setTargetKeys] = useState<string[]>([]);
 
-    const onSaveSiswa = (values: Siswa) => {
-        console.log("Success:", values);
+    const teacherAvailableQuery = useQuery(["get-teacher"], async () => {
+        return (await getTeachers()).data as Guru[];
+    });
+
+    const editClassMutation = useMutation(["edit-class", id], async (data: any) => {
+        return (await editClass(data)).data;
+    });
+
+    const detailClassQuery = useQuery(
+        ["get-class", id],
+        async () => {
+            return (await detailClass({ id: id as any })).data as Kelas;
+        },
+        {
+            onSuccess: (data) => {
+                setTargetKeys(data?.murid?.map((el) => el.id as any) || []);
+            },
+            refetchInterval: false,
+            refetchOnWindowFocus: false,
+        }
+    );
+
+    const studentAvailableQuery = useQuery(
+        ["get-student"],
+        async () => {
+            return ((await getStudents()).data as Siswa[])?.filter((student) => !student.kelas || targetKeys.includes(student.id as any));
+        },
+        {
+            enabled: !!targetKeys.length,
+            refetchInterval: false,
+            refetchOnWindowFocus: false,
+        }
+    );
+
+    const onSaveSiswa = (values: any) => {
+        if (!targetKeys.length) {
+            message.error("Pilih siswa terlebih dahulu");
+            return;
+        }
+        const data = {
+            ...values,
+            wali_nama: teacherAvailableQuery.data?.find((t) => t.id === values.wali)?.nama,
+            murid: targetKeys,
+            id_kelas: id,
+        };
+        editClassMutation
+            .mutateAsync(data)
+            .then(() => {
+                navigate(-1);
+                message.success("Berhasil menambahkan data");
+            })
+            .catch((e) => {
+                message.error(e?.message);
+            });
     };
-
-    const dummyTeacher = [
-        {
-            value: 1,
-            label: "Sri spd",
-        },
-        {
-            value: 2,
-            label: "Joko sunjoyo",
-        },
-        {
-            value: 3,
-            label: "Roni saputra",
-        },
-    ];
-
-    const siswa: Siswa[] = [
-        {
-            id: "12",
-            nama: "sugiono",
-            kelas: "XII IPA 1",
-            nis: "12341234234234",
-            nisn: "345634563e456",
-        },
-        {
-            id: "12234",
-            nama: "ahmad dani",
-            kelas: "XII IPA 2",
-            nis: "12341234234asdf234",
-            nisn: "f2432323",
-        },
-        {
-            id: "2",
-            nama: "jono sugigi",
-            kelas: "XII IPA 14",
-            nis: "1232342",
-            nisn: "34545",
-        },
-    ];
 
     const onChange = (nextTargetKeys: string[]) => {
         setTargetKeys(nextTargetKeys);
     };
 
     const confirm = () => {};
+
+    const initialValues = {
+        kelas: detailClassQuery.data?.kelas,
+        nomor_kelas: detailClassQuery.data?.nomor_kelas,
+        wali: detailClassQuery.data?.wali_id,
+    };
 
     return (
         <div className="flex flex-col gap-5">
@@ -91,35 +124,56 @@ function MasterDataKelasEdit() {
                     <Button danger>Delete</Button>
                 </Popconfirm>
             </div>
-            <Form onFinish={onSaveSiswa} autoComplete="off" layout="vertical" requiredMark={false}>
-                <div className="grid w-full grid-cols-3 gap-x-5">
-                    <Form.Item label="Nama Kelas" name="kelas" rules={[{ required: true, message: "Nama kelas harus diisi!" }]}>
-                        <Input />
-                    </Form.Item>
+            <StateRender data={detailClassQuery.data} isLoading={detailClassQuery.isLoading} isError={detailClassQuery.isError}>
+                <StateRender.Data>
+                    <Form initialValues={initialValues} onFinish={onSaveSiswa} autoComplete="off" layout="vertical" requiredMark={false}>
+                        <div className="grid w-full grid-cols-3 gap-x-5">
+                            <Form.Item label="Tingkat Kelas" name="kelas" rules={[{ required: true, message: "Kelas harus diisi!" }]}>
+                                <Select options={CLASS_OPTION} />
+                            </Form.Item>
 
-                    <Form.Item label="Wali Kelas" name="wali" rules={[{ required: true, message: "Wali kelas harus diisi!" }]}>
-                        <Select options={dummyTeacher} />
-                    </Form.Item>
-                </div>
-                <TableTransfer
-                    titles={["Seluruh Siswa SMAN 12", "Kelas"]}
-                    rowKey={(s: any) => s.id}
-                    dataSource={siswa}
-                    targetKeys={targetKeys}
-                    showSearch
-                    onChange={onChange}
-                    filterOption={(inputValue, item) =>
-                        item?.nama!.indexOf(inputValue) !== -1 || item.nis.indexOf(inputValue) !== -1 || item.nisn.indexOf(inputValue) !== -1
-                    }
-                    leftColumns={columns}
-                    rightColumns={columns}
-                />
-                <Form.Item>
-                    <Button type="primary" htmlType="submit" className="mt-10">
-                        Submit
-                    </Button>
-                </Form.Item>
-            </Form>
+                            <Form.Item label="Nomor Kelas" name="nomor_kelas" rules={[{ required: true, message: "Nomor Kelas harus diisi!" }]}>
+                                <Select options={NUMBER_CLASS_OPTION} />
+                            </Form.Item>
+
+                            <Form.Item label="Wali Kelas" name="wali" rules={[{ required: true, message: "Wali kelas harus diisi!" }]}>
+                                <Select
+                                    options={teacherAvailableQuery.data
+                                        ?.filter((t) => !t.kelas || t.id === detailClassQuery.data?.wali_id)
+                                        ?.map((t) => ({ label: t.nama, value: t.id }))}
+                                    loading={teacherAvailableQuery.isLoading}
+                                />
+                            </Form.Item>
+                        </div>
+                        <TableTransfer
+                            titles={[studentAvailableQuery.isLoading ? "Mengambil data..." : "Seluruh Siswa SMAN 12", "Kelas"]}
+                            rowKey={(s: any) => s.id}
+                            dataSource={studentAvailableQuery.data as any}
+                            targetKeys={targetKeys}
+                            showSearch
+                            onChange={onChange}
+                            filterOption={(inputValue, item) =>
+                                item?.nama?.toLowerCase().indexOf(inputValue?.toLowerCase()) !== -1 ||
+                                item.nis?.toString().indexOf(inputValue) !== -1 ||
+                                item.nisn?.toString().indexOf(inputValue) !== -1
+                            }
+                            leftColumns={columns}
+                            rightColumns={columns}
+                        />
+                        <Form.Item>
+                            <Button loading={editClassMutation.isLoading} type="primary" htmlType="submit" className="mt-10">
+                                Submit
+                            </Button>
+                        </Form.Item>
+                    </Form>
+                </StateRender.Data>
+                <StateRender.Loading>
+                    <Skeleton />
+                </StateRender.Loading>
+                <StateRender.Error>
+                    <Alert type="error" message={(detailClassQuery.error as any)?.message} />
+                </StateRender.Error>
+            </StateRender>
         </div>
     );
 }

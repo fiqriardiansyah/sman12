@@ -1,34 +1,35 @@
 import { Button, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { Siswa } from "modules/datasiswa/table";
+import { UseQueryResult } from "react-query";
 import { Link } from "react-router-dom";
 import { STAFF_PATH } from "utils/constant";
 
 type Props = {
-    siswa: Siswa[];
+    fetcher: UseQueryResult<Siswa[], unknown>;
 };
 
-function TableSppSiswa({ siswa }: Props) {
+function TableSppSiswa({ fetcher }: Props) {
     const columns: ColumnsType<Siswa> = [
         {
             title: "Nama",
             dataIndex: "nama",
-            render: (text) => <p className="m-0 capitalize">{text || "-"}</p>,
+            render: (text) => <p className="m-0 capitalize">{text}</p>,
         },
         {
             title: "Kelas",
             dataIndex: "kelas",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
+            render: (text) => <p className="m-0">{text}</p>,
         },
         {
             title: "Nis",
             dataIndex: "nis",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
+            render: (text) => <p className="m-0">{text}</p>,
         },
         {
             title: "Nisn",
             dataIndex: "nisn",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
+            render: (text) => <p className="m-0">{text}</p>,
         },
         {
             width: "80px",
@@ -43,7 +44,16 @@ function TableSppSiswa({ siswa }: Props) {
         },
     ];
 
-    return <Table rowKey={(record) => record.id!} size="small" columns={columns} dataSource={siswa || []} className="w-full" />;
+    return (
+        <Table
+            rowKey={(record) => record.id!}
+            size="small"
+            columns={columns}
+            dataSource={fetcher.data || []}
+            loading={fetcher.isLoading}
+            className="w-full"
+        />
+    );
 }
 
 export default TableSppSiswa;
