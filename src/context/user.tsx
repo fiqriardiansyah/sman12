@@ -10,6 +10,7 @@ interface User extends UserFirebase {
     role?: "teacher" | "staff" | "student";
     nama?: string;
     id?: string;
+    kelas?: string;
 }
 
 interface State {

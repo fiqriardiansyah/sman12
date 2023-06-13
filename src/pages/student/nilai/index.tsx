@@ -68,9 +68,9 @@ function StudentNilai() {
 
     return (
         <div className="w-full">
+            <h1 className="m-0 mb-10 pt-4">Nilai akhir siswa</h1>
             <StateRender data={getMyGradesQuery.data} isLoading={getMyGradesQuery.isLoading} isError={getMyGradesQuery.isError}>
                 <StateRender.Data>
-                    <h1 className="m-0 mb-10 pt-4">Nilai akhir siswa</h1>
                     <div className="grid w-full grid-cols-2 gap-10">
                         {getMyGradesQuery.data?.length ? (
                             getMyGradesQuery.data?.map((el) => (
@@ -89,7 +89,7 @@ function StudentNilai() {
                         ) : (
                             <div className="col-span-2 flex flex-col items-center justify-center h-[400px]">
                                 <Lottie options={defaultOptions} height={400} width={400} isClickToPauseDisabled={false} />
-                                <p className="m-0 text-xl text-gray-500 -translate-y-20">Daftar nilai belum ada</p>
+                                <p className="m-0 text-xl text-gray-500 -translate-y-20">Daftar nilai belum tersedia</p>
                             </div>
                         )}
                     </div>

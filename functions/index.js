@@ -535,9 +535,30 @@ exports.setSPP = functions.https.onCall(async (data) => {
 /// ///////////////////////////////////// STUDENT FUNCTIONS
 exports.getMyGrades = functions.https.onCall(async (data) => {
     const db = admin.database();
-
     try {
         const req = await db.ref(`grades/${data.student_id}`).get();
+        if (!req.exists) return null;
+        return req.toJSON() || null;
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.getMySPP = functions.https.onCall(async (data) => {
+    const db = admin.database();
+    try {
+        const req = await db.ref(`spp/${data.student_id}`).get();
+        if (!req.exists) return null;
+        return req.toJSON() || null;
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.getMyAttendance = functions.https.onCall(async (data) => {
+    const db = admin.database();
+    try {
+        const req = await db.ref(`attendances/${data.student_id}`).get();
         if (!req.exists) return null;
         return req.toJSON() || null;
     } catch (e) {

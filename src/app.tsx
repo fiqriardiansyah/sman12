@@ -43,6 +43,7 @@ import TeacherProfile from "pages/teacher/profile";
 import TeacherProfileEdit from "pages/teacher/profile/edit";
 import TeacherDaftarSiswa from "pages/teacher/siswa";
 import configFirebase from "config/firebase";
+import StudentPengumumanDetail from "pages/student/pengumuman/detail";
 
 function App() {
     const { state } = React.useContext(UserContext);
@@ -110,6 +111,7 @@ function App() {
                             <Route path={STUDENT_PATH.mata_pelajaran.index} element={<StudentMataPelajaran />} />
                             <Route path={STUDENT_PATH.absensi.index} element={<StudentAbsensi />} />
                             <Route path={STUDENT_PATH.pengumuman.index} element={<StudentPengumuman />} />
+                            <Route path={`${STUDENT_PATH.pengumuman.index}/:id`} element={<StudentPengumumanDetail />} />
                             <Route path={STUDENT_PATH.spp.index} element={<StudentSPP />} />
                             <Route path="*" element={<Navigate to={STUDENT_PATH.profile.index} />} />
                         </Routes>

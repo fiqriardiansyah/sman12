@@ -2,19 +2,11 @@ import { Button, Form, Input, Popover, Radio, RadioChangeEvent, Space, Tooltip, 
 import clsx from "clsx";
 import { DetailAttendance } from "pages/staff/infosiswa/absensisiswa/edit";
 import React, { useEffect } from "react";
+import { ABSEN_STATUS } from "utils/constant";
 
-const absenceStatus = {
-    h: "hadir",
-    a: "absen",
-    i: "izin",
-    l: "libur",
-    x: "",
-    n: "",
-};
+type Props = { detail?: DetailAttendance; date: number; onChange?: (data: any) => void; canInteract?: boolean };
 
-type Props = { detail?: DetailAttendance; date: number; onChange: (data: any) => void };
-
-function BoxAbsence({ detail, date, onChange }: Props) {
+function BoxAbsence({ detail, date, onChange, canInteract = true }: Props) {
     const [absence, setAbsence] = React.useState<DetailAttendance | undefined>(detail);
 
     useEffect(() => {
@@ -27,7 +19,7 @@ function BoxAbsence({ detail, date, onChange }: Props) {
                 status: e.target.value,
                 desc: prev?.desc || "",
             };
-            onChange({ detail: curr, date });
+            if (onChange) onChange({ detail: curr, date });
             return curr;
         });
     };
@@ -39,7 +31,7 @@ function BoxAbsence({ detail, date, onChange }: Props) {
                 status: prev?.status as any,
                 desc: value?.desc,
             };
-            onChange({ detail: curr, date });
+            if (onChange) onChange({ detail: curr, date });
             return curr;
         });
     };
@@ -90,13 +82,30 @@ function BoxAbsence({ detail, date, onChange }: Props) {
         return <div className="h-6 w-full" />;
     }
 
+    if (!canInteract) {
+        return (
+            <Tooltip
+                placement="bottomLeft"
+                title={
+                    <p className="m-0 capitalize">
+                        Tanggal {date} {absence ? `: ${ABSEN_STATUS[absence?.status]}` : null}
+                        <br />
+                        {absence?.status === "i" ? absence?.desc : ""}
+                    </p>
+                }
+            >
+                <div className={`${className} !cursor-default`} />
+            </Tooltip>
+        );
+    }
+
     return (
         <Popover trigger={["click"]} content={content}>
             <Tooltip
                 placement="bottomLeft"
                 title={
                     <p className="m-0 capitalize">
-                        Tanggal {date} {absence ? `: ${absenceStatus[absence?.status]}` : null}
+                        Tanggal {date} {absence ? `: ${ABSEN_STATUS[absence?.status]}` : null}
                         <br />
                         {absence?.status === "i" ? absence?.desc : ""}
                     </p>

@@ -10,7 +10,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable consistent-return */
 import Cookies from "js-cookie";
-import { GMAIL, TOKEN_USER } from "./constant";
+import { CLASSES, GMAIL, TOKEN_USER } from "./constant";
 
 const Utils = {
     SignOut() {
@@ -60,6 +60,12 @@ const Utils = {
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+    },
+    SplitStrKelas(str: any) {
+        if (!str) return CLASSES[0];
+        const regex = /([a-zA-Z]+)(\d+)/;
+        const splitStr = str?.match(regex) as any;
+        return splitStr[1];
     },
 };
 

@@ -8,6 +8,7 @@ import { IoMdArrowBack } from "react-icons/io";
 import { useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
+import Utils from "utils";
 import { CLASSES, STAFF_PATH } from "utils/constant";
 
 export type DetailSpp = {
@@ -52,12 +53,6 @@ function InfoSiswaSppEdit() {
 
     const [tabClass, setTabClass] = useState<string>("");
 
-    const splitStrKelas = (str: any) => {
-        const regex = /([a-zA-Z]+)(\d+)/;
-        const splitStr = str?.match(regex) as any;
-        return splitStr[1];
-    };
-
     const dataUserQuery = useQuery(
         ["detail-student", id],
         async () => {
@@ -65,7 +60,7 @@ function InfoSiswaSppEdit() {
         },
         {
             onSuccess(data) {
-                setTabClass(splitStrKelas(data.kelas));
+                setTabClass(Utils.SplitStrKelas(data.kelas));
             },
         }
     );
@@ -73,7 +68,7 @@ function InfoSiswaSppEdit() {
     const items: TabsProps["items"] = CLASSES.map((cls) => ({
         key: cls,
         label: `Kelas ${cls}`,
-        children: <TableDetailSpp studentId={id} currentCls={splitStrKelas(dataUserQuery.data?.kelas)} cls={cls} />,
+        children: <TableDetailSpp studentId={id} currentCls={Utils.SplitStrKelas(dataUserQuery.data?.kelas)} cls={cls} />,
     }));
 
     const onChange = (key: string) => {

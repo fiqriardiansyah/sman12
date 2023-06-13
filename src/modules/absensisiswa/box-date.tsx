@@ -1,15 +1,16 @@
-import { Button, Popover, Radio, RadioChangeEvent, Space } from "antd";
+import { Button, Popover } from "antd";
 
 type Props = {
     date: number;
-    onChange: (val: string) => void;
-    loading: boolean;
+    onChange?: (val: string) => void;
+    loading?: boolean;
+    canInteract?: boolean;
 };
 
-function BoxDate({ date, onChange, loading }: Props) {
+function BoxDate({ date, onChange, loading, canInteract = true }: Props) {
     const onClick = (status: string) => {
         return () => {
-            onChange(status);
+            if (onChange) onChange(status);
         };
     };
 
@@ -32,9 +33,17 @@ function BoxDate({ date, onChange, loading }: Props) {
         </div>
     );
 
+    if (!canInteract) {
+        return (
+            <div className="w-full flex items-center justify-center">
+                <p className="m-0 text-white font-semibold">{date}</p>
+            </div>
+        );
+    }
+
     return (
         <Popover trigger={["click"]} content={content}>
-            <div className="w-full flex items-center justify-center hover:opacity-25" title="Klik ">
+            <div className="w-full flex items-center justify-center hover:opacity-25" title="Buka pilihan">
                 <p className="m-0 text-white cursor-pointer font-semibold">{date}</p>
             </div>
         </Popover>

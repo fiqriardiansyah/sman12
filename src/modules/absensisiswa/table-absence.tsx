@@ -7,14 +7,13 @@ import { useMutation, useQuery } from "react-query";
 import StateRender from "components/common/state";
 import { Skeleton, Spin, message } from "antd";
 import React from "react";
+import { TOTAL_DAY } from "utils/constant";
 import BoxAbsence from "./box-absence";
 import BoxDate from "./box-date";
 
 const getAttandanceHistory = httpsCallable(functionInstance, "getAttendanceHistory");
 const setOneAttendance = httpsCallable(functionInstance, "setOneAttendance");
 const setMultipleAttendance = httpsCallable(functionInstance, "setMultipleAttendance");
-
-const dateCount = 31;
 
 function TableAbsence({ month, students, cls }: { month: string; students?: Siswa[]; cls?: string }) {
     const setAttendanceMutate = useMutation(["set-attendance"], async (data: any) => {
@@ -103,7 +102,7 @@ function TableAbsence({ month, students, cls }: { month: string; students?: Sisw
                 <div className="w-full flex items-center px-3 py-1">
                     <p className="w-[150px] font-semibold m-0 text-black capitalize line-clamp-1">{absence.name}</p>
                     <div className="w-full flex justify-evenly gap-[1px]">
-                        {[...new Array(dateCount)]?.map((_, i) => {
+                        {[...new Array(TOTAL_DAY)]?.map((_, i) => {
                             if (!absenceThisMonth || Object.keys(absenceThisMonth).length === 0) {
                                 return <BoxAbsence onChange={onChangeAttendance(absence.id)} date={i + 1} />;
                             }
@@ -133,7 +132,7 @@ function TableAbsence({ month, students, cls }: { month: string; students?: Sisw
                 <p className="font-semibold w-[150px] m-0 text-white">Nama</p>
                 <div className="h-5 bg-white w-1px" />
                 <div className="w-full flex justify-evenly">
-                    {[...new Array(dateCount)]?.map((_, i) => (
+                    {[...new Array(TOTAL_DAY)]?.map((_, i) => (
                         <BoxDate loading={setManyAttendanceMutate.isLoading} onChange={onChangeManyAttendance(i + 1)} date={i + 1} key={i} />
                     ))}
                 </div>
