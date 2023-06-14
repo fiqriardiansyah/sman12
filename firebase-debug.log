@@ -1,0 +1,148 @@
+[debug] [2023-06-14T02:13:04.213Z] ----------------------------------------------------------------------
+[debug] [2023-06-14T02:13:04.215Z] Command:       C:\Program Files\nodejs\node.exe C:\Users\fiqri\AppData\Roaming\npm\node_modules\firebase-tools\lib\bin\firebase.js emulators:start
+[debug] [2023-06-14T02:13:04.215Z] CLI Version:   12.3.0
+[debug] [2023-06-14T02:13:04.215Z] Platform:      win32
+[debug] [2023-06-14T02:13:04.216Z] Node Version:  v16.16.0
+[debug] [2023-06-14T02:13:04.217Z] Time:          Wed Jun 14 2023 09:13:04 GMT+0700 (Western Indonesia Time)
+[debug] [2023-06-14T02:13:04.217Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2023-06-14T02:13:04.221Z] >>> [apiv2][query] GET https://firebase-public.firebaseio.com/cli.json [none]
+[debug] [2023-06-14T02:13:04.333Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2023-06-14T02:13:04.334Z] > authorizing via signed-in user (it.autoloka@gmail.com)
+[debug] [2023-06-14T02:13:04.899Z] <<< [apiv2][status] GET https://firebase-public.firebaseio.com/cli.json 200
+[debug] [2023-06-14T02:13:04.899Z] <<< [apiv2][body] GET https://firebase-public.firebaseio.com/cli.json {"cloudBuildErrorAfter":1594252800000,"cloudBuildWarnAfter":1590019200000,"defaultNode10After":1594252800000,"minVersion":"3.0.5","node8DeploysDisabledAfter":1613390400000,"node8RuntimeDisabledAfter":1615809600000,"node8WarnAfter":1600128000000}
+[debug] [2023-06-14T02:13:05.331Z] java version "19.0.2" 2023-01-17
+Java(TM) SE Runtime Environment (build 19.0.2+7-44)
+
+[debug] [2023-06-14T02:13:05.332Z] Java HotSpot(TM) 64-Bit Server VM (build 19.0.2+7-44, mixed mode, sharing)
+
+[debug] [2023-06-14T02:13:05.349Z] Parsed Java major version: 19
+[info] i  emulators: Starting emulators: auth, functions, firestore, database, hosting, storage {"metadata":{"emulator":{"name":"hub"},"message":"Starting emulators: auth, functions, firestore, database, hosting, storage"}}
+[debug] [2023-06-14T02:13:05.365Z] [logging] Logging Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-06-14T02:13:05.366Z] [auth] Authentication Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-06-14T02:13:05.366Z] [firestore] Firestore Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-06-14T02:13:05.366Z] [firestore.websocket] websocket server for firestore only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-06-14T02:13:05.366Z] [database] Database Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-06-14T02:13:05.366Z] [hosting] Hosting Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-06-14T02:13:05.366Z] [storage] Storage Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-06-14T02:13:05.366Z] assigned listening specs for emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"auth":[{"address":"127.0.0.1","family":"IPv4","port":4001}],"firestore":[{"address":"127.0.0.1","family":"IPv4","port":4002}],"firestore.websocket":[{"address":"127.0.0.1","family":"IPv4","port":9150}],"database":[{"address":"127.0.0.1","family":"IPv4","port":4003}],"hosting":[{"address":"127.0.0.1","family":"IPv4","port":5000}],"storage":[{"address":"127.0.0.1","family":"IPv4","port":4004}]},"metadata":{"message":"assigned listening specs for emulators"}}
+[debug] [2023-06-14T02:13:05.385Z] [hub] writing locator at C:\Users\fiqri\AppData\Local\Temp\hub-fiqri-e685d.json
+[warn] !  functions: Functions Emulator unable to start on port 5000, starting on 5001 instead. {"metadata":{"emulator":{"name":"functions"},"message":"Functions Emulator unable to start on port 5000, starting on 5001 instead."}}
+[debug] [2023-06-14T02:13:05.396Z] [functions] Functions Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-06-14T02:13:05.396Z] [eventarc] Eventarc Emulator only supports listening on one address (127.0.0.1). Not listening on ::1
+[debug] [2023-06-14T02:13:05.396Z] late-assigned ports for functions and eventarc emulators {"user":{"hub":[{"address":"127.0.0.1","family":"IPv4","port":4400},{"address":"::1","family":"IPv6","port":4400}],"ui":[{"address":"127.0.0.1","family":"IPv4","port":4000},{"address":"::1","family":"IPv6","port":4000}],"logging":[{"address":"127.0.0.1","family":"IPv4","port":4500}],"auth":[{"address":"127.0.0.1","family":"IPv4","port":4001}],"firestore":[{"address":"127.0.0.1","family":"IPv4","port":4002}],"firestore.websocket":[{"address":"127.0.0.1","family":"IPv4","port":9150}],"database":[{"address":"127.0.0.1","family":"IPv4","port":4003}],"hosting":[{"address":"127.0.0.1","family":"IPv4","port":5000}],"storage":[{"address":"127.0.0.1","family":"IPv4","port":4004}],"functions":[{"address":"127.0.0.1","family":"IPv4","port":5001}],"eventarc":[{"address":"127.0.0.1","family":"IPv4","port":9299}]},"metadata":{"message":"late-assigned ports for functions and eventarc emulators"}}
+[warn] !  functions: The following emulators are not running, calls to these services from the Functions emulator will affect production: pubsub {"metadata":{"emulator":{"name":"functions"},"message":"The following emulators are not running, calls to these services from the Functions emulator will affect production: \u001b[1mpubsub\u001b[22m"}}
+[debug] [2023-06-14T02:13:05.401Z] defaultcredentials: writing to file C:\Users\fiqri\AppData\Roaming\firebase\it_autoloka_gmail.com_application_default_credentials.json
+[debug] [2023-06-14T02:13:05.404Z] Setting GAC to C:\Users\fiqri\AppData\Roaming\firebase\it_autoloka_gmail.com_application_default_credentials.json {"metadata":{"emulator":{"name":"functions"},"message":"Setting GAC to C:\\Users\\fiqri\\AppData\\Roaming\\firebase\\it_autoloka_gmail.com_application_default_credentials.json"}}
+[debug] [2023-06-14T02:13:05.405Z] > refreshing access token with scopes: []
+[debug] [2023-06-14T02:13:05.406Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2023-06-14T02:13:05.406Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-06-14T02:13:05.579Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2023-06-14T02:13:05.579Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2023-06-14T02:13:05.593Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/fiqri-e685d/adminSdkConfig [none]
+[debug] [2023-06-14T02:13:05.998Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/fiqri-e685d/adminSdkConfig 200
+[debug] [2023-06-14T02:13:05.998Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/fiqri-e685d/adminSdkConfig {"projectId":"fiqri-e685d","databaseURL":"https://fiqri-e685d-default-rtdb.firebaseio.com","storageBucket":"fiqri-e685d.appspot.com","locationId":"us-central"}
+[debug] [2023-06-14T02:13:06.020Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-06-14T02:13:06.020Z] Ignoring unsupported arg: single_project_mode_error {"metadata":{"emulator":{"name":"firestore"},"message":"Ignoring unsupported arg: single_project_mode_error"}}
+[debug] [2023-06-14T02:13:06.020Z] Starting Firestore Emulator with command {"binary":"java","args":["-Dgoogle.cloud_firestore.debug_log_level=FINE","-Duser.language=en","-jar","C:\\Users\\fiqri\\.cache\\firebase\\emulators\\cloud-firestore-emulator-v1.17.4.jar","--host","127.0.0.1","--port",4002,"--websocket_port",9150,"--project_id","fiqri-e685d","--rules","D:\\PERSONAL\\SMAN-12\\firestore.rules","--single_project_mode",true,"--functions_emulator","127.0.0.1:5001"],"optionalArgs":["port","webchannel_port","host","rules","websocket_port","functions_emulator","seed_from_export","project_id","single_project_mode"],"joinArgs":false} {"metadata":{"emulator":{"name":"firestore"},"message":"Starting Firestore Emulator with command {\"binary\":\"java\",\"args\":[\"-Dgoogle.cloud_firestore.debug_log_level=FINE\",\"-Duser.language=en\",\"-jar\",\"C:\\\\Users\\\\fiqri\\\\.cache\\\\firebase\\\\emulators\\\\cloud-firestore-emulator-v1.17.4.jar\",\"--host\",\"127.0.0.1\",\"--port\",4002,\"--websocket_port\",9150,\"--project_id\",\"fiqri-e685d\",\"--rules\",\"D:\\\\PERSONAL\\\\SMAN-12\\\\firestore.rules\",\"--single_project_mode\",true,\"--functions_emulator\",\"127.0.0.1:5001\"],\"optionalArgs\":[\"port\",\"webchannel_port\",\"host\",\"rules\",\"websocket_port\",\"functions_emulator\",\"seed_from_export\",\"project_id\",\"single_project_mode\"],\"joinArgs\":false}"}}
+[info] i  firestore: Firestore Emulator logging to firestore-debug.log {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator logging to \u001b[1mfirestore-debug.log\u001b[22m"}}
+[info] +  firestore: Firestore Emulator UI websocket is running on 9150. {"metadata":{"emulator":{"name":"firestore"},"message":"Firestore Emulator UI websocket is running on 9150."}}
+[debug] [2023-06-14T02:13:08.402Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/fiqri-e685d [none]
+[debug] [2023-06-14T02:13:09.054Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/fiqri-e685d 200
+[debug] [2023-06-14T02:13:09.054Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/fiqri-e685d {"projectId":"fiqri-e685d","projectNumber":"1094774048018","displayName":"fiqri","name":"projects/fiqri-e685d","resources":{"hostingSite":"fiqri-e685d","realtimeDatabaseInstance":"fiqri-e685d-default-rtdb","storageBucket":"fiqri-e685d.appspot.com","locationId":"us-central"},"state":"ACTIVE","etag":"1_145a21fb-23bd-4de6-84dd-a592e7bfe5f9"}
+[debug] [2023-06-14T02:13:09.055Z] database rules config:  [{"instance":"fiqri-e685d-default-rtdb","rules":"D:\\PERSONAL\\SMAN-12\\database.rules.json"}]
+[debug] [2023-06-14T02:13:09.083Z] Ignoring unsupported arg: projectId {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: projectId"}}
+[debug] [2023-06-14T02:13:09.083Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-06-14T02:13:09.083Z] Ignoring unsupported arg: rules {"metadata":{"emulator":{"name":"database"},"message":"Ignoring unsupported arg: rules"}}
+[debug] [2023-06-14T02:13:09.083Z] Starting Database Emulator with command {"binary":"java","args":["-Duser.language=en","-jar","C:\\Users\\fiqri\\.cache\\firebase\\emulators\\firebase-database-emulator-v4.11.2.jar","--host","127.0.0.1","--port",4003,"--single_project_mode","Warning","--functions_emulator_host","127.0.0.1","--functions_emulator_port",5001],"optionalArgs":["port","host","functions_emulator_port","functions_emulator_host","single_project_mode"],"joinArgs":false} {"metadata":{"emulator":{"name":"database"},"message":"Starting Database Emulator with command {\"binary\":\"java\",\"args\":[\"-Duser.language=en\",\"-jar\",\"C:\\\\Users\\\\fiqri\\\\.cache\\\\firebase\\\\emulators\\\\firebase-database-emulator-v4.11.2.jar\",\"--host\",\"127.0.0.1\",\"--port\",4003,\"--single_project_mode\",\"Warning\",\"--functions_emulator_host\",\"127.0.0.1\",\"--functions_emulator_port\",5001],\"optionalArgs\":[\"port\",\"host\",\"functions_emulator_port\",\"functions_emulator_host\",\"single_project_mode\"],\"joinArgs\":false}"}}
+[info] i  database: Database Emulator logging to database-debug.log {"metadata":{"emulator":{"name":"database"},"message":"Database Emulator logging to \u001b[1mdatabase-debug.log\u001b[22m"}}
+[debug] [2023-06-14T02:13:18.183Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"storage"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2023-06-14T02:13:19.179Z] Temp file directory for storage emulator: C:\Users\fiqri\AppData\Local\Temp/firebase/storage/blobs {"metadata":{"emulator":{"name":"storage"},"message":"Temp file directory for storage emulator: C:\\Users\\fiqri\\AppData\\Local\\Temp/firebase/storage/blobs"}}
+[debug] [2023-06-14T02:13:19.188Z] >>> [apiv2][query] GET https://firebasehosting.googleapis.com/v1beta1/projects/fiqri-e685d/sites 
+[debug] [2023-06-14T02:13:20.115Z] <<< [apiv2][status] GET https://firebasehosting.googleapis.com/v1beta1/projects/fiqri-e685d/sites 200
+[debug] [2023-06-14T02:13:20.115Z] <<< [apiv2][body] GET https://firebasehosting.googleapis.com/v1beta1/projects/fiqri-e685d/sites {"sites":[{"name":"projects/fiqri-e685d/sites/fiqri-e685d","defaultUrl":"https://fiqri-e685d.web.app","appId":"1:1094774048018:web:04c9a2772ac146c25b5fcb","type":"DEFAULT_SITE"}]}
+[debug] [2023-06-14T02:13:20.115Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/fiqri-e685d/webApps/1:1094774048018:web:04c9a2772ac146c25b5fcb/config [none]
+[debug] [2023-06-14T02:13:21.736Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/fiqri-e685d/webApps/1:1094774048018:web:04c9a2772ac146c25b5fcb/config 200
+[debug] [2023-06-14T02:13:21.736Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/fiqri-e685d/webApps/1:1094774048018:web:04c9a2772ac146c25b5fcb/config {"projectId":"fiqri-e685d","appId":"1:1094774048018:web:04c9a2772ac146c25b5fcb","databaseURL":"https://fiqri-e685d-default-rtdb.firebaseio.com","storageBucket":"fiqri-e685d.appspot.com","locationId":"us-central","apiKey":"AIzaSyC2Sp7t81e1Ppf1NLO0VYFeHnm4YaKxzKk","authDomain":"fiqri-e685d.firebaseapp.com","messagingSenderId":"1094774048018"}
+[debug] [2023-06-14T02:13:21.744Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/fiqri-e685d [none]
+[debug] [2023-06-14T02:13:22.131Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/fiqri-e685d 200
+[debug] [2023-06-14T02:13:22.131Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/fiqri-e685d {"projectId":"fiqri-e685d","projectNumber":"1094774048018","displayName":"fiqri","name":"projects/fiqri-e685d","resources":{"hostingSite":"fiqri-e685d","realtimeDatabaseInstance":"fiqri-e685d-default-rtdb","storageBucket":"fiqri-e685d.appspot.com","locationId":"us-central"},"state":"ACTIVE","etag":"1_145a21fb-23bd-4de6-84dd-a592e7bfe5f9"}
+[info] i  hosting[fiqri-e685d]: Serving hosting files from: public {"metadata":{"emulator":{"name":"hosting"},"message":"Serving hosting files from: \u001b[1mpublic\u001b[22m"}}
+[info] +  hosting[fiqri-e685d]: Local server: http://127.0.0.1:5000 {"metadata":{"emulator":{"name":"hosting"},"message":"Local server: \u001b[4m\u001b[1mhttp://127.0.0.1:5000\u001b[22m\u001b[24m"}}
+[debug] [2023-06-14T02:13:22.160Z] Ignoring unsupported arg: auto_download {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: auto_download"}}
+[debug] [2023-06-14T02:13:22.160Z] Ignoring unsupported arg: port {"metadata":{"emulator":{"name":"ui"},"message":"Ignoring unsupported arg: port"}}
+[debug] [2023-06-14T02:13:22.160Z] Starting Emulator UI with command {"binary":"node","args":["C:\\Users\\fiqri\\.cache\\firebase\\emulators\\ui-v1.11.6\\server\\server.js"],"optionalArgs":[],"joinArgs":false} {"metadata":{"emulator":{"name":"ui"},"message":"Starting Emulator UI with command {\"binary\":\"node\",\"args\":[\"C:\\\\Users\\\\fiqri\\\\.cache\\\\firebase\\\\emulators\\\\ui-v1.11.6\\\\server\\\\server.js\"],\"optionalArgs\":[],\"joinArgs\":false}"}}
+[info] i  ui: Emulator UI logging to ui-debug.log {"metadata":{"emulator":{"name":"ui"},"message":"Emulator UI logging to \u001b[1mui-debug.log\u001b[22m"}}
+[debug] [2023-06-14T02:13:22.318Z] Web / API server started at 127.0.0.1:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at 127.0.0.1:4000\n"}}
+[debug] [2023-06-14T02:13:22.319Z] Web / API server started at ::1:4000
+ {"metadata":{"emulator":{"name":"ui"},"message":"Web / API server started at ::1:4000\n"}}
+[info] i  functions: Watching "D:\PERSONAL\SMAN-12\functions" for Cloud Functions... {"metadata":{"emulator":{"name":"functions"},"message":"Watching \"D:\\PERSONAL\\SMAN-12\\functions\" for Cloud Functions..."}}
+[debug] [2023-06-14T02:13:22.443Z] Validating nodejs source
+[warn] !  functions: package.json indicates an outdated version of firebase-functions. Please upgrade using npm install --save firebase-functions@latest in your functions directory. 
+[debug] [2023-06-14T02:13:25.295Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "18"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "firebase-admin": "^11.8.0",
+    "firebase-functions": "^4.3.1",
+    "uuidv4": "^6.2.13"
+  },
+  "devDependencies": {
+    "faker": "^5.5.3",
+    "firebase-functions-test": "^3.1.0"
+  },
+  "private": true
+}
+[debug] [2023-06-14T02:13:25.296Z] Building nodejs source
+[debug] [2023-06-14T02:13:25.296Z] Failed to find version of module node: reached end of search path D:\PERSONAL\SMAN-12\functions\node_modules
+[warn] !  functions: Your requested "node" version "18" doesn't match your global version "16". Using node@16 from host. 
+[debug] [2023-06-14T02:13:25.300Z] Could not find functions.yaml. Must use http discovery
+[debug] [2023-06-14T02:13:25.349Z] Found firebase-functions binary at 'D:\PERSONAL\SMAN-12\functions\node_modules\.bin\firebase-functions'
+[debug] [2023-06-14T02:13:29.777Z] Serving at port 8668
+
+[debug] [2023-06-14T02:13:41.749Z] shutdown requested via /__/quitquitquit
+
+[error] !!  functions: Failed to load function definition from source: FirebaseError: User code failed to load. Cannot determine backend specification {"metadata":{"emulator":{"name":"functions"},"message":"Failed to load function definition from source: FirebaseError: User code failed to load. Cannot determine backend specification"}}
+[debug] [2023-06-14T02:13:41.762Z] >>> [apiv2][query] PUT http://127.0.0.1:4003/.settings/rules.json ns=fiqri-e685d-default-rtdb
+[debug] [2023-06-14T02:13:41.762Z] >>> [apiv2][body] PUT http://127.0.0.1:4003/.settings/rules.json "{\n  \"rules\": {\n    \".read\": \"now < 1688490000000\",  // 2023-7-5\n    \".write\": \"now < 1688490000000\",  // 2023-7-5\n  }\n}"
+[debug] [2023-06-14T02:13:42.321Z] <<< [apiv2][status] PUT http://127.0.0.1:4003/.settings/rules.json 200
+[debug] [2023-06-14T02:13:42.321Z] <<< [apiv2][body] PUT http://127.0.0.1:4003/.settings/rules.json {"status":"ok"}
+[info] 
+┌─────────────────────────────────────────────────────────────┐
+│ ✔  All emulators ready! It is now safe to connect your app. │
+│ i  View Emulator UI at http://127.0.0.1:4000/               │
+└─────────────────────────────────────────────────────────────┘
+
+┌────────────────┬────────────────┬─────────────────────────────────┐
+│ Emulator       │ Host:Port      │ View in Emulator UI             │
+├────────────────┼────────────────┼─────────────────────────────────┤
+│ Authentication │ 127.0.0.1:4001 │ http://127.0.0.1:4000/auth      │
+├────────────────┼────────────────┼─────────────────────────────────┤
+│ Functions      │ 127.0.0.1:5001 │ http://127.0.0.1:4000/functions │
+├────────────────┼────────────────┼─────────────────────────────────┤
+│ Firestore      │ 127.0.0.1:4002 │ http://127.0.0.1:4000/firestore │
+├────────────────┼────────────────┼─────────────────────────────────┤
+│ Database       │ 127.0.0.1:4003 │ http://127.0.0.1:4000/database  │
+├────────────────┼────────────────┼─────────────────────────────────┤
+│ Hosting        │ 127.0.0.1:5000 │ n/a                             │
+├────────────────┼────────────────┼─────────────────────────────────┤
+│ Storage        │ 127.0.0.1:4004 │ http://127.0.0.1:4000/storage   │
+└────────────────┴────────────────┴─────────────────────────────────┘
+  Emulator Hub running at 127.0.0.1:4400
+  Other reserved ports: 4500, 9150
+
+Issues? Report them at https://github.com/firebase/firebase-tools/issues and attach the *-debug.log files.
+ 

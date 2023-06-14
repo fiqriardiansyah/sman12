@@ -29,9 +29,9 @@ export function editTableSppMonth<T extends SppTable>(Component: ComponentType<E
                 width: "200px",
                 render: (text, record) => {
                     const isSameOrBeforeMonth = MONTHS.indexOf(record.month || "") <= MONTHS.indexOf(moment().format("MMMM")?.toLowerCase());
-                    const isDebt = isSameOrBeforeMonth && cls?.toLowerCase() === currentCls?.toLowerCase() && !record.pay_date;
+                    const isDebt = isSameOrBeforeMonth && cls?.length <= currentCls?.length && !record.pay_date;
                     return (
-                        <p className="m-0 capitalize">
+                        <p className="m-0 capitalize flex">
                             {text}
                             {isDebt ? (
                                 <Tag className="ml-4" color="magenta">

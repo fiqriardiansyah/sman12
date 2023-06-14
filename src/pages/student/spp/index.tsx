@@ -10,7 +10,7 @@ import Lottie from "react-lottie";
 import { useQuery } from "react-query";
 import { functionInstance } from "service/firebase-instance";
 import Utils from "utils";
-import { MONTHS } from "utils/constant";
+import { CLASSES, MONTHS } from "utils/constant";
 
 const getMySPP = httpsCallable(functionInstance, "getMySPP");
 
@@ -32,16 +32,16 @@ function StudentSPP() {
         ["get-my-grades", state?.user?.id],
         async () => {
             const result = (await getMySPP({ student_id: state?.user?.id })).data as any;
-            const historySPP = Object.keys(result || {})?.map((key) => {
-                const history = result[key];
+            const historySPP = CLASSES.map((cls) => {
+                const history = result ? result[cls] : null;
                 return {
-                    kelas: key,
-                    history: Object.keys(history).map((month) => ({
+                    kelas: cls,
+                    history: MONTHS.map((month) => ({
                         month,
-                        amount: history[month].amount,
-                        pay_date: history[month].pay_date,
-                        note: history[month].note,
-                        kelas: key,
+                        amount: history ? history[month].amount : "",
+                        pay_date: history ? history[month].pay_date : "",
+                        note: history ? history[month].note : "",
+                        kelas: cls,
                     })),
                 };
             });
@@ -49,7 +49,7 @@ function StudentSPP() {
             const sortMonthHistory = historySPP?.map((history) => {
                 return {
                     ...history,
-                    history: MONTHS.map((month) => history.history.find((val) => val.month === month)),
+                    history: MONTHS.map((month) => history.history.find((val) => val?.month === month)),
                 };
             });
 
@@ -68,11 +68,9 @@ function StudentSPP() {
             render: (text, record) => {
                 const isSameOrBeforeMonth = MONTHS.indexOf((record.month as any) || "") <= MONTHS.indexOf(moment().format("MMMM")?.toLowerCase());
                 const isDebt =
-                    isSameOrBeforeMonth &&
-                    Utils.SplitStrKelas(state?.user?.kelas)?.toLowerCase() === record.kelas?.toLowerCase() &&
-                    (!record.pay_date as any);
+                    isSameOrBeforeMonth && record.kelas?.length <= Utils.SplitStrKelas(state?.user?.kelas)?.length && (!record.pay_date as any);
                 return (
-                    <p className="m-0 capitalize">
+                    <p className="m-0 capitalize flex">
                         {text}
                         {isDebt ? (
                             <Tag className="ml-4" color="magenta">
@@ -123,7 +121,7 @@ function StudentSPP() {
             <StateRender data={getMySPPQuery.data} isLoading={getMySPPQuery.isLoading} isError={getMySPPQuery.isError}>
                 <StateRender.Data>
                     {getMySPPQuery.data?.length ? (
-                        getMySPPQuery.data?.map((el: any) => <Tabs activeKey={tabClass} items={items} onChange={onChange} />)
+                        <Tabs activeKey={tabClass} items={items} onChange={onChange} />
                     ) : (
                         <div className="col-span-2 flex flex-col items-center justify-center h-[400px]">
                             <Lottie options={defaultOptions} height={400} width={400} isClickToPauseDisabled={false} />
