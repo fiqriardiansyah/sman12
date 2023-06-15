@@ -1,16 +1,15 @@
 import { Alert, Button, Form, Image, Input, Popconfirm, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
+import StateRender from "components/common/state";
 import { httpsCallable } from "firebase/functions";
-import { Guru } from "modules/dataguru/table";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { Staff } from "modules/datastaff/table";
+import { AiOutlineUpload } from "react-icons/ai";
 import { IoMdArrowBack } from "react-icons/io";
 import { useMutation, useQuery } from "react-query";
 import { functionInstance, storageInstance } from "service/firebase-instance";
-import { GENDER, IMAGE_FALLBACK, STAFF_PATH } from "utils/constant";
-import StateRender from "components/common/state";
-import { AiOutlineUpload } from "react-icons/ai";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { Staff } from "modules/datastaff/table";
+import { GENDER, IMAGE_FALLBACK } from "utils/constant";
 
 function MasterDataStaffEdit() {
     const { id } = useParams();
@@ -101,6 +100,11 @@ function MasterDataStaffEdit() {
         showUploadList: false,
     };
 
+    const clickGoBack = (e: any) => {
+        e.preventDefault();
+        navigate(-1);
+    };
+
     if (!id) return <Alert type="error" message="Halaman tidak ditemukan" />;
 
     return (
@@ -108,7 +112,7 @@ function MasterDataStaffEdit() {
             {contextHolder}
             <div className="w-full flex items-center justify-between mt-5">
                 <Space>
-                    <Link to={STAFF_PATH.masterdata.datastaff.index}>
+                    <Link to=".." onClick={clickGoBack}>
                         <IoMdArrowBack className="text-lg m-0 mt-1 cursor-pointer" />
                     </Link>
                     <h1 className="m-0">Edit Staff</h1>

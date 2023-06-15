@@ -100,6 +100,11 @@ function MasterDataGuruEdit() {
         showUploadList: false,
     };
 
+    const clickGoBack = (e: any) => {
+        e.preventDefault();
+        navigate(-1);
+    };
+
     if (!id) return <Alert type="error" message="Halaman tidak ditemukan" />;
 
     return (
@@ -107,7 +112,7 @@ function MasterDataGuruEdit() {
             {contextHolder}
             <div className="w-full flex items-center justify-between mt-5">
                 <Space>
-                    <Link to={STAFF_PATH.masterdata.dataguru.index}>
+                    <Link to=".." onClick={clickGoBack}>
                         <IoMdArrowBack className="text-lg m-0 mt-1 cursor-pointer" />
                     </Link>
                     <h1 className="m-0">Edit Guru</h1>

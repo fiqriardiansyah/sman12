@@ -111,11 +111,16 @@ function MasterDataKelasEdit() {
         wali: detailClassQuery.data?.wali_id,
     };
 
+    const clickGoBack = (e: any) => {
+        e.preventDefault();
+        navigate(-1);
+    };
+
     return (
         <div className="flex flex-col gap-5">
             <div className="w-full flex items-center justify-between mt-5">
                 <Space>
-                    <Link to={STAFF_PATH.masterdata.datakelas.index}>
+                    <Link to=".." onClick={clickGoBack}>
                         <IoMdArrowBack className="text-lg m-0 mt-1 cursor-pointer" />
                     </Link>
                     <h1 className="m-0">Edit Kelas</h1>

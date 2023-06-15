@@ -9,6 +9,7 @@ export interface Kelas {
     id?: string;
     kelas?: string;
     nomor_kelas?: string;
+    nama_kelas?: string;
     murid?: Partial<Siswa>[];
     wali_id?: any;
     wali_nama?: string;

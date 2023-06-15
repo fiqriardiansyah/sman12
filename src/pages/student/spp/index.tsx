@@ -4,13 +4,14 @@ import collegeAnimation from "assets/animation/college.json";
 import StateRender from "components/common/state";
 import { UserContext } from "context/user";
 import { httpsCallable } from "firebase/functions";
+import { Staff } from "modules/datastaff/table";
 import moment from "moment";
 import { useContext, useState } from "react";
 import Lottie from "react-lottie";
 import { useQuery } from "react-query";
 import { functionInstance } from "service/firebase-instance";
 import Utils from "utils";
-import { CLASSES, MONTHS } from "utils/constant";
+import { CLASSES, MONTHS, SPP_PAYMENT_METHOD } from "utils/constant";
 
 const getMySPP = httpsCallable(functionInstance, "getMySPP");
 
@@ -23,10 +24,16 @@ const defaultOptions = {
     },
 };
 
+const getStaffs = httpsCallable(functionInstance, "getStaffs");
+
 function StudentSPP() {
     const { state } = useContext(UserContext);
 
     const [tabClass, setTabClass] = useState<string>(Utils.SplitStrKelas(state?.user?.kelas));
+
+    const getStaffsQuery = useQuery(["get-staff"], async () => {
+        return (await getStaffs()).data as Staff[];
+    });
 
     const getMySPPQuery = useQuery(
         ["get-my-grades", state?.user?.id],
@@ -38,9 +45,11 @@ function StudentSPP() {
                     kelas: cls,
                     history: MONTHS.map((month) => ({
                         month,
-                        amount: history ? history[month].amount : "",
-                        pay_date: history ? history[month].pay_date : "",
-                        note: history ? history[month].note : "",
+                        amount: history ? history[month]?.amount : "",
+                        pay_date: history ? history[month]?.pay_date : "",
+                        note: history ? history[month]?.note : "",
+                        author_id: history ? history[month]?.author_id : "",
+                        method: history ? history[month]?.method : "",
                         kelas: cls,
                     })),
                 };
@@ -74,7 +83,7 @@ function StudentSPP() {
                         {text}
                         {isDebt ? (
                             <Tag className="ml-4" color="magenta">
-                                menunggak
+                                belum lunas
                             </Tag>
                         ) : null}
                     </p>
@@ -92,9 +101,19 @@ function StudentSPP() {
             render: (text) => <p className="m-0">{text ? (text as number)?.ToIndCurrency("Rp") : ""}</p>,
         },
         {
+            title: "Metode Bayar",
+            dataIndex: "method",
+            render: (text) => <p className="m-0">{text ? SPP_PAYMENT_METHOD.find((el) => el.value === text)?.label : ""}</p>,
+        },
+        {
             title: "Keterangan",
             dataIndex: "note",
             render: (text) => <p className="m-0">{text}</p>,
+        },
+        {
+            title: "Autor",
+            dataIndex: "author_id",
+            render: (text) => <p className="m-0">{text ? getStaffsQuery.data?.find((staff) => staff.id === text)?.nama : ""}</p>,
         },
     ];
 

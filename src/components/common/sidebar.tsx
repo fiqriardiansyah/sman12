@@ -46,9 +46,10 @@ function Sidebar() {
             icon: <MdOutlineSpaceDashboard />,
             children: [
                 { label: "Data Siswa", key: STAFF_PATH.masterdata.datasiswa.index },
-                { label: "Data Kelas", key: STAFF_PATH.masterdata.datakelas.index },
                 { label: "Data Guru", key: STAFF_PATH.masterdata.dataguru.index },
                 { label: "Data Staff", key: STAFF_PATH.masterdata.datastaff.index },
+                { label: "Data Kelas", key: STAFF_PATH.masterdata.datakelas.index },
+                { label: "Data Pelajaran", key: STAFF_PATH.masterdata.datapelajaran.index },
             ],
         },
         {

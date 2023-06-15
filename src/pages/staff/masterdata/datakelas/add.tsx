@@ -1,44 +1,50 @@
-import { Button, Form, Select, Space, message } from "antd";
+import { Button, Card, Form, Select, Space, Tabs, TabsProps, message } from "antd";
 import { ColumnsType } from "antd/es/table";
 import TableTransfer from "components/common/table-transfer";
+import dayjs from "dayjs";
 import { httpsCallable } from "firebase/functions";
 import { Guru } from "modules/dataguru/table";
+import RosterEdit from "modules/datakelas/roster";
+import { Roster } from "modules/datakelas/table-pelajaran";
 import { Siswa } from "modules/datasiswa/table";
 import { useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
 import { useMutation, useQuery } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
-import { CLASS_OPTION, NUMBER_CLASS_OPTION, STAFF_PATH } from "utils/constant";
+import { CLASS_OPTION, DAYS, NUMBER_CLASS_OPTION, STAFF_PATH } from "utils/constant";
+
+const columns: ColumnsType<Siswa> = [
+    {
+        title: "Nama",
+        dataIndex: "nama",
+        render: (text) => <p className="m-0 capitalize">{text || "-"}</p>,
+    },
+    {
+        title: "Nis",
+        dataIndex: "nis",
+        render: (text) => <p className="m-0">{text || "-"}</p>,
+    },
+    {
+        title: "Nisn",
+        dataIndex: "nisn",
+        render: (text) => <p className="m-0">{text || "-"}</p>,
+    },
+];
 
 function MasterDataKelasAdd() {
     const createClass = httpsCallable(functionInstance, "createClass");
+    const getStudents = httpsCallable(functionInstance, "getStudents");
+    const getTeachers = httpsCallable(functionInstance, "getTeachers");
+
+    const [targetKeys, setTargetKeys] = useState<string[]>([]);
+    const [rosters, setRosters] = useState<any>({});
+
     const navigate = useNavigate();
 
     const createClassMutation = useMutation(["create-class"], async (data: any) => {
         return (await createClass(data)).data;
     });
-
-    const columns: ColumnsType<Siswa> = [
-        {
-            title: "Nama",
-            dataIndex: "nama",
-            render: (text) => <p className="m-0 capitalize">{text || "-"}</p>,
-        },
-        {
-            title: "Nis",
-            dataIndex: "nis",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
-        },
-        {
-            title: "Nisn",
-            dataIndex: "nisn",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
-        },
-    ];
-    const getStudents = httpsCallable(functionInstance, "getStudents");
-    const getTeachers = httpsCallable(functionInstance, "getTeachers");
-    const [targetKeys, setTargetKeys] = useState<string[]>([]);
 
     const studentAvailableQuery = useQuery(["get-student"], async () => {
         return ((await getStudents()).data as Siswa[])?.filter((student) => !student.kelas);
@@ -53,11 +59,32 @@ function MasterDataKelasAdd() {
             message.error("Pilih siswa terlebih dahulu");
             return;
         }
+        try {
+            DAYS.forEach((day) => {
+                if (!rosters[day] || !rosters[day].length) {
+                    throw new Error(`Roster hari ${day} belum diisi`);
+                }
+            });
+        } catch (e: any) {
+            message.error(e?.message);
+            return;
+        }
+
+        const tRosters = DAYS.reduce((obj, day) => {
+            const daysRoster = rosters[day] as Roster[];
+            return {
+                ...obj,
+                [day]: daysRoster.map((rstr) => ({ ...rstr, jam: dayjs(rstr.jam).format("HH:mm:ss") })),
+            };
+        }, {});
+
         const data = {
             ...values,
             wali_nama: teacherAvailableQuery.data?.find((t) => t.id === values.wali)?.nama,
             murid: targetKeys,
+            rosters: tRosters,
         };
+
         createClassMutation
             .mutateAsync(data)
             .then(() => {
@@ -72,6 +99,19 @@ function MasterDataKelasAdd() {
     const onChange = (nextTargetKeys: string[]) => {
         setTargetKeys(nextTargetKeys);
     };
+
+    const onChangeRoster = ({ day, roster }: { day: string; roster: Roster[] }) => {
+        setRosters((prev: any) => ({
+            ...prev,
+            [day]: roster,
+        }));
+    };
+
+    const items: TabsProps["items"] = DAYS.map((day) => ({
+        key: day,
+        label: day?.CapitalizeFirstLetter(),
+        children: <RosterEdit day={day} onChange={onChangeRoster} />,
+    }));
 
     return (
         <div className="flex flex-col gap-5">
@@ -120,6 +160,12 @@ function MasterDataKelasAdd() {
                         leftColumns={columns}
                         rightColumns={columns}
                     />
+                </div>
+                <div className="">
+                    <p className="mt-5">Roster</p>
+                    <Card>
+                        <Tabs items={items} />
+                    </Card>
                 </div>
                 <Form.Item>
                     <Button loading={createClassMutation.isLoading} type="primary" htmlType="submit" className="mt-10">

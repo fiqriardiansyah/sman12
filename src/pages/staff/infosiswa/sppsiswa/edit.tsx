@@ -23,28 +23,6 @@ export type Spp = {
     };
 };
 
-const dummySpp: Spp = {
-    X: {
-        july: {
-            amount: 10000,
-            note: "test test",
-            pay_date: "12 may 2023",
-        },
-        august: {
-            amount: 23000,
-            note: "adfasdfadf",
-            pay_date: "12 may 2023",
-        },
-    },
-    XI: {
-        july: {
-            amount: 20000,
-            note: "",
-            pay_date: "12 may 2023",
-        },
-    },
-};
-
 const getDataUser = httpsCallable(functionInstance, "getUserWithId");
 
 function InfoSiswaSppEdit() {
@@ -75,11 +53,16 @@ function InfoSiswaSppEdit() {
         setTabClass(key);
     };
 
+    const clickGoBack = (e: any) => {
+        e.preventDefault();
+        navigate(-1);
+    };
+
     return (
         <div className="flex flex-col gap-5">
             <div className="w-full flex items-center justify-between mt-5">
                 <Space>
-                    <Link to={STAFF_PATH.infosiswa.sppsiswa.index}>
+                    <Link to=".." onClick={clickGoBack}>
                         <IoMdArrowBack className="text-lg m-0 mt-1 cursor-pointer" />
                     </Link>
                     <h1 className="m-0">Edit Spp Siswa</h1>

@@ -1,9 +1,15 @@
 import { Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import EditTable, { Props as EditTableProps } from "components/table/editable-table";
+import dayjs from "dayjs";
 import moment from "moment";
 import { ComponentType, useState } from "react";
-import { MONTHS } from "utils/constant";
+
+import { httpsCallable } from "firebase/functions";
+import { Staff } from "modules/datastaff/table";
+import { useQuery } from "react-query";
+import { functionInstance } from "service/firebase-instance";
+import { FORMAT_DATE_DAYJS, MONTHS, SPP_PAYMENT_METHOD } from "utils/constant";
 
 export interface SppTable {
     id?: any;
@@ -11,6 +17,8 @@ export interface SppTable {
     pay_date?: any;
     amount?: any;
     note?: any;
+    method?: any;
+    author_id?: any;
 }
 
 type Props<T> = Omit<EditTableProps<T>, "editRow" | "setEditRow" | "isEditing" | "findIndexSave" | "rowKey" | "editInputType" | "columns"> & {
@@ -18,9 +26,15 @@ type Props<T> = Omit<EditTableProps<T>, "editRow" | "setEditRow" | "isEditing" |
     currentCls: string;
 };
 
+const getStaffs = httpsCallable(functionInstance, "getStaffs");
+
 export function editTableSppMonth<T extends SppTable>(Component: ComponentType<EditTableProps<T>>) {
     return function ({ cls, currentCls, ...props }: Props<T>) {
         const [editRow, setEditRow] = useState<T | null>(null);
+
+        const getStaffsQuery = useQuery(["get-staff"], async () => {
+            return (await getStaffs()).data as Staff[];
+        });
 
         const columns: ColumnsType<T> = [
             {
@@ -46,7 +60,7 @@ export function editTableSppMonth<T extends SppTable>(Component: ComponentType<E
                 title: "Tanggal Bayar",
                 dataIndex: "pay_date",
                 ...{ editable: true },
-                render: (text) => <p className="m-0">{text}</p>,
+                render: (text) => <p className="m-0">{text ? dayjs(text).format(FORMAT_DATE_DAYJS) : ""}</p>,
             },
             {
                 title: "Jumlah",
@@ -55,17 +69,28 @@ export function editTableSppMonth<T extends SppTable>(Component: ComponentType<E
                 render: (text) => <p className="m-0">{text ? (text as number)?.ToIndCurrency("Rp") : ""}</p>,
             },
             {
+                title: "Metode Bayar",
+                dataIndex: "method",
+                ...{ editable: true },
+                render: (text) => <p className="m-0">{text ? SPP_PAYMENT_METHOD.find((el) => el.value === text)?.label : ""}</p>,
+            },
+            {
                 title: "Keterangan",
                 dataIndex: "note",
                 ...{ editable: true },
                 render: (text) => <p className="m-0">{text}</p>,
+            },
+            {
+                title: "Autor",
+                dataIndex: "author_id",
+                render: (text) => <p className="m-0">{text ? getStaffsQuery.data?.find((staff) => staff.id === text)?.nama : ""}</p>,
             },
         ];
 
         const isEditing = (record: SppTable, edited: SppTable | null) => record.month === edited?.month;
         const findIndexSave = (record: SppTable, edited: SppTable) => record.month === edited.month;
         const rowKey = (record: SppTable) => record.month! as any;
-        const editInputType: EditTableProps<SppTable>["editInputType"] = { pay_date: "text", amount: "number", note: "text" };
+        const editInputType: EditTableProps<SppTable>["editInputType"] = { pay_date: "date", amount: "number", note: "text", method: "select" };
 
         return (
             <Component
@@ -80,6 +105,13 @@ export function editTableSppMonth<T extends SppTable>(Component: ComponentType<E
                 findIndexSave={findIndexSave}
                 canRemove={false}
                 pagination={false}
+                cellProps={{
+                    selectProps: {
+                        options: SPP_PAYMENT_METHOD,
+                        className: "!w-[200px]",
+                        placeholder: "Pilih",
+                    },
+                }}
             />
         );
     };

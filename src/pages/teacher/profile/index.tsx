@@ -1,28 +1,59 @@
-import { Descriptions } from "antd";
+import { Alert, Descriptions, Image, Skeleton } from "antd";
+import StateRender from "components/common/state";
+import { UserContext } from "context/user";
+import { httpsCallable } from "firebase/functions";
+import { Guru } from "modules/dataguru/table";
+import { useContext } from "react";
 import { FaRegEdit } from "react-icons/fa";
+import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
-import { STUDENT_PATH } from "utils/constant";
+import { functionInstance } from "service/firebase-instance";
+import { GENDER, IMAGE_FALLBACK, TEACHER_PATH } from "utils/constant";
 
 function TeacherProfile() {
+    const { state } = useContext(UserContext);
+    const getMyData = httpsCallable(functionInstance, "getUserWithEmail");
+
+    const profileQuery = useQuery(["profile", state?.user?.uid], async () => {
+        return (await (
+            await getMyData({ email: state?.user?.email })
+        ).data) as Guru;
+    });
+
     return (
         <div>
             <div className="w-full flex items-center justify-between">
                 <h1>Profil</h1>
-                <Link to={STUDENT_PATH.profile.edit}>
+                <Link to={TEACHER_PATH.profile.edit}>
                     <FaRegEdit title="edit profil" className="cursor-pointer text-lg" />
                 </Link>
             </div>
-            <img src="https://source.unsplash.com/random/?Cryptocurrency&1" alt="" className="w-[200px] h-[200px] rounded-full object-cover" />
-            <Descriptions title="User Info" className="mt-10">
-                <Descriptions.Item label="Nama">Fiqri ardiansyah</Descriptions.Item>
-                <Descriptions.Item label="NUPTK">1810000000</Descriptions.Item>
-                <Descriptions.Item label="Email">fiqri@gmail.com</Descriptions.Item>
-                <Descriptions.Item label="Handphone">0823423423</Descriptions.Item>
-                <Descriptions.Item label="Kelamin">Laki - Laki</Descriptions.Item>
-                <Descriptions.Item label="Tempat, Tanggal lahir">Medan, 12 Feb 2000</Descriptions.Item>
-                <Descriptions.Item label="Alamat">No. 18, Wantang Road, Xihu District, Hangzhou, Zhejiang, China</Descriptions.Item>
-                <Descriptions.Item label="Posisi">Staff kurikulum</Descriptions.Item>
-            </Descriptions>
+            <StateRender data={profileQuery.data} isLoading={profileQuery.isLoading} isError={profileQuery.isError}>
+                <StateRender.Data>
+                    <Image
+                        height={200}
+                        width={200}
+                        src={profileQuery.data?.foto}
+                        className="!rounded-full object-cover"
+                        fallback={IMAGE_FALLBACK}
+                        alt={profileQuery.data?.nama}
+                    />
+                    <Descriptions title="User Info" className="mt-10" bordered>
+                        <Descriptions.Item label="Nama">{profileQuery.data?.nama}</Descriptions.Item>
+                        <Descriptions.Item label="NUPTK">{profileQuery.data?.nuptk}</Descriptions.Item>
+                        <Descriptions.Item label="Email">{profileQuery.data?.email}</Descriptions.Item>
+                        <Descriptions.Item label="Handphone">{profileQuery.data?.hp}</Descriptions.Item>
+                        <Descriptions.Item label="Kelamin">{GENDER.find((el) => el.value === profileQuery?.data?.kelamin)?.label}</Descriptions.Item>
+                        <Descriptions.Item label="Alamat">{profileQuery.data?.alamat}</Descriptions.Item>
+                    </Descriptions>
+                </StateRender.Data>
+                <StateRender.Loading>
+                    <Skeleton />
+                </StateRender.Loading>
+                <StateRender.Error>
+                    <Alert type="error" message={(profileQuery.error as any)?.message} />
+                </StateRender.Error>
+            </StateRender>
         </div>
     );
 }

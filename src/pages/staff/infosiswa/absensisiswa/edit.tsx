@@ -7,7 +7,7 @@ import { Kelas } from "modules/datakelas/table";
 import moment from "moment";
 import { IoMdArrowBack } from "react-icons/io";
 import { useQuery } from "react-query";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
 import { MONTHS, STAFF_PATH } from "utils/constant";
 
@@ -25,10 +25,12 @@ export type Absences = {
     name?: string;
     attendance: Attendance | null;
 };
+const detailClass = httpsCallable(functionInstance, "detailClass");
 
 function InfoSiswaAbsensiEdit() {
     const { id } = useParams();
-    const detailClass = httpsCallable(functionInstance, "detailClass");
+    const navigate = useNavigate();
+
     const [currentMonth, setCurrentMonth] = useState<string>(moment(moment.now()).format("MMMM").toLowerCase());
 
     const detailClassQuery = useQuery(["get-class", id], async () => {
@@ -37,6 +39,11 @@ function InfoSiswaAbsensiEdit() {
 
     const onChangeTab = (key: any) => {
         setCurrentMonth(key);
+    };
+
+    const clickGoBack = (e: any) => {
+        e.preventDefault();
+        navigate(-1);
     };
 
     const tabHistory = React.useCallback(() => {
@@ -54,7 +61,7 @@ function InfoSiswaAbsensiEdit() {
         <div className="flex flex-col gap-5">
             <div className="w-full flex items-center justify-between mt-5">
                 <Space>
-                    <Link to={STAFF_PATH.infosiswa.absensisiswa.index}>
+                    <Link to=".." onClick={clickGoBack}>
                         <IoMdArrowBack className="text-lg m-0 mt-1 cursor-pointer" />
                     </Link>
                     <h1 className="m-0">Edit Absensi Siwa</h1>

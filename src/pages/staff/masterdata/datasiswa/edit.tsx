@@ -1,16 +1,15 @@
 import { Alert, Button, Form, Image, Input, Popconfirm, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
-import Layout from "components/common/layout";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
-import { DEFAULT_ERROR_MESSAGE, GENDER, IMAGE_FALLBACK, STAFF_PATH } from "utils/constant";
+import StateRender from "components/common/state";
+import { httpsCallable } from "firebase/functions";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Siswa } from "modules/datasiswa/table";
+import { AiOutlineUpload } from "react-icons/ai";
 import { IoMdArrowBack } from "react-icons/io";
 import { useMutation, useQuery } from "react-query";
-import { httpsCallable } from "firebase/functions";
 import { functionInstance, storageInstance } from "service/firebase-instance";
-import StateRender from "components/common/state";
-import { AiOutlineUpload } from "react-icons/ai";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { GENDER, IMAGE_FALLBACK } from "utils/constant";
 
 function MasterDataSiswaEdit() {
     const { id } = useParams();
@@ -102,6 +101,11 @@ function MasterDataSiswaEdit() {
         showUploadList: false,
     };
 
+    const clickGoBack = (e: any) => {
+        e.preventDefault();
+        navigate(-1);
+    };
+
     if (!id) return <Alert type="error" message="Halaman tidak ditemukan" />;
 
     return (
@@ -109,7 +113,7 @@ function MasterDataSiswaEdit() {
             {contextHolder}
             <div className="w-full flex items-center justify-between mt-5">
                 <Space>
-                    <Link to={STAFF_PATH.masterdata.datasiswa.index}>
+                    <Link to=".." onClick={clickGoBack}>
                         <IoMdArrowBack className="text-lg m-0 mt-1 cursor-pointer" />
                     </Link>
                     <h1 className="m-0">Edit Siswa</h1>

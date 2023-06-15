@@ -14,6 +14,7 @@ export interface Guru {
     foto?: string;
     kelas?: string;
     kelas_id?: string;
+    kelamin?: any;
 }
 
 type Props = {

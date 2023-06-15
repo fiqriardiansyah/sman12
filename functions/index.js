@@ -61,7 +61,7 @@ exports.deleteUserWithEmail = functions.https.onCall(async (data) => {
 });
 
 // STUDENT
-exports.getStudents = functions.https.onCall(async () => {
+exports.getStudents = functions.https.onCall(async (data) => {
     const req = await admin.firestore().collection("users").where("role", "==", "student").get();
     const students = [];
     req?.forEach((student) => {
@@ -70,6 +70,24 @@ exports.getStudents = functions.https.onCall(async () => {
             id: student.id,
         });
     });
+
+    if (data?.query || data?.kelas) {
+        return students
+            ?.filter((student) => {
+                if (!data?.query) return student;
+                return (
+                    student?.nama?.toLowerCase()?.includes(data?.query?.toLowerCase()) ||
+                    student?.nisn?.toString()?.includes(data?.query) ||
+                    student?.nis?.toString()?.includes(data?.query)
+                );
+            })
+            .filter((student) => {
+                if (!data?.kelas) return student;
+                if (data?.kelas === "no_class") return !student?.kelas;
+                return student?.kelas === data.kelas;
+            });
+    }
+
     return students;
 });
 
@@ -132,7 +150,7 @@ exports.createStudents = functions.https.onCall(async (data) => {
 });
 
 // TEACHER
-exports.getTeachers = functions.https.onCall(async () => {
+exports.getTeachers = functions.https.onCall(async (data) => {
     const req = await admin.firestore().collection("users").where("role", "==", "teacher").get();
     const teachers = [];
     req?.forEach((teacher) => {
@@ -141,6 +159,16 @@ exports.getTeachers = functions.https.onCall(async () => {
             id: teacher.id,
         });
     });
+
+    if (data?.query) {
+        return teachers?.filter(
+            (teacher) =>
+                teacher?.nama?.toLowerCase()?.includes(data?.query?.toLowerCase()) ||
+                teacher?.nuptk?.toString()?.includes(data?.query) ||
+                teacher?.kelas?.toLowerCase()?.includes(data?.query)
+        );
+    }
+
     return teachers;
 });
 
@@ -175,8 +203,69 @@ exports.createTeacherClass = functions.https.onCall(async (data) => {
         });
 });
 
+// SUBJECT
+exports.createSubject = functions.https.onCall(async (data) => {
+    const db = admin.firestore().collection("subjects");
+    try {
+        await db.add(data);
+        return { success: true };
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.editSubject = functions.https.onCall(async (data) => {
+    const db = admin.firestore().collection("subjects").doc(data.id);
+    try {
+        await db.update(data.update);
+        return { success: true };
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.getSubjects = functions.https.onCall(async (data) => {
+    try {
+        const db = await admin.firestore().collection("subjects").get();
+        const subjects = [];
+        db.forEach((subject) => {
+            subjects.push({
+                ...subject.data(),
+                id: subject.id,
+            });
+        });
+
+        if (data?.query) {
+            return subjects?.filter(
+                (sbj) => sbj?.mata_pelajaran?.toLowerCase()?.includes(data?.query?.toLowerCase()) || sbj?.guru_nama?.toString()?.includes(data?.query)
+            );
+        }
+
+        return subjects;
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.detailSubject = functions.https.onCall(async (data) => {
+    try {
+        const db = await admin.firestore().collection("subjects").doc(data.id).get();
+        if (!db.exists) {
+            throw new functions.https.HttpsError("not-found", "mata pelajaran tidak ditemukan");
+        }
+        const subject = {
+            ...db.data(),
+            id: db.id,
+        };
+        return subject;
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+    //
+});
+
 // STAFF
-exports.getStaffs = functions.https.onCall(async () => {
+exports.getStaffs = functions.https.onCall(async (data) => {
     const req = await admin.firestore().collection("users").where("role", "==", "staff").get();
     const staffs = [];
     req?.forEach((staff) => {
@@ -185,6 +274,13 @@ exports.getStaffs = functions.https.onCall(async () => {
             id: staff.id,
         });
     });
+
+    if (data?.query) {
+        return staffs?.filter(
+            (staff) => staff?.nama?.toLowerCase()?.includes(data?.query?.toLowerCase()) || staff?.nuptk?.toString()?.includes(data?.query)
+        );
+    }
+
     return staffs;
 });
 
@@ -220,7 +316,7 @@ exports.createStaff = functions.https.onCall(async (data) => {
 });
 
 // CLASS
-exports.getClasses = functions.https.onCall(async () => {
+exports.getClasses = functions.https.onCall(async (data) => {
     const collClassRef = admin.firestore().collection("classes");
     const getClass = await collClassRef.get();
 
@@ -231,6 +327,12 @@ exports.getClasses = functions.https.onCall(async () => {
             id: cls.id,
         });
     });
+
+    if (data?.query) {
+        return classes?.filter(
+            (cls) => cls?.kelas?.toLowerCase()?.includes(data?.query?.toLowerCase()) || cls?.wali_nama?.toString()?.includes(data?.query)
+        );
+    }
 
     return classes;
 });
@@ -248,6 +350,7 @@ exports.createClass = functions.https.onCall(async (data) => {
 
     const classCollRef = admin.firestore().collection("classes");
     const userCollRef = admin.firestore().collection("users");
+    const db = admin.database();
 
     try {
         const createdClass = await classCollRef.add({
@@ -255,6 +358,7 @@ exports.createClass = functions.https.onCall(async (data) => {
             wali_nama: data.wali_nama,
             kelas: data.kelas,
             nomor_kelas: data.nomor_kelas,
+            nama_kelas: data.kelas + data.nomor_kelas,
         });
 
         const querieStudents = [];
@@ -274,11 +378,13 @@ exports.createClass = functions.https.onCall(async (data) => {
             userCollRef.doc(student.id).update({ kelas_id: createdClass.id, kelas: data.kelas + data.nomor_kelas });
         });
 
+        const createRoster = await db.ref(`rosters/${createdClass.id}`).set(data.rosters);
+
         const addClassToTeacher = await userCollRef.doc(data.wali).update({ kelas_id: createdClass.id, kelas: data.kelas + data.nomor_kelas });
 
         return { success: true };
     } catch (e) {
-        throw new functions.https.HttpsError("already-exists", e?.message);
+        throw new functions.https.HttpsError("unknown", e?.message);
     }
 });
 
@@ -288,6 +394,10 @@ exports.detailClass = functions.https.onCall(async (data) => {
 
     try {
         const dataClass = await docRef.get();
+        if (!dataClass.exists) {
+            return null;
+        }
+
         const studentClass = await docRef.collection("students").get();
 
         const queriesStudents = [];
@@ -305,7 +415,7 @@ exports.detailClass = functions.https.onCall(async (data) => {
             murid: dataStudents || [],
         };
     } catch (e) {
-        throw new functions.https.HttpsError("already-exists", e?.message);
+        throw new functions.https.HttpsError("unknown", e?.message);
     }
 });
 
@@ -358,6 +468,20 @@ exports.editClass = functions.https.onCall(async (data) => {
     }
 });
 
+// ROSTER
+exports.getMyRoster = functions.https.onCall(async (data) => {
+    const db = admin.database();
+    try {
+        const roster = await db.ref(`rosters/${data.kelas_id}`).get();
+        if (!roster.exists) {
+            throw new functions.https.HttpsError("not-found", "roster tidak ditemukan");
+        }
+        return roster.toJSON();
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
 // NEWS
 exports.createNews = functions.https.onCall(async (data) => {
     const collNewsRef = admin.firestore().collection("news");
@@ -370,10 +494,10 @@ exports.createNews = functions.https.onCall(async (data) => {
 });
 
 exports.getNews = functions.https.onCall(async (data) => {
-    const collNewsRef = admin.firestore().collection("news");
+    const collNewsRef = admin.firestore().collection("news").orderBy("tanggal_dibuat", "desc");
 
     try {
-        const res = await collNewsRef.orderBy("tanggal_dibuat", "desc").get();
+        const res = await collNewsRef.get();
 
         const news = [];
         res?.forEach((doc) => {
@@ -382,6 +506,10 @@ exports.getNews = functions.https.onCall(async (data) => {
                 id: doc.id,
             });
         });
+
+        if (data?.query) {
+            return news?.filter((ns) => ns?.judul?.toLowerCase()?.includes(data?.query?.toLowerCase()));
+        }
 
         return news;
     } catch (e) {
@@ -565,4 +693,25 @@ exports.getMyAttendance = functions.https.onCall(async (data) => {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
 });
-//
+
+// ///////////////////////////////////// TEACHER FUNCTIONS
+exports.getSPPClass = functions.https.onCall(async (data) => {
+    const db = admin.database();
+    try {
+        const queries = [];
+        data?.ids?.forEach((id) => {
+            const ref = db.ref(`spp/${id}/${data.class}`);
+            queries.push(ref);
+        });
+
+        const spp = await Promise.all(queries.map((q) => q.get())).then((res) =>
+            res.map((el, i) => ({
+                id: data.ids[i],
+                history: el.toJSON(),
+            }))
+        );
+        return spp;
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});

@@ -44,6 +44,11 @@ import TeacherProfileEdit from "pages/teacher/profile/edit";
 import TeacherDaftarSiswa from "pages/teacher/siswa";
 import configFirebase from "config/firebase";
 import StudentPengumumanDetail from "pages/student/pengumuman/detail";
+import TeacherPengumumanDetail from "pages/teacher/pengumuman/detail";
+import TeacherDaftarSiswaDetail from "pages/teacher/siswa/detail";
+import MasterDataPelajaran from "pages/staff/masterdata/datapelajaran";
+import MasterDataPelajaranAdd from "pages/staff/masterdata/datapelajaran/add";
+import MasterDataPelajaranEdit from "pages/staff/masterdata/datapelajaran/edit";
 
 function App() {
     const { state } = React.useContext(UserContext);
@@ -87,6 +92,10 @@ function App() {
                             <Route path={STAFF_PATH.masterdata.datastaff.add} element={<MasterDataStaffAdd />} />
                             <Route path={`${STAFF_PATH.masterdata.datastaff.edit}/:id`} element={<MasterDataStaffEdit />} />
 
+                            <Route path={STAFF_PATH.masterdata.datapelajaran.index} element={<MasterDataPelajaran />} />
+                            <Route path={STAFF_PATH.masterdata.datapelajaran.add} element={<MasterDataPelajaranAdd />} />
+                            <Route path={`${STAFF_PATH.masterdata.datapelajaran.edit}/:id`} element={<MasterDataPelajaranEdit />} />
+
                             <Route path={STAFF_PATH.infosiswa.nilaisiswa.index} element={<InfoSiswaNilai />} />
                             <Route path={`${STAFF_PATH.infosiswa.nilaisiswa.edit}/:id`} element={<InfoSiswaNilaiEdit />} />
 
@@ -121,7 +130,9 @@ function App() {
                             <Route path={TEACHER_PATH.profile.index} element={<TeacherProfile />} />
                             <Route path={TEACHER_PATH.profile.edit} element={<TeacherProfileEdit />} />
                             <Route path={TEACHER_PATH.siswa.index} element={<TeacherDaftarSiswa />} />
+                            <Route path={`${TEACHER_PATH.siswa.index}/:id`} element={<TeacherDaftarSiswaDetail />} />
                             <Route path={TEACHER_PATH.pengumuman.index} element={<TeacherPengumuman />} />
+                            <Route path={`${TEACHER_PATH.pengumuman.index}/:id`} element={<TeacherPengumumanDetail />} />
                             <Route path={TEACHER_PATH.perwalian.index} element={<TeacherPerwalian />} />
                             <Route path="*" element={<Navigate to={TEACHER_PATH.profile.index} />} />
                         </Routes>

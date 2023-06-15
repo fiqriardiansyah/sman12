@@ -3,25 +3,31 @@ import StateRender from "components/common/state";
 import { httpsCallable } from "firebase/functions";
 import { Pengumuman } from "modules/pengumuman/table";
 import moment from "moment";
+import ReactHtmlParser from "react-html-parser";
 import { IoMdArrowBack } from "react-icons/io";
 import { useQuery } from "react-query";
-import ReactHtmlParser from "react-html-parser";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
-import { FORMATE_DATE_TIME, STUDENT_PATH } from "utils/constant";
+import { FORMATE_DATE_TIME } from "utils/constant";
 
 function StudentPengumumanDetail() {
     const { id } = useParams();
+    const navigate = useNavigate();
     const detailNews = httpsCallable(functionInstance, "detailNews");
 
     const newsQuery = useQuery(["get-news", id], async () => {
         return (await detailNews({ id })).data as Pengumuman;
     });
 
+    const clickGoBack = (e: any) => {
+        e.preventDefault();
+        navigate(-1);
+    };
+
     return (
         <div className="w-full">
             <Space className="mt-5 mb-10">
-                <Link to={STUDENT_PATH.pengumuman.index}>
+                <Link to=".." onClick={clickGoBack}>
                     <IoMdArrowBack className="text-lg m-0 mt-1 cursor-pointer" />
                 </Link>
                 <h1 className="m-0">Pengumuman</h1>

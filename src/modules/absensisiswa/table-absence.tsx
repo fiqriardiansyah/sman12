@@ -7,7 +7,7 @@ import { useMutation, useQuery } from "react-query";
 import StateRender from "components/common/state";
 import { Skeleton, Spin, message } from "antd";
 import React from "react";
-import { TOTAL_DAY } from "utils/constant";
+import { ABSEN_STATUS, COUNT_ABSENT, TOTAL_DAY } from "utils/constant";
 import BoxAbsence from "./box-absence";
 import BoxDate from "./box-date";
 
@@ -15,7 +15,9 @@ const getAttandanceHistory = httpsCallable(functionInstance, "getAttendanceHisto
 const setOneAttendance = httpsCallable(functionInstance, "setOneAttendance");
 const setMultipleAttendance = httpsCallable(functionInstance, "setMultipleAttendance");
 
-function TableAbsence({ month, students, cls }: { month: string; students?: Siswa[]; cls?: string }) {
+type Props = { month: string; students?: Siswa[]; cls?: string; canInteract?: boolean };
+
+function TableAbsence({ month, students, cls, canInteract = true }: Props) {
     const setAttendanceMutate = useMutation(["set-attendance"], async (data: any) => {
         return (await setOneAttendance(data)).data;
     });
@@ -104,14 +106,21 @@ function TableAbsence({ month, students, cls }: { month: string; students?: Sisw
                     <div className="w-full flex justify-evenly gap-[1px]">
                         {[...new Array(TOTAL_DAY)]?.map((_, i) => {
                             if (!absenceThisMonth || Object.keys(absenceThisMonth).length === 0) {
-                                return <BoxAbsence onChange={onChangeAttendance(absence.id)} date={i + 1} />;
+                                return <BoxAbsence canInteract={canInteract} onChange={onChangeAttendance(absence.id)} date={i + 1} />;
                             }
-                            return <BoxAbsence onChange={onChangeAttendance(absence.id)} detail={absenceThisMonth[i + 1]} date={i + 1} />;
+                            return (
+                                <BoxAbsence
+                                    canInteract={canInteract}
+                                    onChange={onChangeAttendance(absence.id)}
+                                    detail={absenceThisMonth[i + 1]}
+                                    date={i + 1}
+                                />
+                            );
                         })}
                     </div>
                     <div className="w-[70px] flex items-center gap-[5px] ml-[5px]">
-                        {[count.hadir, count.absen, count.izin]?.map((el) => (
-                            <div className="m-0 w-full text-black font-semibold" title="Hadir">
+                        {[count.hadir, count.absen, count.izin]?.map((el, i) => (
+                            <div className="m-0 w-full text-black font-semibold" title={COUNT_ABSENT[i]?.CapitalizeFirstLetter()}>
                                 {el}
                             </div>
                         ))}
@@ -133,13 +142,22 @@ function TableAbsence({ month, students, cls }: { month: string; students?: Sisw
                 <div className="h-5 bg-white w-1px" />
                 <div className="w-full flex justify-evenly">
                     {[...new Array(TOTAL_DAY)]?.map((_, i) => (
-                        <BoxDate loading={setManyAttendanceMutate.isLoading} onChange={onChangeManyAttendance(i + 1)} date={i + 1} key={i} />
+                        <BoxDate
+                            canInteract={canInteract}
+                            loading={setManyAttendanceMutate.isLoading}
+                            onChange={onChangeManyAttendance(i + 1)}
+                            date={i + 1}
+                            key={i}
+                        />
                     ))}
                 </div>
                 <div className="w-[70px] flex items-center gap-[5px] ml-[5px]">
-                    {["H", "A", "I"]?.map((el) => (
-                        <div className="m-0 w-full text-black font-semibold" title="Hadir">
-                            {el}
+                    {COUNT_ABSENT?.map((el) => (
+                        <div
+                            className="m-0 w-full text-black font-semibold"
+                            title={ABSEN_STATUS[el.toLowerCase() as keyof typeof ABSEN_STATUS]?.CapitalizeFirstLetter()}
+                        >
+                            {el?.CapitalizeFirstLetter()}
                         </div>
                     ))}
                 </div>

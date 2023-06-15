@@ -42,13 +42,18 @@ function InfoSiswaNilaiEdit() {
         setSemester((prev) => prev + 1);
     };
 
+    const clickGoBack = (e: any) => {
+        e.preventDefault();
+        navigate(-1);
+    };
+
     if (!id) return <Alert type="error" message="Data tidak ditemukan" />;
 
     return (
         <div className="flex flex-col gap-5">
             <div className="w-full flex items-center justify-between mt-5">
                 <Space>
-                    <Link to={STAFF_PATH.infosiswa.nilaisiswa.index}>
+                    <Link to=".." onClick={clickGoBack}>
                         <IoMdArrowBack className="text-lg m-0 mt-1 cursor-pointer" />
                     </Link>
                     <h1 className="m-0">Edit Nilai Siwa</h1>
