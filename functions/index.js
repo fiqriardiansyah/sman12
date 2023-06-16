@@ -715,3 +715,54 @@ exports.getSPPClass = functions.https.onCall(async (data) => {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
 });
+
+exports.createNoteToStudent = functions.https.onCall(async (data) => {
+    const noteCollRef = admin.firestore().collection("notes");
+
+    try {
+        await noteCollRef.add(data);
+        return { success: true };
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.getNoteByStudent = functions.https.onCall(async (data) => {
+    const noteCollRef = admin.firestore().collection("notes").orderBy("send_date", "desc");
+
+    try {
+        const req = await noteCollRef.where("student_id", "==", data.student_id).get();
+        const notes = [];
+        req?.forEach((note) => {
+            notes.push({
+                ...note.data(),
+                id: note.id,
+            });
+        });
+        return notes;
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.editNoteToStudent = functions.https.onCall(async (data) => {
+    const noteCollRef = admin.firestore().collection("notes").doc(data.id);
+
+    try {
+        await noteCollRef.update(data);
+        return { success: true };
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.deleteNoteToStudent = functions.https.onCall(async (data) => {
+    const noteCollRef = admin.firestore().collection("notes").doc(data.id);
+
+    try {
+        await noteCollRef.delete();
+        return { success: true };
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});

@@ -1,4 +1,5 @@
-import { Alert, Descriptions, Image, Skeleton } from "antd";
+import { Alert, Card, Descriptions, Image, Skeleton } from "antd";
+import CardNote, { Note } from "components/card-note";
 import StateRender from "components/common/state";
 import { UserContext } from "context/user";
 import { httpsCallable } from "firebase/functions";
@@ -10,9 +11,15 @@ import { Link } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
 import { GENDER, IMAGE_FALLBACK, STUDENT_PATH } from "utils/constant";
 
+const getNoteByStudent = httpsCallable(functionInstance, "getNoteByStudent");
+
 function StudentProfile() {
     const { state } = useContext(UserContext);
     const getMyData = httpsCallable(functionInstance, "getUserWithEmail");
+
+    const getNoteByStudentQuery = useQuery(["get-note", state?.user?.id], async () => {
+        return (await getNoteByStudent({ student_id: state?.user?.id })).data as Note[];
+    });
 
     const profileQuery = useQuery(["profile", state?.user?.uid], async () => {
         return (await (
@@ -21,7 +28,7 @@ function StudentProfile() {
     });
 
     return (
-        <div>
+        <div className="pb-10">
             <div className="w-full flex items-center justify-between">
                 <h1>Profil</h1>
                 <Link to={STUDENT_PATH.profile.edit}>
@@ -56,6 +63,29 @@ function StudentProfile() {
                     <Alert type="error" message={(profileQuery.error as any)?.message} />
                 </StateRender.Error>
             </StateRender>
+            <div className="flex flex-col gap-4 items-start mt-10">
+                <p className="m-0">Catatan siswa</p>
+                <Card className="!w-full">
+                    <StateRender
+                        data={getNoteByStudentQuery.data}
+                        isLoading={getNoteByStudentQuery.isLoading}
+                        isError={getNoteByStudentQuery.isError}
+                    >
+                        <StateRender.Data>
+                            {getNoteByStudentQuery.data?.map((nt) => (
+                                <CardNote fetcher={getNoteByStudentQuery} key={nt.id} note={nt} />
+                            ))}
+                            {!getNoteByStudentQuery.data?.length ? <p className="text-xl">Tidak ada catatan</p> : null}
+                        </StateRender.Data>
+                        <StateRender.Loading>
+                            <Skeleton />
+                        </StateRender.Loading>
+                        <StateRender.Error>
+                            <Alert type="error" message={(getNoteByStudentQuery.error as any)?.message} />
+                        </StateRender.Error>
+                    </StateRender>
+                </Card>
+            </div>
         </div>
     );
 }
