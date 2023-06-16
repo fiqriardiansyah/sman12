@@ -1,10 +1,10 @@
+import { message } from "antd";
 import configFirebase from "config/firebase";
 import { User as UserFirebase, getAuth, onAuthStateChanged } from "firebase/auth";
 import { httpsCallable } from "firebase/functions";
 import React, { createContext } from "react";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 import { functionInstance } from "service/firebase-instance";
-import Utils from "utils";
 
 interface User extends UserFirebase {
     role?: "teacher" | "staff" | "student";
@@ -17,6 +17,7 @@ interface User extends UserFirebase {
 interface State {
     user: User | null;
     loading: boolean;
+    loadingGetData?: boolean;
 }
 
 interface ValueContextType {
@@ -27,7 +28,7 @@ interface ValueContextType {
 const UserContext = createContext<ValueContextType>({});
 
 function UserProvider({ children }: { children: React.ReactNode }) {
-    const [state, setState] = React.useState<Partial<State> | null>({ loading: true });
+    const [state, setState] = React.useState<Partial<State> | null>({ loading: true, loadingGetData: true });
     const getMyData = httpsCallable(functionInstance, "getUserWithEmail");
 
     const getMyDataMutate = useMutation(["profile", state?.user], async (email: any) => {
@@ -38,20 +39,21 @@ function UserProvider({ children }: { children: React.ReactNode }) {
                 ...prev?.user,
                 ...(myData || {}),
             },
-            loading: false,
+            loadingGetData: false,
         }));
     });
 
     React.useEffect(() => {
         onAuthStateChanged(getAuth(configFirebase.app), async (usr) => {
+            if (usr) {
+                getMyDataMutate.mutate(usr?.email);
+            }
             setState((prev) => ({
                 ...prev,
                 user: usr,
                 loading: false,
+                loadingGetData: !!usr,
             }));
-            if (usr) {
-                getMyDataMutate.mutate(usr?.email);
-            }
         });
     }, []);
 

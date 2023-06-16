@@ -99,7 +99,7 @@ function MasterDataSiswaAdd() {
                         <Input />
                     </Form.Item>
 
-                    <Form.Item label="Kelamin" name="kelamin" rules={[{ required: true, message: "Kelamin harus diisi!" }]}>
+                    <Form.Item label="Jenis Kelamin" name="kelamin" rules={[{ required: true, message: "Kelamin harus diisi!" }]}>
                         <Select options={GENDER} />
                     </Form.Item>
 

@@ -125,7 +125,7 @@ exports.createStudent = functions.https.onCall(async (data) => {
 exports.createStudents = functions.https.onCall(async (data) => {
     const prepareDate = data?.map((user) => ({
         email: user.nisn + GMAIL,
-        password: `${user.nisn}sman12`,
+        password: user.nisn?.toString(),
         displayName: user.nama,
     }));
 
@@ -728,7 +728,7 @@ exports.createNoteToStudent = functions.https.onCall(async (data) => {
 });
 
 exports.getNoteByStudent = functions.https.onCall(async (data) => {
-    const noteCollRef = admin.firestore().collection("notes").orderBy("send_date", "desc");
+    const noteCollRef = admin.firestore().collection("notes");
 
     try {
         const req = await noteCollRef.where("student_id", "==", data.student_id).get();
@@ -739,7 +739,7 @@ exports.getNoteByStudent = functions.https.onCall(async (data) => {
                 id: note.id,
             });
         });
-        return notes;
+        return notes?.sort((a, b) => a.send_date - b.send_date);
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
     }

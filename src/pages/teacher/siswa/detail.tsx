@@ -85,7 +85,9 @@ function TeacherDaftarSiswaDetail() {
                         <Descriptions.Item label="NIS">{dataUserQuery.data?.nis}</Descriptions.Item>
                         <Descriptions.Item label="Email">{dataUserQuery.data?.email}</Descriptions.Item>
                         <Descriptions.Item label="Handphone">{dataUserQuery.data?.hp}</Descriptions.Item>
-                        <Descriptions.Item label="Kelamin">{GENDER.find((el) => el.value === dataUserQuery?.data?.kelamin)?.label}</Descriptions.Item>
+                        <Descriptions.Item label="Jenis Kelamin">
+                            {GENDER.find((el) => el.value === dataUserQuery?.data?.kelamin)?.label}
+                        </Descriptions.Item>
                         <Descriptions.Item label="Alamat">{dataUserQuery.data?.alamat}</Descriptions.Item>
                         <Descriptions.Item label="Wali">{dataUserQuery.data?.wali}</Descriptions.Item>
                         <Descriptions.Item label="Kelas">{dataUserQuery.data?.kelas}</Descriptions.Item>

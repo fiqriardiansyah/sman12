@@ -157,7 +157,7 @@ function MasterDataSiswaEdit() {
                                 <Input disabled />
                             </Form.Item>
 
-                            <Form.Item label="Kelamin" name="kelamin">
+                            <Form.Item label="Jenis Kelamin" name="kelamin">
                                 <Select options={GENDER} />
                             </Form.Item>
 

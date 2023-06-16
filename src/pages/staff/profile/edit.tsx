@@ -126,23 +126,23 @@ function ProfileEdit() {
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Handphone" name="hp" rules={[{ required: true, message: "HP harus diisi!" }]}>
+                            <Form.Item label="NUPTK" name="nuptk">
+                                <Input disabled />
+                            </Form.Item>
+
+                            <Form.Item label="Handphone" name="hp">
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="NUPTK" name="nuptk" rules={[{ required: true, message: "NUPTK harus diisi!" }]}>
+                            <Form.Item label="Alamat" name="alamat">
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Alamat" name="alamat" rules={[{ required: true, message: "Alamat harus diisi!" }]}>
+                            <Form.Item label="Posisi" name="posisi">
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Posisi" name="posisi" rules={[{ required: true, message: "Posisi harus diisi!" }]}>
-                                <Input />
-                            </Form.Item>
-
-                            <Form.Item label="Kelamin" name="kelamin" rules={[{ required: true, message: "Kelamin harus diisi!" }]}>
+                            <Form.Item label="Jenis Kelamin" name="kelamin">
                                 <Select options={GENDER} />
                             </Form.Item>
                         </div>

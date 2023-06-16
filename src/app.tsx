@@ -49,14 +49,44 @@ import TeacherDaftarSiswaDetail from "pages/teacher/siswa/detail";
 import MasterDataPelajaran from "pages/staff/masterdata/datapelajaran";
 import MasterDataPelajaranAdd from "pages/staff/masterdata/datapelajaran/add";
 import MasterDataPelajaranEdit from "pages/staff/masterdata/datapelajaran/edit";
+import Lottie from "react-lottie";
+import waitingAnim from "assets/animation/waiting.json";
+import findAnim from "assets/animation/find.json";
+
+const waitingOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: waitingAnim,
+    rendererSettings: {
+        preserveAspectRatio: "xMidYMid slice",
+    },
+};
+
+const findOptions = {
+    loop: true,
+    autoplay: true,
+    animationData: findAnim,
+    rendererSettings: {
+        preserveAspectRatio: "xMidYMid slice",
+    },
+};
 
 function App() {
     const { state } = React.useContext(UserContext);
 
     if (state?.loading) {
         return (
-            <div className="w-full h-full flex items-center justify-center">
-                <h1>LOADING ...</h1>
+            <div className="w-full h-screen flex items-center justify-center">
+                <Lottie options={waitingOptions} height={400} width={400} isClickToPauseDisabled={false} />
+            </div>
+        );
+    }
+
+    if (state?.loadingGetData) {
+        return (
+            <div className="w-full h-screen flex items-center justify-center flex-col">
+                <Lottie options={findOptions} height={100} width={400} isClickToPauseDisabled={false} />
+                <p className="text-xl">Mengambil data...</p>
             </div>
         );
     }

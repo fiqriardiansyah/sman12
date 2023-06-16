@@ -51,7 +51,9 @@ function StudentProfile() {
                         <Descriptions.Item label="NIS">{profileQuery.data?.nis}</Descriptions.Item>
                         <Descriptions.Item label="Email">{profileQuery.data?.email}</Descriptions.Item>
                         <Descriptions.Item label="Handphone">{profileQuery.data?.hp}</Descriptions.Item>
-                        <Descriptions.Item label="Kelamin">{GENDER.find((el) => el.value === profileQuery?.data?.kelamin)?.label}</Descriptions.Item>
+                        <Descriptions.Item label="Jenis Kelamin">
+                            {GENDER.find((el) => el.value === profileQuery?.data?.kelamin)?.label}
+                        </Descriptions.Item>
                         <Descriptions.Item label="Alamat">{profileQuery.data?.alamat}</Descriptions.Item>
                         <Descriptions.Item label="Wali">{profileQuery.data?.wali}</Descriptions.Item>
                     </Descriptions>
