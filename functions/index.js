@@ -468,7 +468,7 @@ exports.editClass = functions.https.onCall(async (data) => {
     }
 });
 
-// ROSTER
+// ROSTER ///
 exports.getMyRoster = functions.https.onCall(async (data) => {
     const db = admin.database();
     try {
