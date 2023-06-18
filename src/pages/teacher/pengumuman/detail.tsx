@@ -8,7 +8,7 @@ import { useQuery } from "react-query";
 import ReactHtmlParser from "react-html-parser";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
-import { FORMATE_DATE_TIME, STUDENT_PATH } from "utils/constant";
+import { CATEGORY_NEWS, FORMATE_DATE_TIME, STUDENT_PATH } from "utils/constant";
 
 function TeacherPengumumanDetail() {
     const { id } = useParams();
@@ -36,7 +36,12 @@ function TeacherPengumumanDetail() {
             <StateRender data={newsQuery.data} isLoading={newsQuery.isLoading} isError={newsQuery.isError}>
                 <StateRender.Data>
                     <div className="w-full flex items-start justify-between gap-10">
-                        <p className="m-0 text-2xl capitalize font-medium">{newsQuery.data?.judul}</p>
+                        <div className="">
+                            <p className="m-0 text-2xl capitalize font-medium">{newsQuery.data?.judul}</p>
+                            <span className="text-blue-400 tex-sm font-semibold">
+                                {CATEGORY_NEWS.find((el) => el.value === newsQuery.data?.category)?.label}
+                            </span>
+                        </div>
                         <p className="m-0 text">
                             {newsQuery.data?.dibuat_oleh}. {moment(newsQuery.data?.tanggal_dibuat).format(FORMATE_DATE_TIME)}
                         </p>

@@ -389,8 +389,11 @@ exports.createClass = functions.https.onCall(async (data) => {
 });
 
 exports.detailClass = functions.https.onCall(async (data) => {
-    const docRef = admin.firestore().collection("classes").doc(data.id);
-    const userColRef = admin.firestore().collection("users");
+    const firestor = admin.firestore();
+    const db = admin.database();
+
+    const docRef = firestor.collection("classes").doc(data.id);
+    const userColRef = firestor.collection("users");
 
     try {
         const dataClass = await docRef.get();
@@ -410,9 +413,12 @@ exports.detailClass = functions.https.onCall(async (data) => {
             return result?.map((doc) => ({ ...doc.data(), id: doc.id }));
         });
 
+        const rosters = await db.ref(`rosters/${data.id}`).get();
+
         return {
             ...dataClass.data(),
             murid: dataStudents || [],
+            rosters: rosters.toJSON(),
         };
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
@@ -420,7 +426,7 @@ exports.detailClass = functions.https.onCall(async (data) => {
 });
 
 exports.editClass = functions.https.onCall(async (data) => {
-    const isClassExist = await admin
+    const getClasses = await admin
         .firestore()
         .collection("classes")
         .where("kelas", "==", data.kelas)
@@ -428,41 +434,69 @@ exports.editClass = functions.https.onCall(async (data) => {
         .get();
 
     let isThisClass = false;
-    isClassExist.forEach((doc) => {
-        if (doc.id === data.id_kelas) {
+    let currentDataClass;
+
+    getClasses.forEach((doc) => {
+        currentDataClass = {
+            id: doc.id,
+            ...doc.data(),
+        };
+        if (doc.id === data.id) {
             isThisClass = true;
         }
     });
 
-    if (!isClassExist.empty && !isThisClass) {
+    if (!getClasses.empty && !isThisClass) {
         throw new functions.https.HttpsError("already-exists", `kelas "${data.kelas}${data.nomor_kelas}" sudah ada`);
     }
 
     const classCollRef = admin.firestore().collection("classes");
     const userCollRef = admin.firestore().collection("users");
+    const db = admin.database();
 
     try {
-        // const createdClass = await classCollRef.add({
-        //     wali_id: data.wali,
-        //     wali_nama: data.wali_nama,
-        //     kelas: data.kelas,
-        //     nomor_kelas: data.nomor_kelas,
-        // });
-        // const querieStudents = [];
-        // data?.murid?.forEach((id) => {
-        //     const query = userCollRef.doc(id);
-        //     querieStudents.push(query);
-        // });
-        // const students = await Promise.all(querieStudents.map((q) => q.get())).then((docs) => {
-        //     return docs.map((doc) => ({ id: doc.id, uid: doc.data().uid }));
-        // });
-        // const studentClassCollRef = classCollRef.doc(createdClass.id).collection("students");
-        // students.forEach((student) => {
-        //     studentClassCollRef.add(student);
-        //     userCollRef.doc(student.id).update({ kelas_id: createdClass.id, kelas: data.kelas + data.nomor_kelas });
-        // });
-        // const addClassToTeacher = await userCollRef.doc(data.wali).update({ kelas_id: createdClass.id, kelas: data.kelas + data.nomor_kelas });
-        // return { success: true };
+        await classCollRef.doc(data.id).update({
+            wali_id: data.wali,
+            wali_nama: data.wali_nama,
+            kelas: data.kelas,
+            nomor_kelas: data.nomor_kelas,
+        });
+
+        if (currentDataClass.wali_id !== data.wali) {
+            // new Teacher
+            await userCollRef.doc(data.wali).update({ kelas_id: currentDataClass.id, kelas: data.kelas + data.nomor_kelas });
+            // remove old teacher
+            await userCollRef.doc(currentDataClass.wali_id).update({ kelas_id: null, kelas: null });
+        }
+
+        const studentsCollRef = classCollRef.doc(currentDataClass.id).collection("students");
+        const currentStudents = await studentsCollRef.get();
+
+        // remove student
+        currentStudents?.forEach((student) => {
+            studentsCollRef.doc(student.id).delete();
+            userCollRef.doc(student.data().id).update({ kelas_id: null, kelas: null });
+        });
+
+        // add kelas to new student
+        const querieStudents = [];
+        data?.murid?.forEach((id) => {
+            const query = userCollRef.doc(id);
+            querieStudents.push(query);
+        });
+
+        const students = await Promise.all(querieStudents.map((q) => q.get())).then((docs) => {
+            return docs.map((doc) => ({ id: doc.id, uid: doc.data().uid }));
+        });
+
+        students?.forEach((student) => {
+            studentsCollRef.add(student);
+            userCollRef.doc(student.id).update({ kelas_id: currentDataClass.id, kelas: data.kelas + data.nomor_kelas });
+        });
+
+        const updateRosters = await db.ref(`rosters/${currentDataClass.id}`).update(data.rosters);
+
+        return { success: true };
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
@@ -507,8 +541,16 @@ exports.getNews = functions.https.onCall(async (data) => {
             });
         });
 
-        if (data?.query) {
-            return news?.filter((ns) => ns?.judul?.toLowerCase()?.includes(data?.query?.toLowerCase()));
+        if (data?.query || data?.category) {
+            return news
+                ?.filter((ns) => {
+                    if (!data?.query) return ns;
+                    return ns?.judul?.toLowerCase()?.includes(data?.query?.toLowerCase());
+                })
+                .filter((ns) => {
+                    if (!data?.category) return ns;
+                    return Number(ns?.category) === Number(data?.category);
+                });
         }
 
         return news;

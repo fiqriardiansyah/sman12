@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
 import { Card } from "antd";
-import { TbPlaylistAdd } from "react-icons/tb";
 import { httpsCallable } from "firebase/functions";
-import { functionInstance } from "service/firebase-instance";
-import { UseQueryResult, useMutation, useQuery } from "react-query";
 import { Siswa } from "modules/datasiswa/table";
+import { useState } from "react";
+import { TbPlaylistAdd } from "react-icons/tb";
+import { UseQueryResult, useMutation, useQuery } from "react-query";
+import { functionInstance } from "service/firebase-instance";
 import { CLASSES_SEMESTER } from "utils/constant";
 import RaportTable, { Nilai } from "./table-nilai";
 
 const setGrade = httpsCallable(functionInstance, "setGrade");
 const getGrade = httpsCallable(functionInstance, "getGrade");
+const getSubjects = httpsCallable(functionInstance, "getSubjects");
 
 function EditTableNilai({ semester, fetcher }: { semester: number; fetcher: UseQueryResult<Siswa, unknown> }) {
     const [editRow, setEditRow] = useState<Nilai | null>(null);
@@ -38,10 +39,7 @@ function EditTableNilai({ semester, fetcher }: { semester: number; fetcher: UseQ
     );
 
     const tNilai = (grades: Nilai[]) => {
-        return grades?.reduce(
-            (obj, item) => Object.assign(obj, { [item.mata_pelajaran?.toLowerCase() as any]: { nilai: item.nilai, catatan: item.catatan } }),
-            {}
-        );
+        return grades?.reduce((obj, item) => Object.assign(obj, { [item.mata_pelajaran as any]: { ...item } }), {});
     };
 
     const onRemoveRow = (grade: Nilai) => {

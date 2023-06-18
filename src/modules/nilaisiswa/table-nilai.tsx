@@ -1,6 +1,10 @@
 import type { ColumnsType } from "antd/es/table";
-import { useState, ComponentType } from "react";
 import EditTable, { Props as EditTableProps } from "components/table/editable-table";
+import { httpsCallable } from "firebase/functions";
+import { Pelajaran } from "pages/staff/masterdata/datapelajaran/add";
+import { ComponentType } from "react";
+import { useQuery } from "react-query";
+import { functionInstance } from "service/firebase-instance";
 
 export interface Nilai {
     id?: any;
@@ -11,18 +15,33 @@ export interface Nilai {
 
 type Props<T> = Omit<EditTableProps<T>, "isEditing" | "findIndexSave" | "rowKey" | "editInputType" | "columns">;
 
+const getSubjects = httpsCallable(functionInstance, "getSubjects");
+
 export function editTableNilai<T extends Nilai>(Component: ComponentType<EditTableProps<T>>) {
     return function (props: Props<T>) {
+        const subjectsQuery = useQuery(["get-subject"], async () => {
+            return ((await getSubjects()).data as Pelajaran[])?.map((el) => ({
+                label: el.mata_pelajaran?.CapitalizeEachFirstLetter(),
+                value: el.id,
+            }));
+        });
+
         const columns: ColumnsType<T> = [
             {
                 title: "Mata Pelajaran",
                 dataIndex: "mata_pelajaran",
                 ...{ editable: true },
-                render: (text) => <p className="m-0 capitalize">{text}</p>,
+                render: (text) => <p className="m-0 capitalize">{text ? subjectsQuery.data?.find((el) => el.value === text)?.label : ""}</p>,
             },
             {
                 title: "Nilai",
                 dataIndex: "nilai",
+                ...{ editable: true },
+                render: (text) => <p className="m-0">{text}</p>,
+            },
+            {
+                title: "Catatan",
+                dataIndex: "catatan",
                 ...{ editable: true },
                 render: (text) => <p className="m-0">{text}</p>,
             },
@@ -37,7 +56,7 @@ export function editTableNilai<T extends Nilai>(Component: ComponentType<EditTab
         const isEditing = (record: Nilai, edited: Nilai | null) => record.id === edited?.id;
         const findIndexSave = (record: Nilai, edited: Nilai) => record.id === edited.id;
         const rowKey = (record: Nilai) => record.id! as any;
-        const editInputType: EditTableProps<Nilai>["editInputType"] = { mata_pelajaran: "text", nilai: "number", catatan: "text" };
+        const editInputType: EditTableProps<Nilai>["editInputType"] = { mata_pelajaran: "select", nilai: "number", catatan: "text" };
 
         return (
             <Component
@@ -50,6 +69,12 @@ export function editTableNilai<T extends Nilai>(Component: ComponentType<EditTab
                 cellProps={{
                     maxNumber: 100,
                     minNumber: 0,
+                    selectProps: {
+                        options: subjectsQuery.data || [],
+                        className: "!w-[300px]",
+                        placeholder: "pilih",
+                        loading: subjectsQuery.isLoading,
+                    },
                 }}
             />
         );

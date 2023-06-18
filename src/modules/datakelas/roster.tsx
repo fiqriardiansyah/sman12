@@ -4,12 +4,17 @@ import TableRoster, { Roster } from "./table-pelajaran";
 
 type Props = {
     day: string;
+    rosters?: any;
     onChange: ({ day, roster }: { day: string; roster: Roster[] }) => void;
 };
 
-function RosterEdit({ day, onChange }: Props) {
+function RosterEdit({ day, onChange, rosters }: Props) {
     const [editRow, setEditRow] = React.useState<Roster | null>(null);
-    const [roster, setRoster] = React.useState<Roster[]>([]);
+    const [roster, setRoster] = React.useState<Roster[]>(rosters ? rosters[day] : []);
+
+    React.useEffect(() => {
+        setRoster(rosters ? rosters[day] : []);
+    }, [rosters]);
 
     const onRemoveRow = (grade: Roster) => {
         setRoster((prev) => {

@@ -8,6 +8,7 @@ export interface Guru {
     id?: string;
     nama?: string;
     nuptk?: string;
+    nip?: string;
     email?: string;
     hp?: string;
     alamat?: string;
@@ -31,6 +32,11 @@ function TableGuru({ fetcher }: Props) {
         {
             title: "NUPTK",
             dataIndex: "nuptk",
+            render: (text) => <p className="m-0">{text || "-"}</p>,
+        },
+        {
+            title: "NIP",
+            dataIndex: "nip",
             render: (text) => <p className="m-0">{text || "-"}</p>,
         },
         {

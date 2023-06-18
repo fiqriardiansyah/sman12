@@ -1,18 +1,20 @@
-import { Alert, Button, Form, Input, Popconfirm, Select, Skeleton, Space, message } from "antd";
+import { Alert, Button, Card, Form, InputNumber, Popconfirm, Select, Skeleton, Space, Tabs, TabsProps, message } from "antd";
 import { ColumnsType } from "antd/es/table";
-import Layout from "components/common/layout";
 import StateRender from "components/common/state";
 import TableTransfer from "components/common/table-transfer";
+import dayjs from "dayjs";
 import { httpsCallable } from "firebase/functions";
 import { Guru } from "modules/dataguru/table";
+import React, { useState } from "react";
 import { Kelas } from "modules/datakelas/table";
+import { Roster } from "modules/datakelas/table-pelajaran";
 import { Siswa } from "modules/datasiswa/table";
-import { useState } from "react";
 import { IoMdArrowBack } from "react-icons/io";
 import { useMutation, useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
-import { CLASS_OPTION, NUMBER_CLASS_OPTION, STAFF_PATH } from "utils/constant";
+import { CLASS_OPTION, DAYS } from "utils/constant";
+import RosterEdit from "modules/datakelas/roster";
 
 const columns: ColumnsType<Siswa> = [
     {
@@ -42,6 +44,7 @@ function MasterDataKelasEdit() {
     const editClass = httpsCallable(functionInstance, "editClass");
 
     const [targetKeys, setTargetKeys] = useState<string[]>([]);
+    const [rosters, setRosters] = useState<any>({});
 
     const teacherAvailableQuery = useQuery(["get-teacher"], async () => {
         return (await getTeachers()).data as Guru[];
@@ -59,6 +62,18 @@ function MasterDataKelasEdit() {
         {
             onSuccess: (data) => {
                 setTargetKeys(data?.murid?.map((el) => el.id as any) || []);
+                const tRosters = Object.keys(data?.rosters || {})?.reduce((obj, key) => {
+                    const roster = (data?.rosters as any)[key];
+                    const list = Object.keys(roster)?.reduce((arr: any[], rosterKey: any) => {
+                        const item = roster[rosterKey];
+                        return [...arr, { ...item, jam: dayjs(item.jam, "HH:mm:ss") }];
+                    }, []);
+                    return {
+                        ...obj,
+                        [key]: list,
+                    };
+                }, {});
+                setRosters(tRosters);
             },
             refetchInterval: false,
             refetchOnWindowFocus: false,
@@ -77,22 +92,43 @@ function MasterDataKelasEdit() {
         }
     );
 
-    const onSaveSiswa = (values: any) => {
+    const onSaveForm = (values: any) => {
         if (!targetKeys.length) {
             message.error("Pilih siswa terlebih dahulu");
             return;
         }
+        try {
+            DAYS.forEach((day) => {
+                if (!rosters[day] || !rosters[day].length) {
+                    throw new Error(`Roster hari ${day} belum diisi`);
+                }
+            });
+        } catch (e: any) {
+            message.error(e?.message);
+            return;
+        }
+
+        const tRosters = DAYS.reduce((obj, day) => {
+            const daysRoster = rosters[day] as Roster[];
+            return {
+                ...obj,
+                [day]: daysRoster.map((rstr) => ({ ...rstr, jam: dayjs(rstr.jam).format("HH:mm:ss") })),
+            };
+        }, {});
+
         const data = {
             ...values,
             wali_nama: teacherAvailableQuery.data?.find((t) => t.id === values.wali)?.nama,
             murid: targetKeys,
-            id_kelas: id,
+            rosters: tRosters,
+            id,
         };
+
         editClassMutation
             .mutateAsync(data)
             .then(() => {
                 navigate(-1);
-                message.success("Berhasil menambahkan data");
+                message.success("Berhasil mengubah data");
             })
             .catch((e) => {
                 message.error(e?.message);
@@ -116,6 +152,21 @@ function MasterDataKelasEdit() {
         navigate(-1);
     };
 
+    const onChangeRoster = ({ day, roster }: { day: string; roster: Roster[] }) => {
+        setRosters((prev: any) => ({
+            ...prev,
+            [day]: roster,
+        }));
+    };
+
+    const items: TabsProps["items"] = React.useMemo(() => {
+        return DAYS.map((day) => ({
+            key: day,
+            label: day?.CapitalizeFirstLetter(),
+            children: <RosterEdit day={day} onChange={onChangeRoster} rosters={rosters} />,
+        }));
+    }, [rosters]);
+
     return (
         <div className="flex flex-col gap-5">
             <div className="w-full flex items-center justify-between mt-5">
@@ -131,14 +182,14 @@ function MasterDataKelasEdit() {
             </div>
             <StateRender data={detailClassQuery.data} isLoading={detailClassQuery.isLoading} isError={detailClassQuery.isError}>
                 <StateRender.Data>
-                    <Form initialValues={initialValues} onFinish={onSaveSiswa} autoComplete="off" layout="vertical" requiredMark={false}>
+                    <Form initialValues={initialValues} onFinish={onSaveForm} autoComplete="off" layout="vertical" requiredMark={false}>
                         <div className="grid w-full grid-cols-3 gap-x-5">
                             <Form.Item label="Tingkat Kelas" name="kelas" rules={[{ required: true, message: "Kelas harus diisi!" }]}>
                                 <Select options={CLASS_OPTION} />
                             </Form.Item>
 
                             <Form.Item label="Nomor Kelas" name="nomor_kelas" rules={[{ required: true, message: "Nomor Kelas harus diisi!" }]}>
-                                <Select options={NUMBER_CLASS_OPTION} />
+                                <InputNumber max={20} min={1} className="w-full" />
                             </Form.Item>
 
                             <Form.Item label="Wali Kelas" name="wali" rules={[{ required: true, message: "Wali kelas harus diisi!" }]}>
@@ -165,6 +216,12 @@ function MasterDataKelasEdit() {
                             leftColumns={columns}
                             rightColumns={columns}
                         />
+                        <div className="">
+                            <p className="mt-5">Roster</p>
+                            <Card>
+                                <Tabs items={items} />
+                            </Card>
+                        </div>
                         <Form.Item>
                             <Button loading={editClassMutation.isLoading} type="primary" htmlType="submit" className="mt-10">
                                 Submit

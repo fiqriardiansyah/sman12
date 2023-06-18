@@ -52,6 +52,10 @@ function MasterDataGuruAdd() {
                         <Input />
                     </Form.Item>
 
+                    <Form.Item label="NIP" name="nip">
+                        <Input />
+                    </Form.Item>
+
                     <Form.Item label="Jenis Kelamin" name="kelamin">
                         <Select options={GENDER} />
                     </Form.Item>

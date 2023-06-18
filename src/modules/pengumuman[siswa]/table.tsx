@@ -3,7 +3,7 @@ import type { ColumnsType } from "antd/es/table";
 import moment from "moment";
 import { UseQueryResult } from "react-query";
 import { Link } from "react-router-dom";
-import { FORMATE_DATE_TIME, STAFF_PATH, STUDENT_PATH } from "utils/constant";
+import { CATEGORY_NEWS, FORMATE_DATE_TIME, STAFF_PATH, STUDENT_PATH } from "utils/constant";
 
 export type Pengumuman = {
     id?: any;
@@ -25,6 +25,11 @@ function TablePengumumanSiswa({ fetcher }: Props) {
             title: "Judul",
             dataIndex: "judul",
             render: (text) => <p className="m-0 capitalize">{text || "-"}</p>,
+        },
+        {
+            title: "Kategory",
+            dataIndex: "category",
+            render: (text) => <p className="m-0 capitalize">{CATEGORY_NEWS.find((el) => el.value === text)?.label}</p>,
         },
         {
             title: "Tanggal Upload",

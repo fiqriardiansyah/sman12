@@ -66,7 +66,7 @@ function EditableCell<T extends {}>({
                     rules={[
                         {
                             required: dataIndex !== "note",
-                            message: `Please Input ${title}!`,
+                            message: `${title} harus diisi!`?.CapitalizeEachFirstLetter(),
                         },
                     ]}
                 >

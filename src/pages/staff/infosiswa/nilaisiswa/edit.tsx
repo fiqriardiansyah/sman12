@@ -9,7 +9,6 @@ import { IoMdArrowBack } from "react-icons/io";
 import { useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
-import { STAFF_PATH } from "utils/constant";
 
 const getDataUser = httpsCallable(functionInstance, "getUserWithId");
 const getCountSemesterGrade = httpsCallable(functionInstance, "getCountSemesterGrade");

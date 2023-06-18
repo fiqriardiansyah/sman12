@@ -159,6 +159,10 @@ function MasterDataGuruEdit() {
                                 <Input disabled />
                             </Form.Item>
 
+                            <Form.Item label="NIP" name="nip">
+                                <Input />
+                            </Form.Item>
+
                             <Form.Item label="Email" name="email">
                                 <Input disabled />
                             </Form.Item>

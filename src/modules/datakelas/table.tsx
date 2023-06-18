@@ -13,6 +13,9 @@ export interface Kelas {
     murid?: Partial<Siswa>[];
     wali_id?: any;
     wali_nama?: string;
+    rosters?: {
+        [day: string]: { id?: any; jam?: any; mata_pelajaran?: string };
+    };
 }
 
 type Props = {

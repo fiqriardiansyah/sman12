@@ -173,7 +173,7 @@ function MasterDataSiswaEdit() {
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Wali" name="wali">
+                            <Form.Item label="Wali / Orang tua" name="wali">
                                 <Input />
                             </Form.Item>
                         </div>

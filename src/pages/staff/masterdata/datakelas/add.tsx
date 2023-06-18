@@ -1,4 +1,4 @@
-import { Button, Card, Form, Select, Space, Tabs, TabsProps, message } from "antd";
+import { Button, Card, Form, InputNumber, Select, Space, Tabs, TabsProps, message } from "antd";
 import { ColumnsType } from "antd/es/table";
 import TableTransfer from "components/common/table-transfer";
 import dayjs from "dayjs";
@@ -12,7 +12,7 @@ import { IoMdArrowBack } from "react-icons/io";
 import { useMutation, useQuery } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
-import { CLASS_OPTION, DAYS, NUMBER_CLASS_OPTION, STAFF_PATH } from "utils/constant";
+import { CLASS_OPTION, DAYS, STAFF_PATH } from "utils/constant";
 
 const columns: ColumnsType<Siswa> = [
     {
@@ -130,7 +130,7 @@ function MasterDataKelasAdd() {
                     </Form.Item>
 
                     <Form.Item label="Nomor Kelas" name="nomor_kelas" rules={[{ required: true, message: "Nomor Kelas harus diisi!" }]}>
-                        <Select options={NUMBER_CLASS_OPTION} />
+                        <InputNumber max={20} min={1} className="w-full" />
                     </Form.Item>
 
                     <Form.Item label="Wali Kelas" name="wali" rules={[{ required: true, message: "Wali kelas harus diisi!" }]}>

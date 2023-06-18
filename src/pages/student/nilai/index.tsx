@@ -10,8 +10,10 @@ import { functionInstance } from "service/firebase-instance";
 import { CLASSES_SEMESTER } from "utils/constant";
 import Lottie from "react-lottie";
 import gradeAnimation from "assets/animation/grades.json";
+import { Pelajaran } from "pages/staff/masterdata/datapelajaran/add";
 
 const getMyGrades = httpsCallable(functionInstance, "getMyGrades");
+const getSubjects = httpsCallable(functionInstance, "getSubjects");
 
 const defaultOptions = {
     loop: true,
@@ -24,6 +26,13 @@ const defaultOptions = {
 
 function StudentNilai() {
     const { state } = useContext(UserContext);
+
+    const subjectsQuery = useQuery(["get-subject"], async () => {
+        return ((await getSubjects()).data as Pelajaran[])?.map((el) => ({
+            label: el.mata_pelajaran?.CapitalizeEachFirstLetter(),
+            value: el.id,
+        }));
+    });
 
     const getMyGradesQuery = useQuery(
         ["get-my-grades", state?.user?.id],
@@ -52,7 +61,7 @@ function StudentNilai() {
         {
             title: "Mata Pelajaran",
             dataIndex: "mata_pelajaran",
-            render: (text) => <p className="m-0 capitalize">{text}</p>,
+            render: (text) => <p className="m-0 capitalize">{text ? subjectsQuery.data?.find((el) => el.value === text)?.label : ""}</p>,
         },
         {
             title: "Nilai",
