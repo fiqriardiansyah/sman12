@@ -1,8 +1,8 @@
-import { Button, Form, Input, Space, message } from "antd";
+import { Button, Form, Input, Select, Space, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill";
 import { IoMdArrowBack } from "react-icons/io";
-import { STAFF_PATH } from "utils/constant";
+import { CATEGORY_NEWS, STAFF_PATH } from "utils/constant";
 import "react-quill/dist/quill.snow.css";
 import { httpsCallable } from "firebase/functions";
 import { functionInstance } from "service/firebase-instance";
@@ -51,9 +51,14 @@ function StaffPengumumanAdd() {
                 </Space>
             </div>
             <Form onFinish={onSavePengumuman} autoComplete="off" layout="vertical" requiredMark={false}>
-                <Form.Item label="Judul" name="judul" rules={[{ required: true, message: "judul harus diisi!" }]}>
-                    <Input />
-                </Form.Item>
+                <div className="flex w-full gap-x-5">
+                    <Form.Item label="Judul" name="judul" rules={[{ required: true, message: "Judul harus diisi!" }]} className="w-full">
+                        <Input />
+                    </Form.Item>
+                    <Form.Item label="Kategori" name="category" rules={[{ required: true, message: "Kategori harus diisi!" }]} className="w-[200px]">
+                        <Select options={CATEGORY_NEWS} placeholder="pilih" />
+                    </Form.Item>
+                </div>
                 <Form.Item label="Konten" name="isi" rules={[{ required: true, message: "Konten harus diisi!" }]}>
                     <ReactQuill theme="snow" className="bg-white h-[200px]" />
                 </Form.Item>

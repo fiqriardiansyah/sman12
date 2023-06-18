@@ -1,8 +1,8 @@
-import { Alert, Button, Descriptions, Form, Input, Popconfirm, Skeleton, Space, message, notification } from "antd";
+import { Alert, Button, Descriptions, Form, Input, Popconfirm, Select, Skeleton, Space, message, notification } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import { IoMdArrowBack } from "react-icons/io";
-import { FORMATE_DATE_TIME, STAFF_PATH } from "utils/constant";
+import { CATEGORY_NEWS, FORMATE_DATE_TIME, STAFF_PATH } from "utils/constant";
 import "react-quill/dist/quill.snow.css";
 import { useMutation, useQuery } from "react-query";
 import { httpsCallable } from "firebase/functions";
@@ -61,6 +61,7 @@ function StaffPengumumanEdit() {
     const initialValues = {
         judul: detailQuery.data?.judul,
         isi: detailQuery.data?.isi,
+        category: detailQuery.data?.category,
     };
 
     return (
@@ -91,9 +92,19 @@ function StaffPengumumanEdit() {
                         </Descriptions.Item>
                     </Descriptions>
                     <Form initialValues={initialValues} onFinish={onSavePengumuman} autoComplete="off" layout="vertical" requiredMark={false}>
-                        <Form.Item label="Judul" name="judul" rules={[{ required: true, message: "judul harus diisi!" }]}>
-                            <Input />
-                        </Form.Item>
+                        <div className="flex w-full gap-x-5">
+                            <Form.Item label="Judul" name="judul" rules={[{ required: true, message: "Judul harus diisi!" }]} className="w-full">
+                                <Input />
+                            </Form.Item>
+                            <Form.Item
+                                label="Kategori"
+                                name="category"
+                                rules={[{ required: true, message: "Kategori harus diisi!" }]}
+                                className="w-[200px]"
+                            >
+                                <Select options={CATEGORY_NEWS} placeholder="pilih" />
+                            </Form.Item>
+                        </div>
                         <Form.Item label="Konten" name="isi" rules={[{ required: true, message: "Konten harus diisi!" }]}>
                             <ReactQuill theme="snow" className="bg-white h-[500px]" />
                         </Form.Item>

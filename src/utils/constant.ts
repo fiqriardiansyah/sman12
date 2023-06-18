@@ -25,6 +25,17 @@ export const ABSEN_STATUS = {
 };
 export const COUNT_ABSENT = ["H", "A", "I"];
 
+export const CATEGORY_NEWS = [
+    {
+        value: 1,
+        label: "Akademik",
+    },
+    {
+        value: 2,
+        label: "Non Akademik",
+    },
+];
+
 export const GENDER = [
     {
         value: 1,
