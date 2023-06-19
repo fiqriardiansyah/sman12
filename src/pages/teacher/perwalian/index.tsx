@@ -101,7 +101,7 @@ function TeacherPerwalian() {
                 <h1 className="m-0 mb-10 pt-4">Mata Pelajaran</h1>
                 <div className="flex flex-col items-center justify-center h-[400px]">
                     <Lottie options={defaultOptions} height={400} width={400} isClickToPauseDisabled={false} />
-                    <p className="m-0 text-xl text-gray-500">Anda tidak mempunyai kelas perwalian</p>
+                    <p className="m-0 text-xl text-gray-500">Anda bukan wali kelas</p>
                 </div>
             </div>
         );
@@ -109,7 +109,7 @@ function TeacherPerwalian() {
 
     return (
         <div className="pb-10">
-            <h1 className="m-0 mb-10 pt-4">Perwalian Kelas</h1>
+            <h1 className="m-0 mb-10 pt-4">Wali Kelas</h1>
             <StateRender data={detailClassQuery.data} isLoading={detailClassQuery.isLoading} isError={detailClassQuery.isError}>
                 <StateRender.Data>
                     <Card>

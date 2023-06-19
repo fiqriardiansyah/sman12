@@ -502,6 +502,29 @@ exports.editClass = functions.https.onCall(async (data) => {
     }
 });
 
+exports.deleteClass = functions.https.onCall(async (data) => {
+    try {
+        const classCollRef = admin.firestore().collection("classes");
+        const userCollRef = admin.firestore().collection("users");
+        const studentClassCollRef = classCollRef.doc(data.id).collection("students");
+        const db = admin.database();
+
+        const getStudents = await studentClassCollRef.get();
+        getStudents.forEach((student) => {
+            studentClassCollRef.doc(student.id).delete();
+            userCollRef.doc(student.data().id).update({ kelas_id: null, kelas: null });
+        });
+
+        const removeRoster = await db.ref(`rosters/${data.id}`).remove();
+        const removeTeacher = await userCollRef.doc(data.wali_id).update({ kelas_id: null, kelas: null });
+        const removeClass = await classCollRef.doc(data.id).delete();
+
+        return { success: true };
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
 // ROSTER ///
 exports.getMyRoster = functions.https.onCall(async (data) => {
     const db = admin.database();

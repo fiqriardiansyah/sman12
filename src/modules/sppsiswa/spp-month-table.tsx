@@ -81,7 +81,7 @@ export function editTableSppMonth<T extends SppTable>(Component: ComponentType<E
                 render: (text) => <p className="m-0">{text}</p>,
             },
             {
-                title: "Autor",
+                title: "Dibuat oleh",
                 dataIndex: "author_id",
                 render: (text) => <p className="m-0">{text ? getStaffsQuery.data?.find((staff) => staff.id === text)?.nama : ""}</p>,
             },

@@ -1,5 +1,7 @@
 import React from "react";
 import { TbPlaylistAdd } from "react-icons/tb";
+import { message } from "antd";
+import dayjs from "dayjs";
 import TableRoster, { Roster } from "./table-pelajaran";
 
 type Props = {
@@ -38,6 +40,21 @@ function RosterEdit({ day, onChange, rosters }: Props) {
     };
 
     const onEdit = (rs: Roster[], prevEditRow?: Roster | null) => {
+        const subjectSet = new Set([...rs]?.map((n) => n.mata_pelajaran as any));
+        const hourSet = new Set([...rs]?.map((n) => dayjs(n.jam).format("HH:mm") as any));
+
+        if (subjectSet.size < rs.length) {
+            message.error("Mata pelajaran tidak boleh duplikat");
+            setRoster((prev) => prev?.filter((el) => el.id !== prevEditRow?.id));
+            return;
+        }
+
+        if (hourSet.size < rs.length) {
+            message.error("Jam pelajaran bentrok");
+            setRoster((prev) => prev?.filter((el) => el.id !== prevEditRow?.id));
+            return;
+        }
+
         setRoster(rs);
         onChange({ day, roster: rs });
     };
@@ -53,7 +70,7 @@ function RosterEdit({ day, onChange, rosters }: Props) {
                 onCancel={onCancelRow}
                 editRow={editRow}
                 setEditRow={setEditRow}
-                list={roster}
+                list={roster?.sort((a, b) => dayjs(a.jam).unix() - dayjs(b.jam).unix())}
                 removeItemList={onRemoveRow}
                 onSetList={onEdit}
             />

@@ -39,7 +39,14 @@ function RosterTable({ roster }: Props) {
         },
     ];
 
-    return <Table columns={columns} dataSource={tRoster} loading={subjectsQuery.isLoading} rowKey={(i) => i.id} />;
+    return (
+        <Table
+            columns={columns}
+            dataSource={tRoster?.sort((a, b) => dayjs(a.jam).unix() - dayjs(b.jam).unix())}
+            loading={subjectsQuery.isLoading}
+            rowKey={(i) => i.id}
+        />
+    );
 }
 
 export default RosterTable;

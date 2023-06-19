@@ -53,7 +53,7 @@ function ModalImportSiswa({ children, onSave }: Props) {
     const columns: ColumnsType<any> = Object.keys(rowSiswa[0] || {})?.map((row) => ({
         title: row?.CapitalizeEachFirstLetter(),
         dataIndex: row?.toLowerCase(),
-        render: (text) => <p className="m-0 capitalize">{text || "-"}</p>,
+        render: (text) => <p className="m-0 capitalize">{text}</p>,
     }));
 
     const clearRow = () => {

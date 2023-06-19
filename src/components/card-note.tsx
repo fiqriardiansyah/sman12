@@ -76,7 +76,7 @@ function CardNote({ note, fetcher }: { note: Note; fetcher: UseQueryResult<Note[
                 ) : (
                     <p className="m-0 text-lg">{note.note}</p>
                 )}
-                <span className="italic text-xs">
+                <span className="italic text-xs text-blue-400 capitalize">
                     {teacherQuery.data?.find((teacher) => teacher.id === note.sender_id)?.nama} - {moment(note.send_date).format(FORMAT_DATE)}
                 </span>
             </div>

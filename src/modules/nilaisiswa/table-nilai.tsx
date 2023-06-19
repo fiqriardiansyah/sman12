@@ -1,6 +1,8 @@
+/* eslint-disable react/destructuring-assignment */
 import type { ColumnsType } from "antd/es/table";
 import EditTable, { Props as EditTableProps } from "components/table/editable-table";
 import { httpsCallable } from "firebase/functions";
+import { Staff } from "modules/datastaff/table";
 import { Pelajaran } from "pages/staff/masterdata/datapelajaran/add";
 import { ComponentType } from "react";
 import { useQuery } from "react-query";
@@ -11,11 +13,13 @@ export interface Nilai {
     mata_pelajaran?: string;
     nilai?: any;
     catatan?: string;
+    author_id?: string;
 }
 
 type Props<T> = Omit<EditTableProps<T>, "isEditing" | "findIndexSave" | "rowKey" | "editInputType" | "columns">;
 
 const getSubjects = httpsCallable(functionInstance, "getSubjects");
+const getStaffs = httpsCallable(functionInstance, "getStaffs");
 
 export function editTableNilai<T extends Nilai>(Component: ComponentType<EditTableProps<T>>) {
     return function (props: Props<T>) {
@@ -24,6 +28,10 @@ export function editTableNilai<T extends Nilai>(Component: ComponentType<EditTab
                 label: el.mata_pelajaran?.CapitalizeEachFirstLetter(),
                 value: el.id,
             }));
+        });
+
+        const getStaffsQuery = useQuery(["get-staff"], async () => {
+            return (await getStaffs()).data as Staff[];
         });
 
         const columns: ColumnsType<T> = [
@@ -46,10 +54,9 @@ export function editTableNilai<T extends Nilai>(Component: ComponentType<EditTab
                 render: (text) => <p className="m-0">{text}</p>,
             },
             {
-                title: "Catatan",
-                dataIndex: "catatan",
-                ...{ editable: true },
-                render: (text) => <p className="m-0">{text}</p>,
+                title: "Dibuat oleh",
+                dataIndex: "author_id",
+                render: (text) => <p className="m-0">{text ? getStaffsQuery.data?.find((staff) => staff.id === text)?.nama : ""}</p>,
             },
         ];
 

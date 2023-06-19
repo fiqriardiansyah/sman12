@@ -72,6 +72,7 @@ function InfoSiswaAbsensiEdit() {
                     <Card>
                         <Descriptions title={`Kelas ${detailClassQuery.data?.kelas}${detailClassQuery.data?.nomor_kelas}, TA 2022/2023`}>
                             <Descriptions.Item label="Wali Kelas">{detailClassQuery.data?.wali_nama?.CapitalizeEachFirstLetter()}</Descriptions.Item>
+                            <Descriptions.Item label="Jumlah Siswa">{detailClassQuery.data?.murid?.length} siswa</Descriptions.Item>
                         </Descriptions>
                     </Card>
                 </StateRender.Data>

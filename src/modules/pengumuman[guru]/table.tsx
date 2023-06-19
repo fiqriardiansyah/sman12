@@ -1,9 +1,9 @@
-import { Button, Table } from "antd";
+import { Button, Table, Tag } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import moment from "moment";
 import { UseQueryResult } from "react-query";
 import { Link } from "react-router-dom";
-import { CATEGORY_NEWS, FORMATE_DATE_TIME, STUDENT_PATH, TEACHER_PATH } from "utils/constant";
+import { CATEGORY_NEWS, FORMATE_DATE_TIME, FORMAT_DATE, STUDENT_PATH, TEACHER_PATH } from "utils/constant";
 
 export type Pengumuman = {
     id?: any;
@@ -24,7 +24,14 @@ function TablePengumumanGuru({ fetcher }: Props) {
         {
             title: "Judul",
             dataIndex: "judul",
-            render: (text) => <p className="m-0 capitalize">{text || "-"}</p>,
+            render: (text, record) => (
+                <div className="m-0 capitalize">
+                    {text}{" "}
+                    {moment(record.tanggal_dibuat).format(FORMAT_DATE) === moment(moment.now()).format(FORMAT_DATE) ? (
+                        <Tag color="blue">Baru</Tag>
+                    ) : null}
+                </div>
+            ),
         },
         {
             title: "Kategory",
@@ -39,7 +46,7 @@ function TablePengumumanGuru({ fetcher }: Props) {
         {
             title: "Diupload oleh",
             dataIndex: "dibuat_oleh",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
+            render: (text) => <p className="m-0">{text}</p>,
         },
         {
             width: "80px",

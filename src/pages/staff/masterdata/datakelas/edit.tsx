@@ -20,17 +20,17 @@ const columns: ColumnsType<Siswa> = [
     {
         title: "Nama",
         dataIndex: "nama",
-        render: (text) => <p className="m-0 capitalize">{text || "-"}</p>,
+        render: (text) => <p className="m-0 capitalize">{text}</p>,
     },
     {
         title: "Nis",
         dataIndex: "nis",
-        render: (text) => <p className="m-0">{text || "-"}</p>,
+        render: (text) => <p className="m-0">{text}</p>,
     },
     {
         title: "Nisn",
         dataIndex: "nisn",
-        render: (text) => <p className="m-0">{text || "-"}</p>,
+        render: (text) => <p className="m-0">{text}</p>,
     },
 ];
 
@@ -42,9 +42,14 @@ function MasterDataKelasEdit() {
     const getTeachers = httpsCallable(functionInstance, "getTeachers");
     const detailClass = httpsCallable(functionInstance, "detailClass");
     const editClass = httpsCallable(functionInstance, "editClass");
+    const deleteClass = httpsCallable(functionInstance, "deleteClass");
 
     const [targetKeys, setTargetKeys] = useState<string[]>([]);
     const [rosters, setRosters] = useState<any>({});
+
+    const deleteClassMutate = useMutation(["delete-class"], async (data: any) => {
+        return (await deleteClass(data)).data;
+    });
 
     const teacherAvailableQuery = useQuery(["get-teacher"], async () => {
         return (await getTeachers()).data as Guru[];
@@ -139,7 +144,18 @@ function MasterDataKelasEdit() {
         setTargetKeys(nextTargetKeys);
     };
 
-    const confirm = () => {};
+    const confirm = () => {
+        if (deleteClassMutate.isLoading || detailClassQuery.isLoading) return;
+        deleteClassMutate
+            .mutateAsync({ id, wali_id: detailClassQuery.data?.wali_id })
+            .then(() => {
+                message.success("Data kelas dihapus");
+                navigate(-1);
+            })
+            .catch((e: any) => {
+                message.error(e?.message);
+            });
+    };
 
     const initialValues = {
         kelas: detailClassQuery.data?.kelas,
@@ -177,7 +193,9 @@ function MasterDataKelasEdit() {
                     <h1 className="m-0">Edit Kelas</h1>
                 </Space>
                 <Popconfirm title="Hapus" description="Hapus permanen siswa?" onConfirm={confirm} okText="Ya" cancelText="Tidak">
-                    <Button danger>Delete</Button>
+                    <Button loading={deleteClassMutate.isLoading} danger>
+                        Delete
+                    </Button>
                 </Popconfirm>
             </div>
             <StateRender data={detailClassQuery.data} isLoading={detailClassQuery.isLoading} isError={detailClassQuery.isError}>

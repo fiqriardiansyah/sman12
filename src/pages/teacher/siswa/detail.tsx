@@ -1,34 +1,22 @@
-import { Alert, Button, Card, Descriptions, Image, Input, Skeleton, Space, message } from "antd";
-import CardNote, { Note } from "components/card-note";
+import { Alert, Card, Descriptions, Image, Skeleton, Space, Tabs, TabsProps } from "antd";
 import StateRender from "components/common/state";
-import { UserContext } from "context/user";
 import { httpsCallable } from "firebase/functions";
 import { Siswa } from "modules/datasiswa/table";
-import React from "react";
+import Administrasi from "modules/perwalian/administrasi";
+import Akademik from "modules/perwalian/akademik";
+import Catatan from "modules/perwalian/catatan";
 import { IoMdArrowBack } from "react-icons/io";
-import { useMutation, useQuery } from "react-query";
+import { useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
 import { GENDER, IMAGE_FALLBACK } from "utils/constant";
 
-const createNoteToStudent = httpsCallable(functionInstance, "createNoteToStudent");
-const getNoteByStudent = httpsCallable(functionInstance, "getNoteByStudent");
 const getDataUser = httpsCallable(functionInstance, "getUserWithId");
 
 function TeacherDaftarSiswaDetail() {
     const { id } = useParams();
-    const { state } = React.useContext(UserContext);
-    const [note, setNote] = React.useState("");
 
     const navigate = useNavigate();
-
-    const getNoteByStudentQuery = useQuery(["get-note", id], async () => {
-        return (await getNoteByStudent({ student_id: id })).data as Note[];
-    });
-
-    const noteToStudentMutate = useMutation(["note-to-student"], async (data: any) => {
-        return (await createNoteToStudent(data)).data;
-    });
 
     const dataUserQuery = useQuery(["detail-student", id], async () => {
         return (await getDataUser({ id })).data as Siswa;
@@ -39,23 +27,23 @@ function TeacherDaftarSiswaDetail() {
         navigate(-1);
     };
 
-    const onSendNote = () => {
-        const data = {
-            note,
-            student_id: id,
-            sender_id: state?.user?.id,
-            send_date: new Date().getTime(),
-        };
-        noteToStudentMutate
-            .mutateAsync(data)
-            .then(() => {
-                message.success("Catatan terkirim");
-            })
-            .finally(() => {
-                getNoteByStudentQuery.refetch();
-            });
-        setNote("");
-    };
+    const items: TabsProps["items"] = [
+        {
+            key: "catatan",
+            label: "Catatan",
+            children: <Catatan />,
+        },
+        {
+            key: "akademik",
+            label: "Akademik",
+            children: <Akademik kelas={dataUserQuery.data?.kelas} />,
+        },
+        {
+            key: "administrasi",
+            label: "Administrasi",
+            children: <Administrasi kelas={dataUserQuery.data?.kelas} studentId={id} />,
+        },
+    ];
 
     if (!id) return <Alert type="error" message="Halaman tidak ditemukan" />;
 
@@ -89,7 +77,7 @@ function TeacherDaftarSiswaDetail() {
                             {GENDER.find((el) => el.value === dataUserQuery?.data?.kelamin)?.label}
                         </Descriptions.Item>
                         <Descriptions.Item label="Alamat">{dataUserQuery.data?.alamat}</Descriptions.Item>
-                        <Descriptions.Item label="Wali">{dataUserQuery.data?.wali}</Descriptions.Item>
+                        <Descriptions.Item label="Wali / Orang tua">{dataUserQuery.data?.wali}</Descriptions.Item>
                         <Descriptions.Item label="Kelas">{dataUserQuery.data?.kelas}</Descriptions.Item>
                     </Descriptions>
                 </StateRender.Data>
@@ -100,33 +88,9 @@ function TeacherDaftarSiswaDetail() {
                     <Alert type="error" message={(dataUserQuery.error as any)?.message} />
                 </StateRender.Error>
             </StateRender>
-            <div className="flex flex-col gap-4 items-start">
-                <p className="m-0">Catatan siswa</p>
-                <Input.TextArea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Tulis Catatan..." allowClear />
-                <Button disabled={!note} onClick={onSendNote} loading={noteToStudentMutate.isLoading}>
-                    Kirim
-                </Button>
-                <Card className="!w-full">
-                    <StateRender
-                        data={getNoteByStudentQuery.data}
-                        isLoading={getNoteByStudentQuery.isLoading}
-                        isError={getNoteByStudentQuery.isError}
-                    >
-                        <StateRender.Data>
-                            {getNoteByStudentQuery.data?.map((nt) => (
-                                <CardNote fetcher={getNoteByStudentQuery} key={nt.id} note={nt} />
-                            ))}
-                            {!getNoteByStudentQuery.data?.length ? <p className="text-xl">Tidak ada catatan</p> : null}
-                        </StateRender.Data>
-                        <StateRender.Loading>
-                            <Skeleton />
-                        </StateRender.Loading>
-                        <StateRender.Error>
-                            <Alert type="error" message={(getNoteByStudentQuery.error as any)?.message} />
-                        </StateRender.Error>
-                    </StateRender>
-                </Card>
-            </div>
+            <Card>
+                <Tabs items={items} />
+            </Card>
         </div>
     );
 }

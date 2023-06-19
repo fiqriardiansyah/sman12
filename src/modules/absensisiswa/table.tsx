@@ -19,7 +19,7 @@ function TableAbsensiKelas({ fetcher }: Props) {
         {
             title: "Wali Kelas",
             dataIndex: "wali_nama",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
+            render: (text) => <p className="m-0">{text}</p>,
         },
         {
             width: "80px",

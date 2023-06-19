@@ -35,8 +35,35 @@ function Sidebar() {
         { label: "Profile", key: TEACHER_PATH.profile.index, icon: <CgProfile /> },
         { label: "Daftar Siswa", key: TEACHER_PATH.siswa.index, icon: <MdOutlineSupervisedUserCircle /> },
         { label: "Pengumuman", key: TEACHER_PATH.pengumuman.index, icon: <GrAnnounce /> },
-        { label: "Perwalian Kelas", key: TEACHER_PATH.perwalian.index, icon: <SiGoogleclassroom /> },
+        { label: "Wali kelas", key: TEACHER_PATH.perwalian.index, icon: <SiGoogleclassroom /> },
     ];
+
+    // const adminMenuItems: MenuItem[] = [
+    //     { label: "Profile", key: STAFF_PATH.profile.index, icon: <CgProfile /> },
+    //     {
+    //         label: "Master Data",
+    //         key: "masterdata",
+    //         icon: <MdOutlineSpaceDashboard />,
+    //         children: [
+    //             { label: "Data Siswa", key: STAFF_PATH.masterdata.datasiswa.index },
+    //             { label: "Data Guru", key: STAFF_PATH.masterdata.dataguru.index },
+    //             { label: "Data Staff", key: STAFF_PATH.masterdata.datastaff.index },
+    //             { label: "Data Kelas", key: STAFF_PATH.masterdata.datakelas.index },
+    //             { label: "Data Pelajaran", key: STAFF_PATH.masterdata.datapelajaran.index },
+    //         ],
+    //     },
+    //     {
+    //         label: "Kelola Siswa",
+    //         key: "infosiswa",
+    //         icon: <MdOutlineSupervisedUserCircle />,
+    //         children: [
+    //             { label: "Nilai Siswa", key: STAFF_PATH.infosiswa.nilaisiswa.index },
+    //             { label: "Absensi Siswa", key: STAFF_PATH.infosiswa.absensisiswa.index },
+    //             { label: "SPP Siswa", key: STAFF_PATH.infosiswa.sppsiswa.index },
+    //         ],
+    //     },
+    //     { label: "Pengumuman", key: STAFF_PATH.pengumuman.index, icon: <GrAnnounce /> },
+    // ];
 
     const staffMenuItems: MenuItem[] = [
         { label: "Profile", key: STAFF_PATH.profile.index, icon: <CgProfile /> },
@@ -53,7 +80,7 @@ function Sidebar() {
             ],
         },
         {
-            label: "Info Siswa",
+            label: "Kelola Siswa",
             key: "infosiswa",
             icon: <MdOutlineSupervisedUserCircle />,
             children: [

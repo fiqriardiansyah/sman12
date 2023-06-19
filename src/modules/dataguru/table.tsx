@@ -27,27 +27,27 @@ function TableGuru({ fetcher }: Props) {
         {
             title: "Nama",
             dataIndex: "nama",
-            render: (text) => <p className="m-0 capitalize">{text || "-"}</p>,
+            render: (text) => <p className="m-0 capitalize">{text}</p>,
         },
         {
             title: "NUPTK",
             dataIndex: "nuptk",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
+            render: (text) => <p className="m-0">{text}</p>,
         },
         {
             title: "NIP",
             dataIndex: "nip",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
+            render: (text) => <p className="m-0">{text}</p>,
         },
         {
             title: "Wali kelas",
             dataIndex: "kelas",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
+            render: (text) => <p className="m-0">{text}</p>,
         },
         {
             title: "Handphone",
             dataIndex: "hp",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
+            render: (text) => <p className="m-0">{text}</p>,
         },
         {
             width: "80px",

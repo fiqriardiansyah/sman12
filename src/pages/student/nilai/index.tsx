@@ -1,4 +1,4 @@
-import { Alert, Skeleton } from "antd";
+import { Alert, Card, Skeleton, Tabs, TabsProps } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import StateRender from "components/common/state";
 import { UserContext } from "context/user";
@@ -11,9 +11,15 @@ import { CLASSES_SEMESTER } from "utils/constant";
 import Lottie from "react-lottie";
 import gradeAnimation from "assets/animation/grades.json";
 import { Pelajaran } from "pages/staff/masterdata/datapelajaran/add";
+import { Staff } from "modules/datastaff/table";
+import { Chart as ChartJS, registerables } from "chart.js";
+import { Chart, Bar } from "react-chartjs-2";
+
+ChartJS.register(...registerables);
 
 const getMyGrades = httpsCallable(functionInstance, "getMyGrades");
 const getSubjects = httpsCallable(functionInstance, "getSubjects");
+const getStaffs = httpsCallable(functionInstance, "getStaffs");
 
 const defaultOptions = {
     loop: true,
@@ -34,6 +40,10 @@ function StudentNilai() {
         }));
     });
 
+    const getStaffsQuery = useQuery(["get-staff"], async () => {
+        return (await getStaffs()).data as Staff[];
+    });
+
     const getMyGradesQuery = useQuery(
         ["get-my-grades", state?.user?.id],
         async () => {
@@ -46,6 +56,7 @@ function StudentNilai() {
                         mata_pelajaran: subject,
                         nilai: grades[subject].nilai,
                         catatan: grades[subject].catatan,
+                        author_id: grades[subject]?.author_id,
                     })),
                 };
             });
@@ -56,6 +67,36 @@ function StudentNilai() {
             enabled: !!state?.user?.id,
         }
     );
+
+    const getLabelsChart = () => {
+        if (!getMyGradesQuery.data || !subjectsQuery.data) return [];
+        const labels = getMyGradesQuery.data?.map((grade) =>
+            grade.grades?.map((g) => subjectsQuery.data?.find((sub) => sub.value === g.mata_pelajaran)?.label)
+        );
+        const labelsSet = new Set(labels.flat(1));
+        return Array.from(labelsSet) || [];
+    };
+
+    const dataChart = {
+        labels: getLabelsChart(),
+        datasets: getMyGradesQuery.data?.map((grade) => ({
+            label: `Semester ${grade.semester}`,
+            data: grade?.grades?.map((g) => ({
+                x: subjectsQuery.data?.find((sub) => sub.value === g.mata_pelajaran)?.label,
+                y: g.nilai,
+            })),
+            fill: true,
+            lineTension: 0.5,
+        })),
+    };
+
+    const options = {
+        title: {
+            display: true,
+            text: "Bagan nilai siswa",
+        },
+        responsive: true,
+    };
 
     const columns: ColumnsType<Nilai> = [
         {
@@ -73,28 +114,41 @@ function StudentNilai() {
             dataIndex: "catatan",
             render: (text) => <p className="m-0 capitalize">{text}</p>,
         },
+        {
+            title: "Dibuat oleh",
+            dataIndex: "author_id",
+            render: (text) => <p className="m-0">{text ? getStaffsQuery.data?.find((staff) => staff.id === text)?.nama : ""}</p>,
+        },
     ];
 
+    const items: TabsProps["items"] = getMyGradesQuery.data?.map((grade) => ({
+        key: grade.semester,
+        label: `KELAS ${CLASSES_SEMESTER[Number(grade.semester) - 1]} - SEMESTER ${Number(grade.semester) % 2 !== 0 ? 1 : 2}`,
+        children: (
+            <Table
+                rowKey={(i) => i.mata_pelajaran}
+                columns={columns as any}
+                dataSource={grade.grades}
+                pagination={{ position: ["none" as any], pageSize: 100 }}
+            />
+        ),
+    }));
+
+    console.log(getMyGradesQuery.data);
+
     return (
-        <div className="w-full">
+        <div className="w-full pb-20">
             <h1 className="m-0 mb-10 pt-4">Nilai akhir siswa</h1>
             <StateRender data={getMyGradesQuery.data} isLoading={getMyGradesQuery.isLoading} isError={getMyGradesQuery.isError}>
                 <StateRender.Data>
-                    <div className="grid w-full grid-cols-2 gap-10">
+                    {getLabelsChart().length ? (
+                        <Card>
+                            <Bar data={dataChart as any} options={options as any} />
+                        </Card>
+                    ) : null}
+                    <div className="grid w-full grid-cols-1 gap-10 mt-10">
                         {getMyGradesQuery.data?.length ? (
-                            getMyGradesQuery.data?.map((el) => (
-                                <div className="" key={el.semester}>
-                                    <p>
-                                        KELAS {CLASSES_SEMESTER[Number(el.semester) - 1]} - SEMESTER {Number(el.semester) % 2 !== 0 ? 1 : 2}
-                                    </p>
-                                    <Table
-                                        rowKey={(i) => i.mata_pelajaran}
-                                        columns={columns as any}
-                                        dataSource={el.grades}
-                                        pagination={{ position: ["none" as any], pageSize: 100 }}
-                                    />
-                                </div>
-                            ))
+                            <Tabs type="card" items={items} />
                         ) : (
                             <div className="col-span-2 flex flex-col items-center justify-center h-[400px]">
                                 <Lottie options={defaultOptions} height={400} width={400} isClickToPauseDisabled={false} />

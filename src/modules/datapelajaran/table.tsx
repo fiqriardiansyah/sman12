@@ -14,12 +14,12 @@ function TablePelajaran({ fetcher }: Props) {
         {
             title: "Mata pelajaran",
             dataIndex: "mata_pelajaran",
-            render: (text) => <p className="m-0 capitalize">{text || "-"}</p>,
+            render: (text) => <p className="m-0 capitalize">{text}</p>,
         },
         {
             title: "Guru",
             dataIndex: "guru_nama",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
+            render: (text) => <p className="m-0">{text}</p>,
         },
         {
             width: "80px",

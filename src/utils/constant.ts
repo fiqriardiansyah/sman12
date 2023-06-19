@@ -74,7 +74,7 @@ export const TEACHER_PATH = {
         index: "/pengumuman",
     },
     perwalian: {
-        index: "/perwalian",
+        index: "/walikelas",
     },
 };
 

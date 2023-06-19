@@ -11,17 +11,17 @@ function TableSiswaKelas({ siswa }: Props) {
         {
             title: "Nama",
             dataIndex: "nama",
-            render: (text) => <p className="m-0 capitalize">{text || "-"}</p>,
+            render: (text) => <p className="m-0 capitalize">{text}</p>,
         },
         {
             title: "Nis",
             dataIndex: "nis",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
+            render: (text) => <p className="m-0">{text}</p>,
         },
         {
             title: "Nisn",
             dataIndex: "nisn",
-            render: (text) => <p className="m-0">{text || "-"}</p>,
+            render: (text) => <p className="m-0">{text}</p>,
         },
         {
             width: "80px",

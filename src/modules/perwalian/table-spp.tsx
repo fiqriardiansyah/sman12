@@ -80,7 +80,7 @@ function TableSPP({ students, month, sppClass }: Props) {
             render: (_, record) => <p className="m-0">{getHistory(record)?.note}</p>,
         },
         {
-            title: "Autor",
+            title: "Dibuat oleh",
             dataIndex: "author_id",
             render: (_, record) => (
                 <p className="m-0">{getStaffsQuery.data?.find((staff) => staff.id === getHistory(record)?.author_id)?.nama || ""}</p>

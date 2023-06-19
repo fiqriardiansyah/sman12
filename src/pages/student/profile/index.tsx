@@ -3,6 +3,7 @@ import CardNote, { Note } from "components/card-note";
 import StateRender from "components/common/state";
 import { UserContext } from "context/user";
 import { httpsCallable } from "firebase/functions";
+import { Kelas } from "modules/datakelas/table";
 import { Siswa } from "modules/datasiswa/table";
 import { useContext } from "react";
 import { FaRegEdit } from "react-icons/fa";
@@ -16,6 +17,11 @@ const getNoteByStudent = httpsCallable(functionInstance, "getNoteByStudent");
 function StudentProfile() {
     const { state } = useContext(UserContext);
     const getMyData = httpsCallable(functionInstance, "getUserWithEmail");
+    const detailClass = httpsCallable(functionInstance, "detailClass");
+
+    const detailClassQuery = useQuery(["get-class", state?.user?.kelas], async () => {
+        return (await detailClass({ id: state?.user?.kelas_id })).data as Kelas;
+    });
 
     const getNoteByStudentQuery = useQuery(["get-note", state?.user?.id], async () => {
         return (await getNoteByStudent({ student_id: state?.user?.id })).data as Note[];
@@ -55,7 +61,7 @@ function StudentProfile() {
                             {GENDER.find((el) => el.value === profileQuery?.data?.kelamin)?.label}
                         </Descriptions.Item>
                         <Descriptions.Item label="Alamat">{profileQuery.data?.alamat}</Descriptions.Item>
-                        <Descriptions.Item label="Wali">{profileQuery.data?.wali}</Descriptions.Item>
+                        <Descriptions.Item label="Wali / Orang tua">{profileQuery.data?.wali}</Descriptions.Item>
                     </Descriptions>
                 </StateRender.Data>
                 <StateRender.Loading>
@@ -65,6 +71,18 @@ function StudentProfile() {
                     <Alert type="error" message={(profileQuery.error as any)?.message} />
                 </StateRender.Error>
             </StateRender>
+            {state?.user?.kelas ? (
+                <div className="flex flex-col gap-4 items-start mt-10">
+                    <p className="m-0">Detail Kelas</p>
+                    <Card className="!w-full">
+                        <Descriptions>
+                            <Descriptions.Item label="Wali Kelas">{detailClassQuery?.data?.wali_nama}</Descriptions.Item>
+                            <Descriptions.Item label="Kelas">{state?.user?.kelas}</Descriptions.Item>
+                            <Descriptions.Item label="Jumlah siswa">{detailClassQuery?.data?.murid?.length} siswa</Descriptions.Item>
+                        </Descriptions>
+                    </Card>
+                </div>
+            ) : null}
             <div className="flex flex-col gap-4 items-start mt-10">
                 <p className="m-0">Catatan siswa</p>
                 <Card className="!w-full">

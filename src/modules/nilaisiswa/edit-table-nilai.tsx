@@ -1,18 +1,20 @@
-import { Card } from "antd";
+import { Card, message } from "antd";
 import { httpsCallable } from "firebase/functions";
 import { Siswa } from "modules/datasiswa/table";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { TbPlaylistAdd } from "react-icons/tb";
 import { UseQueryResult, useMutation, useQuery } from "react-query";
 import { functionInstance } from "service/firebase-instance";
 import { CLASSES_SEMESTER } from "utils/constant";
+import { UserContext } from "context/user";
 import RaportTable, { Nilai } from "./table-nilai";
 
 const setGrade = httpsCallable(functionInstance, "setGrade");
 const getGrade = httpsCallable(functionInstance, "getGrade");
-const getSubjects = httpsCallable(functionInstance, "getSubjects");
 
 function EditTableNilai({ semester, fetcher }: { semester: number; fetcher: UseQueryResult<Siswa, unknown> }) {
+    const { state } = useContext(UserContext);
+
     const [editRow, setEditRow] = useState<Nilai | null>(null);
     const [nilai, setNilai] = useState<Nilai[]>([]);
 
@@ -26,20 +28,35 @@ function EditTableNilai({ semester, fetcher }: { semester: number; fetcher: UseQ
             return (await getGrade({ student_id: fetcher.data?.id, semester })).data;
         },
         {
+            refetchInterval: false,
+            refetchOnWindowFocus: false,
             enabled: !!fetcher.data?.id,
             staleTime: undefined,
             onSuccess: (data: any) => {
                 if (!data || data?.length === 0) return;
                 const tNilai = Object.keys(data).map(
-                    (key, i) => ({ mata_pelajaran: key, catatan: data[key]?.catatan, nilai: data[key]?.nilai, id: i } as Nilai)
+                    (key, i) =>
+                        ({
+                            mata_pelajaran: key,
+                            catatan: data[key]?.catatan,
+                            nilai: data[key]?.nilai,
+                            id: data[key]?.id,
+                            author_id: data[key]?.author_id,
+                        } as Nilai)
                 );
                 setNilai(tNilai);
             },
         }
     );
 
-    const tNilai = (grades: Nilai[]) => {
-        return grades?.reduce((obj, item) => Object.assign(obj, { [item.mata_pelajaran as any]: { ...item } }), {});
+    const tNilai = (grades: Nilai[], prevEdited?: Nilai | null) => {
+        return grades?.reduce(
+            (obj, item) =>
+                Object.assign(obj, {
+                    [item.mata_pelajaran as any]: { ...item, author_id: prevEdited?.id === item.id ? state?.user?.id : item.author_id },
+                }),
+            {}
+        );
     };
 
     const onRemoveRow = (grade: Nilai) => {
@@ -60,24 +77,25 @@ function EditTableNilai({ semester, fetcher }: { semester: number; fetcher: UseQ
             catatan: "",
             mata_pelajaran: "",
             nilai: "",
+            author_id: state?.user?.id,
         };
-        setNilai((prev) => {
-            const curr = [...prev, newRow];
-            setGradeMutate.mutateAsync({
-                student_id: fetcher.data?.id,
-                semester,
-                grades: tNilai(curr),
-            });
-            return curr;
-        });
+        setNilai((prev) => [...prev, newRow]);
         setEditRow(newRow);
     };
 
-    const onEdit = (grades: Nilai[]) => {
+    const onEdit = (grades: Nilai[], prevEdit?: Nilai | null) => {
+        const itemSet = new Set(grades.map((n) => n.mata_pelajaran as any));
+        if (itemSet.size < grades.length) {
+            message.error("Mata pelajaran tidak boleh duplikat");
+            setNilai((prev) => prev?.filter((el) => el.id !== prevEdit?.id));
+            return;
+        }
+
+        setNilai(grades);
         setGradeMutate.mutateAsync({
             student_id: fetcher.data?.id,
             semester,
-            grades: tNilai(grades),
+            grades: tNilai(grades, prevEdit),
         });
     };
 
@@ -99,7 +117,6 @@ function EditTableNilai({ semester, fetcher }: { semester: number; fetcher: UseQ
                 editRow={editRow}
                 setEditRow={setEditRow}
                 list={nilai}
-                setList={setNilai}
                 removeItemList={onRemoveRow}
                 loading={getGradeQuery.isLoading}
                 onSetList={onEdit}
