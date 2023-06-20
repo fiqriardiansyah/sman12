@@ -53,7 +53,7 @@ function Catatan() {
                 <StateRender data={getNoteByStudentQuery.data} isLoading={getNoteByStudentQuery.isLoading} isError={getNoteByStudentQuery.isError}>
                     <StateRender.Data>
                         {getNoteByStudentQuery.data?.map((nt) => (
-                            <CardNote fetcher={getNoteByStudentQuery} key={nt.id} note={nt} />
+                            <CardNote roles="teacher" fetcher={getNoteByStudentQuery} key={nt.id} note={nt} />
                         ))}
                         {!getNoteByStudentQuery.data?.length ? <p className="text-xl">Tidak ada catatan</p> : null}
                     </StateRender.Data>

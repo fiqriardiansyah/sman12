@@ -804,7 +804,7 @@ exports.getNoteByStudent = functions.https.onCall(async (data) => {
                 id: note.id,
             });
         });
-        return notes?.sort((a, b) => a.send_date - b.send_date);
+        return notes?.sort((a, b) => b.send_date - a.send_date);
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
@@ -827,6 +827,75 @@ exports.deleteNoteToStudent = functions.https.onCall(async (data) => {
     try {
         await noteCollRef.delete();
         return { success: true };
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.noteSeenByStudent = functions.https.onCall(async (data) => {
+    const noteCollRef = admin.firestore().collection("notes");
+
+    try {
+        const queries = [];
+        data?.notes?.forEach(async (note) => {
+            queries.push(noteCollRef.doc(note.id));
+        });
+
+        await Promise.all(queries.map((q) => q.update({ receiver_seen: true })));
+
+        return { success: true };
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.noteSeenByTeacher = functions.https.onCall(async (data) => {
+    const noteCollRef = admin.firestore().collection("notes");
+
+    try {
+        await noteCollRef.doc(data.id).update({ teacher_seen: true });
+        return { success: true };
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.getNotesByTeacher = functions.https.onCall(async (data) => {
+    const noteCollRef = admin.firestore().collection("notes");
+    const userCollRef = admin.firestore().collection("users");
+
+    try {
+        const classId = data.kelas_id;
+        const getStudentClass = await userCollRef.where("kelas_id", "==", classId).get();
+        const students = [];
+        getStudentClass?.forEach((doc) => {
+            const student = {
+                id: doc.id,
+                ...doc.data(),
+            };
+            students.push(student);
+        });
+
+        const querieNotes = [];
+        students?.forEach((student) => {
+            const queri = noteCollRef.where("student_id", "==", student.id);
+            querieNotes.push(queri);
+        });
+
+        const notes = [];
+        await Promise.all(querieNotes.map((q) => q.get())).then((res) => {
+            res.forEach((snap) => {
+                snap?.forEach((doc) => {
+                    notes.push({
+                        id: doc.id,
+                        ...doc.data(),
+                        student_name: students?.find((s) => s.id === doc.data().student_id)?.nama,
+                    });
+                });
+            });
+        });
+
+        return notes?.sort((a, b) => b.send_date - a.send_date);
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
     }

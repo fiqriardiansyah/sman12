@@ -1,30 +1,37 @@
-import { Alert, Card, Descriptions, Image, Skeleton } from "antd";
+import { Alert, Card, Descriptions, Image, Skeleton, Tag } from "antd";
 import CardNote, { Note } from "components/card-note";
 import StateRender from "components/common/state";
+import VisibilitySensor from "react-visibility-sensor";
 import { UserContext } from "context/user";
 import { httpsCallable } from "firebase/functions";
 import { Kelas } from "modules/datakelas/table";
 import { Siswa } from "modules/datasiswa/table";
 import { useContext } from "react";
 import { FaRegEdit } from "react-icons/fa";
-import { useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
 import { GENDER, IMAGE_FALLBACK, STUDENT_PATH } from "utils/constant";
 
 const getNoteByStudent = httpsCallable(functionInstance, "getNoteByStudent");
+const noteSeenByStudent = httpsCallable(functionInstance, "noteSeenByStudent");
+const getMyData = httpsCallable(functionInstance, "getUserWithEmail");
+const detailClass = httpsCallable(functionInstance, "detailClass");
 
 function StudentProfile() {
     const { state } = useContext(UserContext);
-    const getMyData = httpsCallable(functionInstance, "getUserWithEmail");
-    const detailClass = httpsCallable(functionInstance, "detailClass");
+    const queryClient = useQueryClient();
 
     const detailClassQuery = useQuery(["get-class", state?.user?.kelas], async () => {
         return (await detailClass({ id: state?.user?.kelas_id })).data as Kelas;
     });
 
-    const getNoteByStudentQuery = useQuery(["get-note", state?.user?.id], async () => {
+    const getNoteByStudentQuery = useQuery(["get-note-student", state?.user?.id], async () => {
         return (await getNoteByStudent({ student_id: state?.user?.id })).data as Note[];
+    });
+
+    const seenNoteStudentMutate = useMutation(["seen-note-student", state?.user?.id], async (notes: Note[] | undefined) => {
+        return (await noteSeenByStudent({ notes })).data as Note[];
     });
 
     const profileQuery = useQuery(["profile", state?.user?.uid], async () => {
@@ -32,6 +39,19 @@ function StudentProfile() {
             await getMyData({ email: state?.user?.email })
         ).data) as Siswa;
     });
+
+    const onChangeVisibilityNote = (isSeen: boolean) => {
+        const notes = getNoteByStudentQuery.data?.filter((el) => !el?.receiver_seen);
+        if (isSeen && notes?.length) {
+            seenNoteStudentMutate.mutateAsync(notes).then(() => {
+                setTimeout(() => {
+                    queryClient.invalidateQueries("get-note-student");
+                }, 1000);
+            });
+        }
+    };
+
+    const totalUnseenNote = getNoteByStudentQuery.data?.filter((el) => !el?.receiver_seen).length || 0;
 
     return (
         <div className="pb-10">
@@ -84,7 +104,7 @@ function StudentProfile() {
                 </div>
             ) : null}
             <div className="flex flex-col gap-4 items-start mt-10">
-                <p className="m-0">Catatan siswa</p>
+                <div className="m-0">Catatan siswa {totalUnseenNote ? <Tag color="red">{totalUnseenNote} Baru</Tag> : null}</div>
                 <Card className="!w-full">
                     <StateRender
                         data={getNoteByStudentQuery.data}
@@ -96,6 +116,9 @@ function StudentProfile() {
                                 <CardNote fetcher={getNoteByStudentQuery} key={nt.id} note={nt} />
                             ))}
                             {!getNoteByStudentQuery.data?.length ? <p className="text-xl">Tidak ada catatan</p> : null}
+                            <VisibilitySensor scrollCheck="true" onChange={onChangeVisibilityNote}>
+                                <div className="h-1 w-full" />
+                            </VisibilitySensor>
                         </StateRender.Data>
                         <StateRender.Loading>
                             <Skeleton />

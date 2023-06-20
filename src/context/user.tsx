@@ -7,7 +7,7 @@ import { useMutation } from "react-query";
 import { functionInstance } from "service/firebase-instance";
 
 interface User extends UserFirebase {
-    role?: "teacher" | "staff" | "student";
+    role?: "teacher" | "staff" | "student" | "admin";
     nama?: string;
     id?: string;
     kelas?: string;

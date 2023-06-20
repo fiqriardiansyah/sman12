@@ -6,6 +6,7 @@ import { httpsCallable } from "firebase/functions";
 import TableAbsence from "modules/absensisiswa/table-absence";
 import { Kelas } from "modules/datakelas/table";
 import RosterTable from "modules/datapelajaran/roster-table";
+import CatatanKelas from "modules/perwalian/catatan-kelas";
 import PerwalianTableSiswa from "modules/perwalian/table-siswa";
 import TableSPP from "modules/perwalian/table-spp";
 import moment from "moment";
@@ -95,6 +96,29 @@ function TeacherPerwalian() {
         children: <RosterTable roster={getMyRosterQuery.data ? getMyRosterQuery.data[day] : []} />,
     }));
 
+    const itemsProperty: TabsProps["items"] = [
+        {
+            key: "catatan",
+            label: "Catatan Siswa",
+            children: <CatatanKelas />,
+        },
+        {
+            key: "daftar",
+            label: "Siswa",
+            children: <PerwalianTableSiswa siswa={detailClassQuery.data?.murid || []} />,
+        },
+        {
+            key: "absen",
+            label: "Absensi",
+            children: <Card>{attendanceHistory()}</Card>,
+        },
+        {
+            key: "spp",
+            label: "SPP",
+            children: <Card>{sppHistory()}</Card>,
+        },
+    ];
+
     if (!state?.loading && !state?.user?.kelas_id) {
         return (
             <div className="w-full">
@@ -121,18 +145,7 @@ function TeacherPerwalian() {
                         <p>Roster kelas</p>
                         <Tabs type="card" items={items} />
                     </Card>
-                    <div className="mt-5">
-                        <p className="m-0 font-semibold mb-4">Daftar siswa</p>
-                        <PerwalianTableSiswa siswa={detailClassQuery.data?.murid || []} />
-                    </div>
-                    <div className="">
-                        <p className="m-0 font-semibold mb-4">Absensi siswa</p>
-                        <Card>{attendanceHistory()}</Card>
-                    </div>
-                    <div className="mt-10">
-                        <p className="m-0 font-semibold mb-4">SPP siswa</p>
-                        <Card>{sppHistory()}</Card>
-                    </div>
+                    <Tabs className="mt-10" items={itemsProperty} />
                 </StateRender.Data>
                 <StateRender.Loading>
                     <Skeleton />

@@ -2,8 +2,7 @@ import Layout from "components/common/layout";
 import { UserContext } from "context/user";
 import React from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import { STAFF_PATH, STUDENT_PATH, TEACHER_PATH } from "utils/constant";
-import { getAuth } from "firebase/auth";
+import { ADMIN_PATH, STAFF_PATH, STUDENT_PATH, TEACHER_PATH } from "utils/constant";
 
 // staff
 import Login from "pages/auth/login";
@@ -52,6 +51,7 @@ import MasterDataPelajaranEdit from "pages/staff/masterdata/datapelajaran/edit";
 import Lottie from "react-lottie";
 import waitingAnim from "assets/animation/waiting.json";
 import findAnim from "assets/animation/find.json";
+import LaporanSPP from "pages/admin/laporang-spp";
 
 const waitingOptions = {
     loop: true,
@@ -101,8 +101,10 @@ function App() {
             )}
             {state?.user && !state.loading && (
                 <Layout>
-                    {state?.user?.role === "staff" && (
+                    {(state?.user?.role === "staff" || state?.user?.role === "admin") && (
                         <Routes>
+                            {state?.user?.role === "admin" && <Route path={ADMIN_PATH.laporanspp.index} element={<LaporanSPP />} />}
+
                             <Route path={STAFF_PATH.profile.index} element={<Profile />} />
                             <Route path={STAFF_PATH.profile.edit} element={<ProfileEdit />} />
 
@@ -152,7 +154,7 @@ function App() {
                             <Route path={STUDENT_PATH.pengumuman.index} element={<StudentPengumuman />} />
                             <Route path={`${STUDENT_PATH.pengumuman.index}/:id`} element={<StudentPengumumanDetail />} />
                             <Route path={STUDENT_PATH.spp.index} element={<StudentSPP />} />
-                            <Route path="*" element={<Navigate to={STUDENT_PATH.profile.index} />} />
+                            <Route path="*" element={<Navigate to={STUDENT_PATH.pengumuman.index} />} />
                         </Routes>
                     )}
                     {state?.user?.role === "teacher" && (
@@ -164,7 +166,7 @@ function App() {
                             <Route path={TEACHER_PATH.pengumuman.index} element={<TeacherPengumuman />} />
                             <Route path={`${TEACHER_PATH.pengumuman.index}/:id`} element={<TeacherPengumumanDetail />} />
                             <Route path={TEACHER_PATH.perwalian.index} element={<TeacherPerwalian />} />
-                            <Route path="*" element={<Navigate to={TEACHER_PATH.profile.index} />} />
+                            <Route path="*" element={<Navigate to={TEACHER_PATH.pengumuman.index} />} />
                         </Routes>
                     )}
                 </Layout>

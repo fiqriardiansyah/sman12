@@ -62,6 +62,12 @@ export const CLASS_OPTION = CLASSES.map((el) => ({ label: el, value: el }));
 
 export const NUMBER_CLASS_OPTION = [...new Array(5)].map((el, i) => ({ label: i + 1, value: i + 1 }));
 
+export const ADMIN_PATH = {
+    laporanspp: {
+        index: "/laporanspp",
+    },
+};
+
 export const TEACHER_PATH = {
     profile: {
         index: "/profile",
