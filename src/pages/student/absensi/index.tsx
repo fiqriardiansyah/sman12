@@ -9,7 +9,7 @@ import { CLASSES } from "utils/constant";
 function StudentAbsensi() {
     const { state } = React.useContext(UserContext);
 
-    const [tabClass, setTabClass] = React.useState<string>(Utils.SplitStrKelas(state?.user?.kelas));
+    const [tabClass, setTabClass] = React.useState<string>(state?.user?.kelas === "LULUS" ? "XII" : Utils.SplitStrKelas(state?.user?.kelas));
 
     const onChange = (key: string) => {
         setTabClass(key);

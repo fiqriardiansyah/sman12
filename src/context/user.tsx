@@ -12,6 +12,7 @@ interface User extends UserFirebase {
     id?: string;
     kelas?: string;
     kelas_id?: string;
+    lulus?: string;
 }
 
 interface State {

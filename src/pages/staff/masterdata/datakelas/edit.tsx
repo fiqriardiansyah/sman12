@@ -1,4 +1,4 @@
-import { Alert, Button, Card, Form, InputNumber, Popconfirm, Select, Skeleton, Space, Tabs, TabsProps, message } from "antd";
+import { Alert, Button, Card, DatePicker, Form, InputNumber, Popconfirm, Select, Skeleton, Space, Tabs, TabsProps, message } from "antd";
 import { ColumnsType } from "antd/es/table";
 import StateRender from "components/common/state";
 import TableTransfer from "components/common/table-transfer";
@@ -127,6 +127,7 @@ function MasterDataKelasEdit() {
             murid: targetKeys,
             rosters: tRosters,
             id,
+            stambuk: dayjs(values?.stambuk).format("YYYY"),
         };
 
         editClassMutation
@@ -161,6 +162,7 @@ function MasterDataKelasEdit() {
         kelas: detailClassQuery.data?.kelas,
         nomor_kelas: detailClassQuery.data?.nomor_kelas,
         wali: detailClassQuery.data?.wali_id,
+        stambuk: dayjs(detailClassQuery.data?.stambuk) || undefined,
     };
 
     const clickGoBack = (e: any) => {
@@ -192,7 +194,7 @@ function MasterDataKelasEdit() {
                     </Link>
                     <h1 className="m-0">Edit Kelas</h1>
                 </Space>
-                <Popconfirm title="Hapus" description="Hapus permanen siswa?" onConfirm={confirm} okText="Ya" cancelText="Tidak">
+                <Popconfirm title="Hapus" description="Hapus permanen kelas?" onConfirm={confirm} okText="Ya" cancelText="Tidak">
                     <Button loading={deleteClassMutate.isLoading} danger>
                         Delete
                     </Button>
@@ -201,13 +203,17 @@ function MasterDataKelasEdit() {
             <StateRender data={detailClassQuery.data} isLoading={detailClassQuery.isLoading} isError={detailClassQuery.isError}>
                 <StateRender.Data>
                     <Form initialValues={initialValues} onFinish={onSaveForm} autoComplete="off" layout="vertical" requiredMark={false}>
-                        <div className="grid w-full grid-cols-3 gap-x-5">
+                        <div className="grid w-full grid-cols-4 gap-x-5">
                             <Form.Item label="Tingkat Kelas" name="kelas" rules={[{ required: true, message: "Kelas harus diisi!" }]}>
                                 <Select options={CLASS_OPTION} />
                             </Form.Item>
 
                             <Form.Item label="Nomor Kelas" name="nomor_kelas" rules={[{ required: true, message: "Nomor Kelas harus diisi!" }]}>
                                 <InputNumber max={20} min={1} className="w-full" />
+                            </Form.Item>
+
+                            <Form.Item label="Stambuk" name="stambuk" rules={[{ required: true, message: "Stambuk harus diisi!" }]}>
+                                <DatePicker picker="year" className="w-full" />
                             </Form.Item>
 
                             <Form.Item label="Wali Kelas" name="wali" rules={[{ required: true, message: "Wali kelas harus diisi!" }]}>

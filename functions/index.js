@@ -3,7 +3,7 @@ const admin = require("firebase-admin");
 
 const GMAIL = "@gmail.com";
 
-const app = admin.initializeApp();
+admin.initializeApp();
 
 // USER
 exports.getUserWithEmail = functions.https.onCall(async (data) => {
@@ -48,12 +48,51 @@ exports.editUser = functions.https.onCall(async (data) => {
 
 exports.deleteUserWithEmail = functions.https.onCall(async (data) => {
     try {
-        const db = admin.firestore().collection("users");
-        const findUid = await db.where("email", "==", data.email).get();
+        const userCollRef = admin.firestore().collection("users");
+        const classCollRef = admin.firestore().collection("classes");
+        const subjectCollRef = admin.firestore().collection("subjects");
+
+        const findUid = await userCollRef.where("email", "==", data.email).get();
+        let ifTeacher = null;
+        let ifTeacherSubject = null;
+
         findUid.forEach(async (usr) => {
-            db.doc(usr.id).delete();
-            await admin.auth().deleteUser(usr.data().uid);
+            if (usr.data()?.role === "student" && usr.data()?.kelas_id) {
+                const classStudentCollRef = classCollRef.doc(usr.data()?.kelas_id).collection("students");
+                const getMyClass = await classStudentCollRef.where("uid", "==", usr.data().uid).get();
+                getMyClass.forEach(async (st) => {
+                    await classStudentCollRef.doc(st.id).delete();
+                });
+                userCollRef.doc(usr.id).delete();
+                await admin.auth().deleteUser(usr.data().uid);
+            }
+
+            if (usr.data()?.role === "teacher") {
+                ifTeacher = {
+                    id: usr.id,
+                    ...usr?.data(),
+                };
+            }
         });
+
+        if (ifTeacher?.kelas_id) {
+            throw new functions.https.HttpsError("unknown", `User adalah guru wali kelas ${ifTeacher?.kelas}`);
+        }
+
+        if (ifTeacher) {
+            const getSubject = await subjectCollRef.where("guru_id", "==", ifTeacher.id).get();
+            getSubject?.forEach((sub) => {
+                ifTeacherSubject = {
+                    id: sub.id,
+                    ...sub.data(),
+                };
+            });
+        }
+
+        if (ifTeacherSubject) {
+            throw new functions.https.HttpsError("unknown", `User adalah guru pelajaran ${ifTeacherSubject?.mata_pelajaran}`);
+        }
+
         return { success: true };
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
@@ -85,10 +124,31 @@ exports.getStudents = functions.https.onCall(async (data) => {
                 if (!data?.kelas) return student;
                 if (data?.kelas === "no_class") return !student?.kelas;
                 return student?.kelas === data.kelas;
-            });
+            })
+            .filter((student) => student?.kelas !== "LULUS");
     }
 
-    return students;
+    return students?.filter((st) => st?.kelas !== "LULUS");
+});
+
+exports.getAlumni = functions.https.onCall(async (data) => {
+    const req = await admin.firestore().collection("users").where("role", "==", "student").where("kelas", "==", "LULUS").get();
+    const students = [];
+    req?.forEach((student) => {
+        students.push({
+            ...student.data(),
+            id: student.id,
+        });
+    });
+
+    return students?.filter((st) => {
+        if (!data?.query) return st;
+        return (
+            st?.nama?.toLowerCase()?.includes(data?.query?.toLowerCase()) ||
+            st?.nisn?.toString()?.includes(data?.query) ||
+            st?.nis?.toString()?.includes(data?.query)
+        );
+    });
 });
 
 exports.createStudent = functions.https.onCall(async (data) => {
@@ -202,7 +262,7 @@ exports.createTeacherClass = functions.https.onCall(async (data) => {
             return { success: true };
         });
 });
-
+//
 // SUBJECT
 exports.createSubject = functions.https.onCall(async (data) => {
     const db = admin.firestore().collection("subjects");
@@ -266,7 +326,7 @@ exports.detailSubject = functions.https.onCall(async (data) => {
 
 // STAFF
 exports.getStaffs = functions.https.onCall(async (data) => {
-    const req = await admin.firestore().collection("users").where("role", "==", "staff").get();
+    const req = await admin.firestore().collection("users").where("role", "in", ["staff", "admin"]).get();
     const staffs = [];
     req?.forEach((staff) => {
         staffs.push({
@@ -359,6 +419,7 @@ exports.createClass = functions.https.onCall(async (data) => {
             kelas: data.kelas,
             nomor_kelas: data.nomor_kelas,
             nama_kelas: data.kelas + data.nomor_kelas,
+            stambuk: data.stambuk,
         });
 
         const querieStudents = [];
@@ -375,7 +436,7 @@ exports.createClass = functions.https.onCall(async (data) => {
 
         students.forEach((student) => {
             studentClassCollRef.add(student);
-            userCollRef.doc(student.id).update({ kelas_id: createdClass.id, kelas: data.kelas + data.nomor_kelas });
+            userCollRef.doc(student.id).update({ kelas_id: createdClass.id, kelas: data.kelas + data.nomor_kelas, stambuk: data.stambuk });
         });
 
         const createRoster = await db.ref(`rosters/${createdClass.id}`).set(data.rosters);
@@ -460,6 +521,8 @@ exports.editClass = functions.https.onCall(async (data) => {
             wali_nama: data.wali_nama,
             kelas: data.kelas,
             nomor_kelas: data.nomor_kelas,
+            nama_kelas: data.kelas + data.nomor_kelas,
+            stambuk: data.stambuk,
         });
 
         if (currentDataClass.wali_id !== data.wali) {
@@ -475,7 +538,7 @@ exports.editClass = functions.https.onCall(async (data) => {
         // remove student
         currentStudents?.forEach((student) => {
             studentsCollRef.doc(student.id).delete();
-            userCollRef.doc(student.data().id).update({ kelas_id: null, kelas: null });
+            userCollRef.doc(student.data().id).update({ kelas_id: null, kelas: null, stambuk: null });
         });
 
         // add kelas to new student
@@ -491,7 +554,7 @@ exports.editClass = functions.https.onCall(async (data) => {
 
         students?.forEach((student) => {
             studentsCollRef.add(student);
-            userCollRef.doc(student.id).update({ kelas_id: currentDataClass.id, kelas: data.kelas + data.nomor_kelas });
+            userCollRef.doc(student.id).update({ kelas_id: currentDataClass.id, kelas: data.kelas + data.nomor_kelas, stambuk: data.stambuk });
         });
 
         const updateRosters = await db.ref(`rosters/${currentDataClass.id}`).update(data.rosters);
@@ -510,9 +573,9 @@ exports.deleteClass = functions.https.onCall(async (data) => {
         const db = admin.database();
 
         const getStudents = await studentClassCollRef.get();
-        getStudents.forEach((student) => {
+        getStudents?.forEach((student) => {
             studentClassCollRef.doc(student.id).delete();
-            userCollRef.doc(student.data().id).update({ kelas_id: null, kelas: null });
+            userCollRef.doc(student.data()?.id).update({ kelas_id: null, kelas: null });
         });
 
         const removeRoster = await db.ref(`rosters/${data.id}`).remove();
@@ -896,6 +959,75 @@ exports.getNotesByTeacher = functions.https.onCall(async (data) => {
         });
 
         return notes?.sort((a, b) => b.send_date - a.send_date);
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+/// ////////////////////////////////////// OTHER FUNCTIONS
+exports.newAcademicYear = functions.https.onCall(async (data) => {
+    const classCollRef = admin.firestore().collection("classes");
+    const userCollRef = admin.firestore().collection("users");
+    const academyYearCollRef = admin.firestore().collection("academicyear");
+
+    try {
+        const allStudents = await userCollRef.where("role", "==", "student").get();
+        const allTeachers = await userCollRef.where("role", "==", "teacher").get();
+
+        // remove all teacer class
+        const queries = [];
+        allTeachers?.forEach((doc) => {
+            queries.push(userCollRef.doc(doc.id));
+        });
+        await Promise.all(queries.map((q) => q.update({ kelas: null, kelas_id: null })));
+        // ////
+
+        // set new class/graduate to students
+        allStudents?.forEach(async (doc) => {
+            const student = doc.data();
+            const myClass = data?.list?.find((cls) => cls.id === student.kelas_id);
+            if (!myClass) return;
+            await userCollRef.doc(doc.id).update({
+                kelas: myClass.kelas_baru === "LULUS" ? "LULUS" : myClass.kelas_baru + myClass.nomor_kelas,
+                lulus: myClass.kelas_baru === "LULUS" ? new Date().getFullYear() : null,
+            });
+        });
+        ///
+
+        /// update/delete data class
+        data?.list?.forEach(async (cls) => {
+            if (cls.kelas_baru === "LULUS") {
+                await classCollRef.doc(cls.id).delete();
+                return;
+            }
+            await classCollRef.doc(cls.id).update({
+                wali_id: cls.wali_id_baru,
+                wali_nama: cls.wali_nama_baru,
+                kelas: cls.kelas_baru,
+                nama_kelas: cls.kelas_baru + cls.nomor_kelas,
+            });
+            await userCollRef.doc(cls.wali_id_baru).update({ kelas: cls.kelas_baru, kelas_id: cls.id });
+        });
+
+        academyYearCollRef.add({ year: new Date().getFullYear() });
+
+        return { success: true };
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.getLatestAcademicYearUpdate = functions.https.onCall(async (data) => {
+    const academyYearCollRef = admin.firestore().collection("academicyear");
+    try {
+        const years = [];
+        const req = await academyYearCollRef.get();
+        req?.forEach((doc) => {
+            years.push(doc.data().year);
+        });
+
+        if (years.length === 0) return null;
+        return years?.sort((a, b) => a - b)[years.length - 1];
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
     }

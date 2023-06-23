@@ -8,13 +8,13 @@ import { functionInstance } from "service/firebase-instance";
 import { STAFF_PATH } from "utils/constant";
 
 function MasterDataKelas() {
-    const getTeachers = httpsCallable(functionInstance, "getClasses");
+    const getClasses = httpsCallable(functionInstance, "getClasses");
 
     const [searchParams, setSearchParams] = useSearchParams();
     const query = searchParams.get("query");
 
     const classQuery = useQuery(["get-classes", query], async () => {
-        return (await getTeachers({ query })).data as Kelas[];
+        return (await getClasses({ query })).data as Kelas[];
     });
 
     const onSearch = (qr: string) => {

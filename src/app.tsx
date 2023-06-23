@@ -52,6 +52,9 @@ import Lottie from "react-lottie";
 import waitingAnim from "assets/animation/waiting.json";
 import findAnim from "assets/animation/find.json";
 import LaporanSPP from "pages/admin/laporang-spp";
+import PergantianTahunAjar from "pages/admin/tahun-ajar";
+import Alumni from "pages/staff/alumni";
+import AlumniView from "pages/staff/alumni/view";
 
 const waitingOptions = {
     loop: true,
@@ -103,7 +106,12 @@ function App() {
                 <Layout>
                     {(state?.user?.role === "staff" || state?.user?.role === "admin") && (
                         <Routes>
-                            {state?.user?.role === "admin" && <Route path={ADMIN_PATH.laporanspp.index} element={<LaporanSPP />} />}
+                            {state?.user?.role === "admin" && (
+                                <>
+                                    <Route path={ADMIN_PATH.laporanspp.index} element={<LaporanSPP />} />
+                                    <Route path={ADMIN_PATH.tahunajar.index} element={<PergantianTahunAjar />} />
+                                </>
+                            )}
 
                             <Route path={STAFF_PATH.profile.index} element={<Profile />} />
                             <Route path={STAFF_PATH.profile.edit} element={<ProfileEdit />} />
@@ -140,6 +148,9 @@ function App() {
                             <Route path={STAFF_PATH.pengumuman.index} element={<StaffPengumuman />} />
                             <Route path={STAFF_PATH.pengumuman.add} element={<StaffPengumumanAdd />} />
                             <Route path={`${STAFF_PATH.pengumuman.edit}/:id`} element={<StaffPengumumanEdit />} />
+
+                            <Route path={STAFF_PATH.alumni.index} element={<Alumni />} />
+                            <Route path={`${STAFF_PATH.alumni.index}/:id`} element={<AlumniView />} />
 
                             <Route path="*" element={<Navigate to={STAFF_PATH.profile.index} />} />
                         </Routes>

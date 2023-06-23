@@ -1,4 +1,4 @@
-import { Button, Card, Form, InputNumber, Select, Space, Tabs, TabsProps, message } from "antd";
+import { Button, Card, DatePicker, Form, InputNumber, Select, Space, Tabs, TabsProps, message } from "antd";
 import { ColumnsType } from "antd/es/table";
 import TableTransfer from "components/common/table-transfer";
 import dayjs from "dayjs";
@@ -83,6 +83,7 @@ function MasterDataKelasAdd() {
             wali_nama: teacherAvailableQuery.data?.find((t) => t.id === values.wali)?.nama,
             murid: targetKeys,
             rosters: tRosters,
+            stambuk: dayjs(values?.stambuk).format("YYYY"),
         };
 
         createClassMutation
@@ -124,13 +125,17 @@ function MasterDataKelasAdd() {
                 </Space>
             </div>
             <Form onFinish={onSaveKelas} autoComplete="off" layout="vertical" requiredMark={false}>
-                <div className="grid w-full grid-cols-3 gap-x-5">
+                <div className="grid w-full grid-cols-4 gap-x-5">
                     <Form.Item label="Tingkat Kelas" name="kelas" rules={[{ required: true, message: "Kelas harus diisi!" }]}>
                         <Select options={CLASS_OPTION} />
                     </Form.Item>
 
                     <Form.Item label="Nomor Kelas" name="nomor_kelas" rules={[{ required: true, message: "Nomor Kelas harus diisi!" }]}>
                         <InputNumber max={20} min={1} className="w-full" />
+                    </Form.Item>
+
+                    <Form.Item label="Stambuk" name="stambuk" rules={[{ required: true, message: "Stambuk harus diisi!" }]}>
+                        <DatePicker picker="year" className="w-full" />
                     </Form.Item>
 
                     <Form.Item label="Wali Kelas" name="wali" rules={[{ required: true, message: "Wali kelas harus diisi!" }]}>

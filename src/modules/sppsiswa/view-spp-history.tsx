@@ -26,7 +26,7 @@ const defaultOptions = {
 const getStaffs = httpsCallable(functionInstance, "getStaffs");
 
 function ViewSppHistory({ kelas, studentId }: { kelas: any; studentId: any }) {
-    const [tabClass, setTabClass] = useState<string>(Utils.SplitStrKelas(kelas));
+    const [tabClass, setTabClass] = useState<string>(kelas === "LULUS" ? "XII" : Utils.SplitStrKelas(kelas));
 
     const getStaffsQuery = useQuery(["get-staff"], async () => {
         return (await getStaffs()).data as Staff[];
@@ -72,6 +72,7 @@ function ViewSppHistory({ kelas, studentId }: { kelas: any; studentId: any }) {
             dataIndex: "month",
             width: "200px",
             render: (text, record) => {
+                if (kelas === "LULUS") return <p className="m-0 capitalize flex">{text}</p>;
                 const isSameOrBeforeMonth = MONTHS.indexOf((record.month as any) || "") <= MONTHS.indexOf(moment().format("MMMM")?.toLowerCase());
                 const isDebt = isSameOrBeforeMonth && record.kelas?.length <= Utils.SplitStrKelas(kelas)?.length && (!record.pay_date as any);
                 return (

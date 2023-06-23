@@ -17,6 +17,8 @@ export interface Siswa {
     kelas_id?: string;
     foto?: string;
     kelamin?: any;
+    stambuk?: string;
+    lulus?: string;
 }
 
 type Props = {

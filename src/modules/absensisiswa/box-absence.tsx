@@ -42,6 +42,7 @@ function BoxAbsence({ detail, date, onChange, canInteract = true }: Props) {
         "bg-gray-400": absence?.status === "i",
         "bg-yellow-200": absence?.status === "l",
         "bg-white": absence?.status === "x",
+        "bg-pink-200": absence?.status === "s",
         "cursor-pointer": absence?.status !== "x",
     });
 
@@ -51,6 +52,7 @@ function BoxAbsence({ detail, date, onChange, canInteract = true }: Props) {
                 <Space direction="vertical">
                     <Radio value="h">Hadir</Radio>
                     <Radio value="a">Absen</Radio>
+                    <Radio value="s">Sakit</Radio>
                     <Radio value="i" className="flex flex-row !items-start">
                         <div className={`flex flex-row gap-4 ${absence?.status === "i" ? "mt-6" : ""}`}>
                             Izin

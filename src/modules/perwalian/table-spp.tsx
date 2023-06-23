@@ -38,6 +38,7 @@ function TableSPP({ students, month, sppClass }: Props) {
             dataIndex: "nama",
             width: "200px",
             render: (text, record) => {
+                if (state?.user?.kelas === "LULUS") return <p className="m-0 capitalize flex !h-fit">{text}</p>;
                 const payDate = getHistory(record)?.pay_date;
                 const isSameOrBeforeMonth = MONTHS.indexOf((month as any) || "") <= MONTHS.indexOf(moment().format("MMMM")?.toLowerCase());
                 const isDebt =

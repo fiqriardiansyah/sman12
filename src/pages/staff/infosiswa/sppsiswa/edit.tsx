@@ -38,7 +38,7 @@ function InfoSiswaSppEdit() {
         },
         {
             onSuccess(data) {
-                setTabClass(Utils.SplitStrKelas(data.kelas));
+                setTabClass(data.kelas === "LULUS" ? "XII" : Utils.SplitStrKelas(data.kelas));
             },
         }
     );
@@ -46,7 +46,13 @@ function InfoSiswaSppEdit() {
     const items: TabsProps["items"] = CLASSES.map((cls) => ({
         key: cls,
         label: `Kelas ${cls}`,
-        children: <TableDetailSpp studentId={id} currentCls={Utils.SplitStrKelas(dataUserQuery.data?.kelas)} cls={cls} />,
+        children: (
+            <TableDetailSpp
+                studentId={id}
+                currentCls={dataUserQuery.data?.kelas === "LULUS" ? "XII" : Utils.SplitStrKelas(dataUserQuery.data?.kelas)}
+                cls={cls}
+            />
+        ),
     }));
 
     const onChange = (key: string) => {

@@ -1,4 +1,4 @@
-import { Alert, Button, Form, Image, Input, Popconfirm, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
+import { Alert, Button, Form, Image, Input, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import StateRender from "components/common/state";
@@ -17,15 +17,10 @@ function MasterDataStaffEdit() {
     const navigate = useNavigate();
 
     const editUser = httpsCallable(functionInstance, "editUser");
-    const deleteUser = httpsCallable(functionInstance, "deleteUserWithEmail");
     const getDataUser = httpsCallable(functionInstance, "getUserWithId");
 
     const dataUserQuery = useQuery(["detail-staff", id], async () => {
         return (await getDataUser({ id })).data as Staff;
-    });
-
-    const deleteMutation = useMutation(["delete", id], async () => {
-        return (await deleteUser({ email: dataUserQuery.data?.email })).data;
     });
 
     const editMutation = useMutation(
@@ -39,13 +34,6 @@ function MasterDataStaffEdit() {
             },
         }
     );
-
-    const confirm = () => {
-        deleteMutation.mutateAsync().then(() => {
-            navigate(-1);
-            message.success("Data staff dihapus");
-        });
-    };
 
     const onSaveStaff = (values: Staff) => {
         editMutation.mutateAsync(values).then(() => {
@@ -117,11 +105,6 @@ function MasterDataStaffEdit() {
                     </Link>
                     <h1 className="m-0">Edit Staff</h1>
                 </Space>
-                <Popconfirm title="Hapus" description="Hapus permanen ?" onConfirm={confirm} okText="Ya" cancelText="Tidak">
-                    <Button loading={deleteMutation.isLoading} danger>
-                        Delete
-                    </Button>
-                </Popconfirm>
             </div>
             <StateRender data={dataUserQuery.data} isLoading={dataUserQuery.isLoading} isError={dataUserQuery.isError}>
                 <StateRender.Data>

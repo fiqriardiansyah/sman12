@@ -13,6 +13,7 @@ export interface Kelas {
     murid?: Partial<Siswa>[];
     wali_id?: any;
     wali_nama?: string;
+    stambuk?: string;
     rosters?: {
         [day: string]: { id?: any; jam?: any; mata_pelajaran?: string };
     };

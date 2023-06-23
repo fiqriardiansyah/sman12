@@ -14,6 +14,7 @@ export interface Staff {
     kelamin?: any;
     posisi?: string;
     foto?: string;
+    role?: string;
 }
 
 type Props = {

@@ -7,6 +7,7 @@ export const UNAUTHORIZED = "unauthorized";
 export const UNAUTHORIZED_MESSAGE = "It looks like you're not logged in. Reload the page to try again";
 export const MONTHS = ["july", "august", "september", "october", "november", "december", "january", "february", "march", "april", "may", "june"];
 export const CLASSES = ["X", "XI", "XII"];
+export const JOURNEY_CLASSES = [...CLASSES, "LULUS"];
 export const CLASSES_SEMESTER = ["X", "X", "XI", "XI", "XII", "XII"];
 export const DAYS = ["senin", "selasa", "rabu", "kamis", "jum'at", "sabtu"];
 export const FORMAT_DATE = "DD MMM YYYY";
@@ -20,10 +21,11 @@ export const ABSEN_STATUS = {
     a: "absen",
     i: "izin",
     l: "libur",
+    s: "sakit",
     x: "",
     n: "",
 };
-export const COUNT_ABSENT = ["H", "A", "I"];
+export const COUNT_ABSENT = ["H", "A", "I", "S"];
 
 export const CATEGORY_NEWS = [
     {
@@ -65,6 +67,9 @@ export const NUMBER_CLASS_OPTION = [...new Array(5)].map((el, i) => ({ label: i 
 export const ADMIN_PATH = {
     laporanspp: {
         index: "/laporanspp",
+    },
+    tahunajar: {
+        index: "/tahunajar",
     },
 };
 
@@ -156,5 +161,8 @@ export const STAFF_PATH = {
         index: "/pengumuman",
         add: "/pengumuman/add",
         edit: "/pengumuman/edit",
+    },
+    alumni: {
+        index: "/alumni",
     },
 };

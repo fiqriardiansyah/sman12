@@ -10,8 +10,9 @@ import { CgProfile } from "react-icons/cg";
 import { FiAward, FiLogOut } from "react-icons/fi";
 import { GrAnnounce } from "react-icons/gr";
 import { IoIosSchool } from "react-icons/io";
-import { MdGrading, MdOutlineSpaceDashboard, MdOutlineSubject, MdOutlineSupervisedUserCircle } from "react-icons/md";
+import { MdGrading, MdOutlineSpaceDashboard, MdOutlineSubject, MdOutlineSupervisedUserCircle, MdSchool } from "react-icons/md";
 import { SiGoogleclassroom } from "react-icons/si";
+import { TbSchoolOff } from "react-icons/tb";
 import { useQuery } from "react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
@@ -106,6 +107,7 @@ function Sidebar() {
             ],
         },
         { label: "Pengumuman", key: STAFF_PATH.pengumuman.index, icon: <GrAnnounce /> },
+        { label: "Alumni", key: STAFF_PATH.alumni.index, icon: <TbSchoolOff /> },
     ];
 
     const studentMenuItems: MenuItem[] = [
@@ -140,6 +142,11 @@ function Sidebar() {
             label: "Laporan SPP",
             key: ADMIN_PATH.laporanspp.index,
             icon: <BiMoney />,
+        },
+        {
+            label: "Pergantian Tahun Ajar",
+            key: ADMIN_PATH.tahunajar.index,
+            icon: <MdSchool />,
         },
     ];
 

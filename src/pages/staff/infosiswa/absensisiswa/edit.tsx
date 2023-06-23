@@ -12,7 +12,7 @@ import { functionInstance } from "service/firebase-instance";
 import { MONTHS, STAFF_PATH } from "utils/constant";
 
 export type DetailAttendance = {
-    status: "h" | "i" | "a" | "l" | "x" | "n";
+    status: "h" | "i" | "a" | "l" | "x" | "n" | "s";
     desc: string;
 };
 

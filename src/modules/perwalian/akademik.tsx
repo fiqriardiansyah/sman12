@@ -35,7 +35,7 @@ const defaultOptions = {
 function Akademik({ kelas }: { kelas: any }) {
     const { id } = useParams();
 
-    const [tabClass, setTabClass] = useState<string>(Utils.SplitStrKelas(kelas));
+    const [tabClass, setTabClass] = useState<string>(kelas === "LULUS" ? Utils.SplitStrKelas(kelas) : "XII");
 
     const subjectsQuery = useQuery(["get-subject"], async () => {
         return ((await getSubjects()).data as Pelajaran[])?.map((el) => ({
@@ -147,8 +147,6 @@ function Akademik({ kelas }: { kelas: any }) {
             />
         ),
     }));
-
-    console.log(getMyGradesQuery.data);
 
     return (
         <div className="w-full pb-20">

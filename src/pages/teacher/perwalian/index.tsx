@@ -88,7 +88,7 @@ function TeacherPerwalian() {
             children: <TableSPP sppClass={getSPPClassMutate.data} students={detailClassQuery.data?.murid} month={m} />,
         }));
         return <Tabs activeKey={currentMonthSPP?.toString()} items={items} onChange={onChangeTabSPP} />;
-    }, [detailClassQuery.data?.kelas, detailClassQuery.data?.nomor_kelas, currentMonthSPP]);
+    }, [detailClassQuery.data?.kelas, detailClassQuery.data?.nomor_kelas, currentMonthSPP, getSPPClassMutate.data]);
 
     const items: TabsProps["items"] = DAYS.map((day) => ({
         key: day,
@@ -122,7 +122,7 @@ function TeacherPerwalian() {
     if (!state?.loading && !state?.user?.kelas_id) {
         return (
             <div className="w-full">
-                <h1 className="m-0 mb-10 pt-4">Mata Pelajaran</h1>
+                <h1 className="m-0 mb-10 pt-4">Wali Kelas</h1>
                 <div className="flex flex-col items-center justify-center h-[400px]">
                     <Lottie options={defaultOptions} height={400} width={400} isClickToPauseDisabled={false} />
                     <p className="m-0 text-xl text-gray-500">Anda bukan wali kelas</p>

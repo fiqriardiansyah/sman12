@@ -24,9 +24,17 @@ function MasterDataGuruEdit() {
         return (await getDataUser({ id })).data as Guru;
     });
 
-    const deleteMutation = useMutation(["delete", id], async () => {
-        return (await deleteUser({ email: dataUserQuery.data?.email })).data;
-    });
+    const deleteMutation = useMutation(
+        ["delete", id],
+        async () => {
+            return (await deleteUser({ email: dataUserQuery.data?.email })).data;
+        },
+        {
+            onError(e: any) {
+                message.error(e?.message);
+            },
+        }
+    );
 
     const editMutation = useMutation(
         ["edit-profile-teacher", id],

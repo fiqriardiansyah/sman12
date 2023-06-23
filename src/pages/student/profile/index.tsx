@@ -6,6 +6,7 @@ import { UserContext } from "context/user";
 import { httpsCallable } from "firebase/functions";
 import { Kelas } from "modules/datakelas/table";
 import { Siswa } from "modules/datasiswa/table";
+import { GiGraduateCap } from "react-icons/gi";
 import { useContext } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -63,14 +64,22 @@ function StudentProfile() {
             </div>
             <StateRender data={profileQuery.data} isLoading={profileQuery.isLoading} isError={profileQuery.isError}>
                 <StateRender.Data>
-                    <Image
-                        height={200}
-                        width={200}
-                        src={profileQuery.data?.foto}
-                        className="!rounded-full object-cover"
-                        fallback={IMAGE_FALLBACK}
-                        alt={profileQuery.data?.nama}
-                    />
+                    <div className="w-full flex items-center justify-between">
+                        <Image
+                            height={200}
+                            width={200}
+                            src={profileQuery.data?.foto}
+                            className="!rounded-full object-cover"
+                            fallback={IMAGE_FALLBACK}
+                            alt={profileQuery.data?.nama}
+                        />
+                        {state?.user?.kelas === "LULUS" && (
+                            <div className="flex flex-col items-center justify-center">
+                                <GiGraduateCap className="text-9xl text-green-400" />
+                                <p className="m-0 text-green-500 font-semibold">LULUS {state?.user?.lulus}</p>
+                            </div>
+                        )}
+                    </div>
                     <Descriptions title="User Info" className="mt-10" bordered>
                         <Descriptions.Item label="Nama">{profileQuery.data?.nama}</Descriptions.Item>
                         <Descriptions.Item label="NISN">{profileQuery.data?.nisn}</Descriptions.Item>
@@ -82,6 +91,7 @@ function StudentProfile() {
                         </Descriptions.Item>
                         <Descriptions.Item label="Alamat">{profileQuery.data?.alamat}</Descriptions.Item>
                         <Descriptions.Item label="Wali / Orang tua">{profileQuery.data?.wali}</Descriptions.Item>
+                        <Descriptions.Item label="Stambuk">{profileQuery.data?.stambuk}</Descriptions.Item>
                     </Descriptions>
                 </StateRender.Data>
                 <StateRender.Loading>
@@ -91,7 +101,7 @@ function StudentProfile() {
                     <Alert type="error" message={(profileQuery.error as any)?.message} />
                 </StateRender.Error>
             </StateRender>
-            {state?.user?.kelas ? (
+            {state?.user?.kelas && state?.user?.kelas !== "LULUS" ? (
                 <div className="flex flex-col gap-4 items-start mt-10">
                     <p className="m-0">Detail Kelas</p>
                     <Card className="!w-full">

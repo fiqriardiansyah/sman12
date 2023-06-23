@@ -92,12 +92,14 @@ function TableAbsence({ month, students, cls, canInteract = true }: Props) {
                     if (status === "h") return { ...prev, hadir: prev.hadir + 1 };
                     if (status === "a") return { ...prev, absen: prev.absen + 1 };
                     if (status === "i") return { ...prev, izin: prev.izin + 1 };
+                    if (status === "s") return { ...prev, sakit: prev.sakit + 1 };
                     return prev;
                 },
                 {
                     hadir: 0,
                     absen: 0,
                     izin: 0,
+                    sakit: 0,
                 }
             );
             return (
@@ -118,8 +120,8 @@ function TableAbsence({ month, students, cls, canInteract = true }: Props) {
                             );
                         })}
                     </div>
-                    <div className="w-[70px] flex items-center gap-[5px] ml-[5px]">
-                        {[count.hadir, count.absen, count.izin]?.map((el, i) => (
+                    <div className="w-[80px] flex items-center gap-[5px] ml-[5px]">
+                        {[count.hadir, count.absen, count.izin, count.sakit]?.map((el, i) => (
                             <div className="m-0 w-full text-black font-semibold" title={COUNT_ABSENT[i]?.CapitalizeFirstLetter()}>
                                 {el}
                             </div>
@@ -151,7 +153,7 @@ function TableAbsence({ month, students, cls, canInteract = true }: Props) {
                         />
                     ))}
                 </div>
-                <div className="w-[70px] flex items-center gap-[5px] ml-[5px]">
+                <div className="w-[80px] flex items-center gap-[5px] ml-[5px]">
                     {COUNT_ABSENT?.map((el) => (
                         <div
                             className="m-0 w-full text-black font-semibold"

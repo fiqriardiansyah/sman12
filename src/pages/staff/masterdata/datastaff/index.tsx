@@ -1,8 +1,5 @@
 import { Button, Input, Space } from "antd";
-import Layout from "components/common/layout";
 import { httpsCallable } from "firebase/functions";
-import TableGuru, { Guru } from "modules/dataguru/table";
-import TableKelas, { Kelas } from "modules/datakelas/table";
 import TableStaff, { Staff } from "modules/datastaff/table";
 import { useQuery } from "react-query";
 import { Link, useSearchParams } from "react-router-dom";
