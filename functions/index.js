@@ -801,7 +801,7 @@ exports.setSPP = functions.https.onCall(async (data) => {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
 });
-//
+
 exports.getIncome = functions.https.onCall(async (data) => {
     const sppCollRef = admin.firestore().collection("spp");
     try {
@@ -816,7 +816,38 @@ exports.getIncome = functions.https.onCall(async (data) => {
                 ...doc.data(),
             });
         });
-        return list;
+        return list?.filter((el) => el?.legalized);
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.getNotLegalizeSpp = functions.https.onCall(async (data) => {
+    const sppCollRef = admin.firestore().collection("spp");
+    try {
+        const list = [];
+        const getSppToday = await sppCollRef.get();
+        getSppToday?.forEach((doc) => {
+            list.push({
+                id: doc.id,
+                ...doc.data(),
+            });
+        });
+        return list?.filter((el) => !el?.legalized);
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.setLegalizeSpp = functions.https.onCall(async (data) => {
+    const db = admin.database();
+    const sppCollRef = admin.firestore().collection("spp");
+    try {
+        await sppCollRef.doc(data.id).update({ legalized: data.legalized, legalized_date: new Date().getTime() });
+        await db
+            .ref(`spp/${data.student_id}/${data.class}/${data.month}`)
+            .update({ legalized: data.legalized, legalized_date: new Date().getTime() });
+        return { success: true };
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
     }

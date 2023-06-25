@@ -1,18 +1,17 @@
-import { Button, Form, Input, Select, Space, message } from "antd";
-import Layout from "components/common/layout";
+import { Button, DatePicker, Form, Input, Select, Space, message } from "antd";
 import { AiOutlineQuestionCircle } from "react-icons/ai";
 import { FaFileImport } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 
-import { GENDER, STAFF_PATH } from "utils/constant";
+import dayjs from "dayjs";
+import { httpsCallable } from "firebase/functions";
 import ModalImportSiswa from "modules/datasiswa/modal-import";
 import ModalInfoImport from "modules/datasiswa/modal-info";
 import { Siswa } from "modules/datasiswa/table";
 import { IoMdArrowBack } from "react-icons/io";
 import { useMutation } from "react-query";
-import { httpsCallable } from "firebase/functions";
 import { functionInstance } from "service/firebase-instance";
-import Utils from "utils";
+import { FORMAT_DATE_DAYJS, GENDER, STAFF_PATH } from "utils/constant";
 
 function MasterDataSiswaAdd() {
     const navigate = useNavigate();
@@ -52,7 +51,10 @@ function MasterDataSiswaAdd() {
     );
 
     const onSaveSiswa = (values: Siswa) => {
-        createStudentMutate.mutate(values);
+        createStudentMutate.mutate({
+            ...values,
+            tgl_lahir: values?.tgl_lahir ? dayjs(values?.tgl_lahir).format(FORMAT_DATE_DAYJS) : "",
+        });
     };
 
     const importSiswa = (siswa: Partial<Siswa>[]) => {
@@ -99,12 +101,12 @@ function MasterDataSiswaAdd() {
                         <Input />
                     </Form.Item>
 
-                    <Form.Item label="Jenis Kelamin" name="kelamin" rules={[{ required: true, message: "Kelamin harus diisi!" }]}>
-                        <Select options={GENDER} />
-                    </Form.Item>
-
                     <Form.Item label="Nisn" name="nisn" rules={[{ required: true, message: "NISN harus diisi!" }]}>
                         <Input />
+                    </Form.Item>
+
+                    <Form.Item label="Jenis Kelamin" name="kelamin">
+                        <Select options={GENDER} />
                     </Form.Item>
 
                     <Form.Item label="Nis" name="nis">
@@ -120,6 +122,14 @@ function MasterDataSiswaAdd() {
                     </Form.Item>
 
                     <Form.Item label="Wali / Orang tua" name="wali">
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item label="Tanggal Lahir" name="tgl_lahir">
+                        <DatePicker className="w-full" />
+                    </Form.Item>
+
+                    <Form.Item label="Tempat Lahir" name="tempat_lahir">
                         <Input />
                     </Form.Item>
                 </div>

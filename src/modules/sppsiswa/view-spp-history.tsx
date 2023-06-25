@@ -6,11 +6,12 @@ import { httpsCallable } from "firebase/functions";
 import { Staff } from "modules/datastaff/table";
 import moment from "moment";
 import { useState } from "react";
+import { HiBadgeCheck } from "react-icons/hi";
 import Lottie from "react-lottie";
 import { useQuery } from "react-query";
 import { functionInstance } from "service/firebase-instance";
 import Utils from "utils";
-import { CLASSES, MONTHS, SPP_PAYMENT_METHOD } from "utils/constant";
+import { CLASSES, FORMATE_DATE_TIME, MONTHS, SPP_PAYMENT_METHOD } from "utils/constant";
 
 const getMySPP = httpsCallable(functionInstance, "getMySPP");
 
@@ -48,6 +49,9 @@ function ViewSppHistory({ kelas, studentId }: { kelas: any; studentId: any }) {
                         author_id: history ? history[month]?.author_id : "",
                         method: history ? history[month]?.method : "",
                         kelas: cls,
+                        legalized: history ? history[month]?.legalized : "",
+                        legalized_date:
+                            history && history[month]?.legalized_date ? moment(history[month]?.legalized_date).format(FORMATE_DATE_TIME) : "",
                     })),
                 };
             });
@@ -111,6 +115,24 @@ function ViewSppHistory({ kelas, studentId }: { kelas: any; studentId: any }) {
             title: "Dibuat oleh",
             dataIndex: "author_id",
             render: (text) => <p className="m-0">{text ? getStaffsQuery.data?.find((staff) => staff.id === text)?.nama : ""}</p>,
+        },
+        {
+            title: "Disahkan",
+            dataIndex: "legalized",
+            render: (text, record) => {
+                if (!text) return "";
+                return (
+                    <div className="flex items-center">
+                        <HiBadgeCheck className="text-green-400 text-xl mr-2" />
+                        <div className="">
+                            <p className="m-0 text-green-500 text-sm capitalize leading-none">
+                                {text ? getStaffsQuery.data?.find((staff) => staff.id === text)?.nama : ""}
+                            </p>
+                            <p className="m-0 text-gray-500 text-sm capitalize leading-none">{record.legalized_date}</p>
+                        </div>
+                    </div>
+                );
+            },
         },
     ];
 

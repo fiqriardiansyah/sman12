@@ -4,12 +4,12 @@ import EditTable, { Props as EditTableProps } from "components/table/editable-ta
 import dayjs from "dayjs";
 import moment from "moment";
 import { ComponentType, useState } from "react";
-
+import { HiBadgeCheck } from "react-icons/hi";
 import { httpsCallable } from "firebase/functions";
 import { Staff } from "modules/datastaff/table";
 import { useQuery } from "react-query";
 import { functionInstance } from "service/firebase-instance";
-import { FORMAT_DATE_DAYJS, MONTHS, SPP_PAYMENT_METHOD } from "utils/constant";
+import { FORMATE_DATE_TIME, FORMAT_DATE_DAYJS, MONTHS, SPP_PAYMENT_METHOD } from "utils/constant";
 
 export interface SppTable {
     id?: any;
@@ -19,6 +19,10 @@ export interface SppTable {
     note?: any;
     method?: any;
     author_id?: any;
+    legalized?: any;
+    legalized_date?: any;
+    student_id?: any;
+    class?: any;
 }
 
 type Props<T> = Omit<EditTableProps<T>, "editRow" | "setEditRow" | "isEditing" | "findIndexSave" | "rowKey" | "editInputType" | "columns"> & {
@@ -42,7 +46,7 @@ export function editTableSppMonth<T extends SppTable>(Component: ComponentType<E
                 dataIndex: "month",
                 width: "200px",
                 render: (text, record) => {
-                    const isSameOrBeforeMonth = MONTHS.indexOf(record.month || "") <= MONTHS.indexOf(moment().format("MMMM")?.toLowerCase());
+                    const isSameOrBeforeMonth = MONTHS.indexOf(record?.month || "") <= MONTHS.indexOf(moment().format("MMMM")?.toLowerCase());
                     const isDebt = isSameOrBeforeMonth && cls?.length <= currentCls?.length && !record.pay_date;
                     return (
                         <p className="m-0 capitalize flex">
@@ -84,6 +88,24 @@ export function editTableSppMonth<T extends SppTable>(Component: ComponentType<E
                 title: "Dibuat oleh",
                 dataIndex: "author_id",
                 render: (text) => <p className="m-0">{text ? getStaffsQuery.data?.find((staff) => staff.id === text)?.nama : ""}</p>,
+            },
+            {
+                title: "Disahkan",
+                dataIndex: "legalized",
+                render: (text, record) => {
+                    if (!text) return "";
+                    return (
+                        <div className="flex items-center">
+                            <HiBadgeCheck className="text-green-400 text-xl mr-2" />
+                            <div className="">
+                                <p className="m-0 text-green-500 text-sm capitalize leading-none">
+                                    {text ? getStaffsQuery.data?.find((staff) => staff.id === text)?.nama : ""}
+                                </p>
+                                <p className="m-0 text-gray-500 text-sm capitalize leading-none">{record.legalized_date}</p>
+                            </div>
+                        </div>
+                    );
+                },
             },
         ];
 

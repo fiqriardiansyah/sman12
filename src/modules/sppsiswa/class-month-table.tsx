@@ -4,8 +4,9 @@ import { httpsCallable } from "firebase/functions";
 import React from "react";
 import { useMutation, useQuery } from "react-query";
 import { functionInstance } from "service/firebase-instance";
-import { FORMAT_DATE_DAYJS, MONTHS } from "utils/constant";
+import { FORMATE_DATE_TIME, FORMAT_DATE_DAYJS, MONTHS } from "utils/constant";
 import { UserContext } from "context/user";
+import moment from "moment";
 import TableSppMonth, { SppTable } from "./spp-month-table";
 
 type Props = { cls: string; currentCls?: string; studentId: any };
@@ -36,6 +37,9 @@ function TableDetailSpp({ cls, currentCls, studentId }: Props) {
                                 amount: data ? data[m]?.amount : "",
                                 method: data ? data[m]?.method : "",
                                 author_id: data ? data[m]?.author_id : "",
+                                legalized: data ? data[m]?.legalized : "",
+                                legalized_date: data && data[m]?.legalized_date ? moment(data[m]?.legalized_date).format(FORMATE_DATE_TIME) : "",
+                                hideEditAction: data ? data[m]?.legalized : false,
                             } as SppTable)
                     )
                 );
@@ -57,7 +61,9 @@ function TableDetailSpp({ cls, currentCls, studentId }: Props) {
                         note: item.note,
                         method: item.method,
                         pay_date: item.pay_date ? dayjs(item.pay_date).format(FORMAT_DATE_DAYJS) : "",
+                        legalized_date: item.pay_date ? dayjs(item.legalized_date).format(FORMAT_DATE_DAYJS) : "",
                         author_id: prevEditRow?.month === item.month ? state?.user?.id : item.author_id,
+                        legalized: item.legalized,
                     },
                 }),
             {}

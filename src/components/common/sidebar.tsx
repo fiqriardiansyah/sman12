@@ -18,16 +18,29 @@ import { useQuery } from "react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
 import { ADMIN_PATH, STAFF_PATH, STUDENT_PATH, TEACHER_PATH } from "utils/constant";
+import logoSman12 from "assets/images/logosman12.png";
+import { SppTable } from "modules/sppsiswa/spp-month-table";
 
 type MenuItem = Required<MenuProps>["items"][number];
 
 const getNoteByStudent = httpsCallable(functionInstance, "getNoteByStudent");
 const getNotesByTeacher = httpsCallable(functionInstance, "getNotesByTeacher");
+const getNotLegalizeSpp = httpsCallable(functionInstance, "getNotLegalizeSpp");
 
 function Sidebar() {
     const { state } = useContext(UserContext);
     const navigate = useNavigate();
     const location = useLocation();
+
+    const getNotLegalizeSppQuery = useQuery(
+        ["getNotLegalizeSpp"],
+        async () => {
+            return (await getNotLegalizeSpp()).data as SppTable[];
+        },
+        {
+            enabled: state?.user?.role === "admin",
+        }
+    );
 
     const getNoteByStudentQuery = useQuery(
         ["get-note-student", state?.user?.id],
@@ -51,6 +64,7 @@ function Sidebar() {
 
     const totalUnseenNoteStudent = getNoteByStudentQuery.data?.filter((el) => !el?.receiver_seen).length || 0;
     const totalUnseenNoteTeacher = getNotesByTeacherQuery.data?.filter((el) => !el?.teacher_seen).length || 0;
+    const totalNotLegalizedSpp = getNotLegalizeSppQuery.data?.length || 0;
 
     const onClick: MenuProps["onClick"] = (e) => {
         navigate(e.key);
@@ -135,7 +149,16 @@ function Sidebar() {
 
     const adminMenuItems: MenuItem[] = [
         {
-            label: "Laporan SPP",
+            label: (
+                <div className="flex justify-between items-center">
+                    Laporan SPP{" "}
+                    {totalNotLegalizedSpp ? (
+                        <Tag className="h-fit" color="red" title={`${totalNotLegalizedSpp} Pembayaran Baru`}>
+                            {totalNotLegalizedSpp}
+                        </Tag>
+                    ) : null}
+                </div>
+            ),
             key: ADMIN_PATH.laporanspp.index,
             icon: <BiMoney />,
         },
@@ -166,7 +189,8 @@ function Sidebar() {
     };
 
     return (
-        <div className="h-screen overflow-y-auto pb-20">
+        <div className="h-screen overflow-y-auto pb-20 flex flex-col items-center">
+            <img src={logoSman12} alt="SMAN 12" className="w-[100px] mx-auto my-5" />
             <Menu
                 onClick={onClick}
                 mode="inline"

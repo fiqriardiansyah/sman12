@@ -3,6 +3,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { LoginData } from "models";
 import { useMutation } from "react-query";
 import { authInstance } from "service/firebase-instance";
+import logoSman12 from "assets/images/logosman12.png";
 
 function Login() {
     const signInMutation = useMutation(
@@ -22,10 +23,13 @@ function Login() {
     };
 
     return (
-        <div className="w-full min-h-screen flex items-center justify-center">
-            <Form name="basic" initialValues={{ remember: true }} onFinish={onFinish} autoComplete="off">
+        <div className="w-full h-screen flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center">
+                <img src={logoSman12} alt="SMAN 12" className="w-[150px] mx-auto" />
+                <h1>SMA NEGERI 12 MEDAN</h1>
+            </div>
+            <Form name="basic" initialValues={{ remember: true }} onFinish={onFinish} requiredMark={false} className="w-[300px]">
                 <Form.Item
-                    label="Email"
                     name="email"
                     rules={[
                         {
@@ -34,10 +38,9 @@ function Login() {
                         },
                     ]}
                 >
-                    <Input />
+                    <Input placeholder="Email" />
                 </Form.Item>
                 <Form.Item
-                    label="Password"
                     name="password"
                     rules={[
                         {
@@ -46,11 +49,11 @@ function Login() {
                         },
                     ]}
                 >
-                    <Input.Password />
+                    <Input.Password placeholder="Password" />
                 </Form.Item>
-                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+                <Form.Item>
                     <Button loading={signInMutation.isLoading} type="primary" htmlType="submit">
-                        Submit
+                        Login
                     </Button>
                 </Form.Item>
             </Form>

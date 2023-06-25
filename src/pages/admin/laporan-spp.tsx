@@ -3,8 +3,10 @@ import { Chart as ChartJS, registerables } from "chart.js";
 import StateRender from "components/common/state";
 import dayjs, { Dayjs } from "dayjs";
 import { httpsCallable } from "firebase/functions";
+import ModalValidateSpp from "modules/admin/modal-validate-spp";
 import { Siswa } from "modules/datasiswa/table";
 import { Staff } from "modules/datastaff/table";
+import { SppTable } from "modules/sppsiswa/spp-month-table";
 import moment from "moment";
 import { useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
@@ -19,6 +21,7 @@ ChartJS.register(...registerables);
 const getIncome = httpsCallable(functionInstance, "getIncome");
 const getStudents = httpsCallable(functionInstance, "getStudents");
 const getStaffs = httpsCallable(functionInstance, "getStaffs");
+const getNotLegalizeSpp = httpsCallable(functionInstance, "getNotLegalizeSpp");
 
 function LaporanSPP() {
     const [year, setYear] = useState<any>(new Date().getFullYear());
@@ -31,23 +34,27 @@ function LaporanSPP() {
         return (await getStaffs()).data as Staff[];
     });
 
+    const getNotLegalizeSppQuery = useQuery(["getNotLegalizeSpp"], async () => {
+        return (await getNotLegalizeSpp()).data as SppTable[];
+    });
+
     const getTodayIncomeQuery = useQuery(["get-today-income"], async () => {
         const today = moment(moment.now()).format("DD MMM YYYY");
         const startDate = `${today} 00:00:00`;
         const endDate = `${today} 23:59:00`;
-        return (await getIncome({ start_date: startDate, end_date: endDate })).data as any[];
+        return (await getIncome({ start_date: startDate, end_date: endDate })).data as SppTable[];
     });
 
     const getMonthIncomeQuery = useQuery(["get-month-income"], async () => {
         const startOfMonth = moment().startOf("month").format("DD MMM YYYY HH:mm:ss");
         const endOfMonth = moment().endOf("month").format("DD MMM YYYY HH:mm:ss");
-        return (await getIncome({ start_date: startOfMonth, end_date: endOfMonth })).data as any[];
+        return (await getIncome({ start_date: startOfMonth, end_date: endOfMonth })).data as SppTable[];
     });
 
     const getYearIncomeQuery = useQuery(["get-year-income", year], async () => {
         const startOfYear = moment(moment(year, "YYYY").toISOString()).startOf("year").format("DD MMM YYYY HH:mm:ss");
         const endOfYear = moment(moment(year, "YYYY").toISOString()).endOf("year").format("DD MMM YYYY HH:mm:ss");
-        return (await getIncome({ start_date: startOfYear, end_date: endOfYear })).data as any[];
+        return (await getIncome({ start_date: startOfYear, end_date: endOfYear })).data as SppTable[];
     });
 
     const totalTodayIncome = getTodayIncomeQuery.data?.reduce((a, b) => a + b.amount, 0);
@@ -62,7 +69,7 @@ function LaporanSPP() {
     const totalYearTransfer = getYearIncomeQuery.data?.filter((el) => Number(el.method) === 1)?.length;
     const totalYearCash = getYearIncomeQuery.data?.filter((el) => Number(el.method) === 2)?.length;
 
-    const tDatasets = getYearIncomeQuery.data?.reduce((a, b) => {
+    const tDatasets = getYearIncomeQuery.data?.reduce((a: any, b) => {
         return {
             ...a,
             [b.month]: [...(Object.keys(a).length ? a[b.month] || [] : []), b],
@@ -191,6 +198,23 @@ function LaporanSPP() {
                                 <div className="w-full flex items-center my-2 justify-between" style={{ borderTop: "1px solid white" }}>
                                     <p className="text-white m-0">Transfer: {totalYearTransfer}</p>
                                     <p className="text-white m-0">Tunai: {totalYearCash}</p>
+                                </div>
+                            </div>
+                            <div className="rounded bg-red-400 p-3 flex flex-col items-center relative">
+                                <span className="text-white font-semibold">Pembayaran yang perlu disahkan</span>
+                                <p className="text-white text-3xl font-semibold m-0 my-4">{getNotLegalizeSppQuery?.data?.length || 0}</p>
+                                <div className="w-full flex items-center my-2 justify-between" style={{ borderTop: "1px solid white" }}>
+                                    <ModalValidateSpp>
+                                        {(ctrl) => (
+                                            <button
+                                                onClick={ctrl.openModal}
+                                                type="button"
+                                                className="text-white bg-transparent border-none font-poppins cursor-pointer capitalize "
+                                            >
+                                                lihat detail
+                                            </button>
+                                        )}
+                                    </ModalValidateSpp>
                                 </div>
                             </div>
                         </div>

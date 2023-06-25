@@ -6,10 +6,11 @@ import { Siswa } from "modules/datasiswa/table";
 import { Staff } from "modules/datastaff/table";
 import moment from "moment";
 import React from "react";
+import { HiBadgeCheck } from "react-icons/hi";
 import { useQuery } from "react-query";
 import { functionInstance } from "service/firebase-instance";
 import Utils from "utils";
-import { MONTHS, SPP_PAYMENT_METHOD } from "utils/constant";
+import { FORMATE_DATE_TIME, MONTHS, SPP_PAYMENT_METHOD } from "utils/constant";
 
 type Props = {
     students?: Siswa[];
@@ -86,6 +87,27 @@ function TableSPP({ students, month, sppClass }: Props) {
             render: (_, record) => (
                 <p className="m-0">{getStaffsQuery.data?.find((staff) => staff.id === getHistory(record)?.author_id)?.nama || ""}</p>
             ),
+        },
+        {
+            title: "Disahkan",
+            dataIndex: "-",
+            render: (text, record) => {
+                const history = getHistory(record);
+                if (!history?.legalized) return "";
+                return (
+                    <div className="flex items-center">
+                        <HiBadgeCheck className="text-green-400 text-xl mr-2" />
+                        <div className="">
+                            <p className="m-0 text-green-500 text-sm capitalize leading-none">
+                                {history?.legalized ? getStaffsQuery.data?.find((staff) => staff.id === history?.legalized)?.nama : ""}
+                            </p>
+                            <p className="m-0 text-gray-500 text-sm capitalize leading-none">
+                                {moment(history?.legalized_date).format(FORMATE_DATE_TIME)}
+                            </p>
+                        </div>
+                    </div>
+                );
+            },
         },
     ];
 

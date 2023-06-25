@@ -1,4 +1,4 @@
-import { Alert, Button, Form, Image, Input, Popconfirm, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
+import { Alert, Button, DatePicker, Form, Image, Input, Popconfirm, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import StateRender from "components/common/state";
@@ -9,7 +9,8 @@ import { AiOutlineUpload } from "react-icons/ai";
 import { IoMdArrowBack } from "react-icons/io";
 import { useMutation, useQuery } from "react-query";
 import { functionInstance, storageInstance } from "service/firebase-instance";
-import { GENDER, IMAGE_FALLBACK } from "utils/constant";
+import { FORMAT_DATE_DAYJS, GENDER, IMAGE_FALLBACK } from "utils/constant";
+import dayjs from "dayjs";
 
 function MasterDataSiswaEdit() {
     const { id } = useParams();
@@ -42,10 +43,15 @@ function MasterDataSiswaEdit() {
     });
 
     const onSaveSiswa = (values: Siswa) => {
-        editMutation.mutateAsync(values).then(() => {
-            navigate(-1);
-            message.success("Data siswa diubah");
-        });
+        editMutation
+            .mutateAsync({
+                ...values,
+                tgl_lahir: values?.tgl_lahir ? dayjs(values?.tgl_lahir).format(FORMAT_DATE_DAYJS) : "",
+            })
+            .then(() => {
+                navigate(-1);
+                message.success("Data siswa diubah");
+            });
     };
 
     const confirm = () => {
@@ -106,6 +112,11 @@ function MasterDataSiswaEdit() {
         navigate(-1);
     };
 
+    const initialValues = {
+        ...(dataUserQuery.data || {}),
+        tgl_lahir: dataUserQuery.data?.tgl_lahir ? dayjs(dataUserQuery.data?.tgl_lahir) : null,
+    };
+
     if (!id) return <Alert type="error" message="Halaman tidak ditemukan" />;
 
     return (
@@ -143,7 +154,7 @@ function MasterDataSiswaEdit() {
                             </Button>
                         </Upload>
                     </div>
-                    <Form initialValues={dataUserQuery.data} onFinish={onSaveSiswa} autoComplete="off" layout="vertical" requiredMark={false}>
+                    <Form initialValues={initialValues} onFinish={onSaveSiswa} autoComplete="off" layout="vertical" requiredMark={false}>
                         <div className="grid w-full grid-cols-3 gap-x-5">
                             <Form.Item label="Nama" name="nama" rules={[{ required: true, message: "Nama harus diisi!" }]}>
                                 <Input />
@@ -174,6 +185,14 @@ function MasterDataSiswaEdit() {
                             </Form.Item>
 
                             <Form.Item label="Wali / Orang tua" name="wali">
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item label="Tanggal Lahir" name="tgl_lahir">
+                                <DatePicker className="w-full" />
+                            </Form.Item>
+
+                            <Form.Item label="Tempat Lahir" name="tempat_lahir">
                                 <Input />
                             </Form.Item>
                         </div>
