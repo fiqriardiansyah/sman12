@@ -1,19 +1,19 @@
 import { Alert, Card, Skeleton, Tabs, TabsProps } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
+import gradeAnimation from "assets/animation/grades.json";
+import { Chart as ChartJS, registerables } from "chart.js";
 import StateRender from "components/common/state";
 import { UserContext } from "context/user";
 import { httpsCallable } from "firebase/functions";
+import { Staff } from "modules/datastaff/table";
 import { Nilai } from "modules/nilaisiswa/table-nilai";
+import { Pelajaran } from "pages/staff/masterdata/datapelajaran/add";
 import { useContext } from "react";
+import { Bar } from "react-chartjs-2";
+import Lottie from "react-lottie";
 import { useQuery } from "react-query";
 import { functionInstance } from "service/firebase-instance";
 import { CLASSES_SEMESTER } from "utils/constant";
-import Lottie from "react-lottie";
-import gradeAnimation from "assets/animation/grades.json";
-import { Pelajaran } from "pages/staff/masterdata/datapelajaran/add";
-import { Staff } from "modules/datastaff/table";
-import { Chart as ChartJS, registerables } from "chart.js";
-import { Chart, Bar } from "react-chartjs-2";
 
 ChartJS.register(...registerables);
 
@@ -133,8 +133,6 @@ function StudentNilai() {
             />
         ),
     }));
-
-    console.log(getMyGradesQuery.data);
 
     return (
         <div className="w-full pb-20">

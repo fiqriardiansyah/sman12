@@ -1,4 +1,4 @@
-import { Alert, Button, Form, Image, Input, Popconfirm, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
+import { Alert, Button, DatePicker, Form, Image, Input, Popconfirm, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import { httpsCallable } from "firebase/functions";
@@ -6,10 +6,11 @@ import { Guru } from "modules/dataguru/table";
 import { IoMdArrowBack } from "react-icons/io";
 import { useMutation, useQuery } from "react-query";
 import { functionInstance, storageInstance } from "service/firebase-instance";
-import { GENDER, IMAGE_FALLBACK, STAFF_PATH } from "utils/constant";
+import { FORMAT_DATE_DAYJS, GENDER, IMAGE_FALLBACK, JENJANG, KEPEGAWAIAN, STAFF_PATH } from "utils/constant";
 import StateRender from "components/common/state";
 import { AiOutlineUpload } from "react-icons/ai";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import dayjs from "dayjs";
 
 function MasterDataGuruEdit() {
     const { id } = useParams();
@@ -56,10 +57,15 @@ function MasterDataGuruEdit() {
     };
 
     const onSaveGuru = (values: Guru) => {
-        editMutation.mutateAsync(values).then(() => {
-            navigate(-1);
-            message.success("Data guru diubah");
-        });
+        editMutation
+            .mutateAsync({
+                ...values,
+                tgl_lahir: values?.tgl_lahir ? dayjs(values?.tgl_lahir).format(FORMAT_DATE_DAYJS) : "",
+            })
+            .then(() => {
+                navigate(-1);
+                message.success("Data guru diubah");
+            });
     };
 
     const uploadProps: UploadProps = {
@@ -113,6 +119,11 @@ function MasterDataGuruEdit() {
         navigate(-1);
     };
 
+    const initialValues = {
+        ...(dataUserQuery.data || {}),
+        tgl_lahir: dataUserQuery.data?.tgl_lahir ? dayjs(dataUserQuery.data?.tgl_lahir) : null,
+    };
+
     if (!id) return <Alert type="error" message="Halaman tidak ditemukan" />;
 
     return (
@@ -151,7 +162,7 @@ function MasterDataGuruEdit() {
                         </Upload>
                     </div>
                     <Form
-                        initialValues={dataUserQuery.data}
+                        initialValues={initialValues}
                         disabled={editMutation.isLoading}
                         onFinish={onSaveGuru}
                         autoComplete="off"
@@ -167,24 +178,48 @@ function MasterDataGuruEdit() {
                                 <Input disabled />
                             </Form.Item>
 
-                            <Form.Item label="NIP" name="nip">
-                                <Input />
-                            </Form.Item>
-
                             <Form.Item label="Email" name="email">
                                 <Input disabled />
                             </Form.Item>
 
-                            <Form.Item label="Jenis Kelamin" name="kelamin">
+                            <Form.Item label="NIP" name="nip" rules={[{ required: true, message: "NIP harus diisi!" }]}>
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item label="Jenis Kelamin" name="kelamin" rules={[{ required: true, message: "Jenis kelamin harus diisi!" }]}>
                                 <Select options={GENDER} />
                             </Form.Item>
 
-                            <Form.Item label="Alamat" name="alamat">
+                            <Form.Item label="Alamat" name="alamat" rules={[{ required: true, message: "Alamat harus diisi!" }]}>
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Handphone" name="hp">
+                            <Form.Item label="Handphone" name="hp" rules={[{ required: true, message: "Nomor hp harus diisi!" }]}>
                                 <Input />
+                            </Form.Item>
+
+                            <Form.Item label="Tanggal Lahir" name="tgl_lahir" rules={[{ required: true, message: "Tanggal lahir harus diisi!" }]}>
+                                <DatePicker className="w-full" />
+                            </Form.Item>
+
+                            <Form.Item label="Tempat Lahir" name="tempat_lahir" rules={[{ required: true, message: "Tempat lahir harus diisi!" }]}>
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Status Kepegawaian"
+                                name="status_kepegawaian"
+                                rules={[{ required: true, message: "Status kepegawaian harus diisi!" }]}
+                            >
+                                <Select options={KEPEGAWAIAN} />
+                            </Form.Item>
+
+                            <Form.Item label="Jurusan" name="jurusan" rules={[{ required: true, message: "Jurusan harus diisi!" }]}>
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item label="Jenjang" name="jenjang" rules={[{ required: true, message: "Jenjang pendidikan harus diisi!" }]}>
+                                <Select options={JENJANG} />
                             </Form.Item>
                         </div>
                         <Form.Item>

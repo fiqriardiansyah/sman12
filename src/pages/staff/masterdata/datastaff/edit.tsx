@@ -1,4 +1,4 @@
-import { Alert, Button, Form, Image, Input, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
+import { Alert, Button, DatePicker, Form, Image, Input, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 import StateRender from "components/common/state";
@@ -9,7 +9,8 @@ import { AiOutlineUpload } from "react-icons/ai";
 import { IoMdArrowBack } from "react-icons/io";
 import { useMutation, useQuery } from "react-query";
 import { functionInstance, storageInstance } from "service/firebase-instance";
-import { GENDER, IMAGE_FALLBACK } from "utils/constant";
+import { GENDER, IMAGE_FALLBACK, JENJANG, KEPEGAWAIAN } from "utils/constant";
+import dayjs from "dayjs";
 
 function MasterDataStaffEdit() {
     const { id } = useParams();
@@ -93,6 +94,11 @@ function MasterDataStaffEdit() {
         navigate(-1);
     };
 
+    const initialValues = {
+        ...(dataUserQuery.data || {}),
+        tgl_lahir: dataUserQuery.data?.tgl_lahir ? dayjs(dataUserQuery.data?.tgl_lahir) : null,
+    };
+
     if (!id) return <Alert type="error" message="Halaman tidak ditemukan" />;
 
     return (
@@ -126,7 +132,7 @@ function MasterDataStaffEdit() {
                         </Upload>
                     </div>
                     <Form
-                        initialValues={dataUserQuery.data}
+                        initialValues={initialValues}
                         disabled={editMutation.isLoading}
                         onFinish={onSaveStaff}
                         autoComplete="off"
@@ -146,20 +152,44 @@ function MasterDataStaffEdit() {
                                 <Input disabled />
                             </Form.Item>
 
-                            <Form.Item label="Jenis Kelamin" name="kelamin">
+                            <Form.Item label="Jenis Kelamin" name="kelamin" rules={[{ required: true, message: "Jenis kelamin lahir harus diisi!" }]}>
                                 <Select options={GENDER} />
                             </Form.Item>
 
-                            <Form.Item label="Alamat" name="alamat">
+                            <Form.Item label="Alamat" name="alamat" rules={[{ required: true, message: "Alamat harus diisi!" }]}>
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Handphone" name="hp">
+                            <Form.Item label="Handphone" name="hp" rules={[{ required: true, message: "Handphone harus diisi!" }]}>
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Posisi" name="posisi">
+                            <Form.Item label="Posisi" name="posisi" rules={[{ required: true, message: "Posisi harus diisi!" }]}>
                                 <Input />
+                            </Form.Item>
+
+                            <Form.Item label="Tanggal Lahir" name="tgl_lahir" rules={[{ required: true, message: "Tanggal lahir harus diisi!" }]}>
+                                <DatePicker className="w-full" />
+                            </Form.Item>
+
+                            <Form.Item label="Tempat Lahir" name="tempat_lahir" rules={[{ required: true, message: "Tempat lahir harus diisi!" }]}>
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Status Kepegawaian"
+                                name="status_kepegawaian"
+                                rules={[{ required: true, message: "Status kepegawaian harus diisi!" }]}
+                            >
+                                <Select options={KEPEGAWAIAN} />
+                            </Form.Item>
+
+                            <Form.Item label="Jurusan" name="jurusan" rules={[{ required: true, message: "Jurusan harus diisi!" }]}>
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item label="Jenjang" name="jenjang" rules={[{ required: true, message: "Jenjang pendidikan harus diisi!" }]}>
+                                <Select options={JENJANG} />
                             </Form.Item>
                         </div>
                         <Form.Item>

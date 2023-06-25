@@ -51,10 +51,11 @@ import MasterDataPelajaranEdit from "pages/staff/masterdata/datapelajaran/edit";
 import Lottie from "react-lottie";
 import waitingAnim from "assets/animation/waiting.json";
 import findAnim from "assets/animation/find.json";
-import LaporanSPP from "pages/admin/laporang-spp";
+import LaporanSPP from "pages/admin/laporan-spp";
 import PergantianTahunAjar from "pages/admin/tahun-ajar";
 import Alumni from "pages/staff/alumni";
 import AlumniView from "pages/staff/alumni/view";
+import Rekap from "pages/admin/recap";
 
 const waitingOptions = {
     loop: true,
@@ -110,6 +111,7 @@ function App() {
                                 <>
                                     <Route path={ADMIN_PATH.laporanspp.index} element={<LaporanSPP />} />
                                     <Route path={ADMIN_PATH.tahunajar.index} element={<PergantianTahunAjar />} />
+                                    <Route path={ADMIN_PATH.rekap.index} element={<Rekap />} />
                                 </>
                             )}
 

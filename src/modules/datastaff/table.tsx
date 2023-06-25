@@ -15,6 +15,12 @@ export interface Staff {
     posisi?: string;
     foto?: string;
     role?: string;
+
+    tgl_lahir?: string;
+    tempat_lahir?: string;
+    status_kepegawaian?: any;
+    jurusan?: string;
+    jenjang?: any;
 }
 
 type Props = {

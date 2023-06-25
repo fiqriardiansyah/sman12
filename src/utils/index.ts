@@ -10,6 +10,8 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable consistent-return */
 import Cookies from "js-cookie";
+import * as FileSaver from "file-saver";
+import XLSX from "sheetjs-style";
 import { CLASSES, GMAIL, TOKEN_USER } from "./constant";
 
 const Utils = {
@@ -66,6 +68,20 @@ const Utils = {
         const regex = /([a-zA-Z]+)(\d+)/;
         const splitStr = str?.match(regex) as any;
         return splitStr[1];
+    },
+    ExportToExcel(fileName: string, json: any) {
+        const fileType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
+        const fileExtension = ".xlsx";
+        const ws = XLSX.utils.json_to_sheet(json);
+        const excelBuffer = XLSX.write(
+            {
+                Sheets: { data: ws },
+                SheetNames: ["data"],
+            },
+            { bookType: "xlsx", type: "array" }
+        );
+        const data = new Blob([excelBuffer], { type: fileType });
+        FileSaver.saveAs(data, fileName + fileExtension);
     },
 };
 

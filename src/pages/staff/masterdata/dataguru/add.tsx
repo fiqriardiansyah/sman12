@@ -1,4 +1,4 @@
-import { Button, Form, Input, Select, Space, message } from "antd";
+import { Button, DatePicker, Form, Input, Select, Space, message } from "antd";
 import { Link, useNavigate } from "react-router-dom";
 
 import { httpsCallable } from "firebase/functions";
@@ -6,7 +6,8 @@ import { Guru } from "modules/dataguru/table";
 import { IoMdArrowBack } from "react-icons/io";
 import { useMutation } from "react-query";
 import { functionInstance } from "service/firebase-instance";
-import { GENDER, STAFF_PATH } from "utils/constant";
+import { FORMAT_DATE_DAYJS, GENDER, JENJANG, KEPEGAWAIAN, STAFF_PATH } from "utils/constant";
+import dayjs from "dayjs";
 
 function MasterDataGuruAdd() {
     const createTeacher = httpsCallable(functionInstance, "createTeacherClass");
@@ -29,7 +30,10 @@ function MasterDataGuruAdd() {
     );
 
     const onSaveGuru = (values: Guru) => {
-        createTeacherMutate.mutate(values);
+        createTeacherMutate.mutate({
+            ...values,
+            tgl_lahir: values?.tgl_lahir ? dayjs(values?.tgl_lahir).format(FORMAT_DATE_DAYJS) : "",
+        });
     };
 
     return (
@@ -52,20 +56,44 @@ function MasterDataGuruAdd() {
                         <Input />
                     </Form.Item>
 
-                    <Form.Item label="NIP" name="nip">
+                    <Form.Item label="NIP" name="nip" rules={[{ required: true, message: "NIP harus diisi!" }]}>
                         <Input />
                     </Form.Item>
 
-                    <Form.Item label="Jenis Kelamin" name="kelamin">
+                    <Form.Item label="Jenis Kelamin" name="kelamin" rules={[{ required: true, message: "Jenis kelamin harus diisi!" }]}>
                         <Select options={GENDER} />
                     </Form.Item>
 
-                    <Form.Item label="Alamat" name="alamat">
+                    <Form.Item label="Alamat" name="alamat" rules={[{ required: true, message: "Alamat harus diisi!" }]}>
                         <Input />
                     </Form.Item>
 
-                    <Form.Item label="Handphone" name="hp">
+                    <Form.Item label="Handphone" name="hp" rules={[{ required: true, message: "Nomor hp harus diisi!" }]}>
                         <Input />
+                    </Form.Item>
+
+                    <Form.Item label="Tanggal Lahir" name="tgl_lahir" rules={[{ required: true, message: "Tanggal lahir harus diisi!" }]}>
+                        <DatePicker className="w-full" />
+                    </Form.Item>
+
+                    <Form.Item label="Tempat Lahir" name="tempat_lahir" rules={[{ required: true, message: "Tempat lahir harus diisi!" }]}>
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item
+                        label="Status Kepegawaian"
+                        name="status_kepegawaian"
+                        rules={[{ required: true, message: "Status kepegawaian harus diisi!" }]}
+                    >
+                        <Select options={KEPEGAWAIAN} />
+                    </Form.Item>
+
+                    <Form.Item label="Jurusan" name="jurusan" rules={[{ required: true, message: "Jurusan harus diisi!" }]}>
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item label="Jenjang" name="jenjang" rules={[{ required: true, message: "Jenjang pendidikan harus diisi!" }]}>
+                        <Select options={JENJANG} />
                     </Form.Item>
                 </div>
                 <Form.Item>

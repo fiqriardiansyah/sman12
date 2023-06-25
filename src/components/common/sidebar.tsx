@@ -4,8 +4,9 @@ import configFirebase from "config/firebase";
 import { UserContext } from "context/user";
 import { getAuth } from "firebase/auth";
 import { httpsCallable } from "firebase/functions";
-import React, { useContext } from "react";
+import { useContext } from "react";
 import { BiMoney } from "react-icons/bi";
+import { BsClipboard2DataFill } from "react-icons/bs";
 import { CgProfile } from "react-icons/cg";
 import { FiAward, FiLogOut } from "react-icons/fi";
 import { GrAnnounce } from "react-icons/gr";
@@ -133,21 +134,26 @@ function Sidebar() {
     ];
 
     const adminMenuItems: MenuItem[] = [
-        ...(staffMenuItems as any).map((menu: any) =>
-            menu?.key === "masterdata"
-                ? { ...menu, children: [...menu.children, { label: "Data Staff", key: STAFF_PATH.masterdata.datastaff.index }] } // tambah master data staff
-                : menu
-        ),
         {
             label: "Laporan SPP",
             key: ADMIN_PATH.laporanspp.index,
             icon: <BiMoney />,
         },
         {
+            label: "Rekap",
+            key: ADMIN_PATH.rekap.index,
+            icon: <BsClipboard2DataFill />,
+        },
+        {
             label: "Pergantian Tahun Ajar",
             key: ADMIN_PATH.tahunajar.index,
             icon: <MdSchool />,
         },
+        ...(staffMenuItems as any).map((menu: any) =>
+            menu?.key === "masterdata"
+                ? { ...menu, children: [...menu.children, { label: "Data Staff", key: STAFF_PATH.masterdata.datastaff.index }] } // tambah master data staff
+                : menu
+        ),
     ];
 
     const configMenuItems: MenuItem[] = [{ label: "Logout", key: "logout", icon: <FiLogOut />, danger: true, onClick: onClickLogout }];

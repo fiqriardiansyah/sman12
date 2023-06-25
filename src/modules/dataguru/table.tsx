@@ -16,6 +16,12 @@ export interface Guru {
     kelas?: string;
     kelas_id?: string;
     kelamin?: any;
+
+    tgl_lahir?: string;
+    tempat_lahir?: string;
+    status_kepegawaian?: any;
+    jurusan?: string;
+    jenjang?: any;
 }
 
 type Props = {

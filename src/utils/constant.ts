@@ -40,12 +40,50 @@ export const CATEGORY_NEWS = [
 
 export const GENDER = [
     {
-        value: 1,
+        value: "L",
         label: "Laki - Laki",
     },
     {
-        value: 2,
+        value: "P",
         label: "Perempuan",
+    },
+];
+
+export const KEPEGAWAIAN = [
+    {
+        value: 1,
+        label: "PNS",
+    },
+    {
+        value: 2,
+        label: "Honorer",
+    },
+];
+
+export const JENJANG = [
+    {
+        value: 1,
+        label: "SMA/SEDERAJAT",
+    },
+    {
+        value: 2,
+        label: "D3",
+    },
+    {
+        value: 3,
+        label: "D4",
+    },
+    {
+        value: 4,
+        label: "S1",
+    },
+    {
+        value: 5,
+        label: "S2",
+    },
+    {
+        value: 6,
+        label: "S3",
     },
 ];
 
@@ -70,6 +108,9 @@ export const ADMIN_PATH = {
     },
     tahunajar: {
         index: "/tahunajar",
+    },
+    rekap: {
+        index: "/rekap",
     },
 };
 

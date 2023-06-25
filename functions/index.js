@@ -779,10 +779,44 @@ exports.getSPP = functions.https.onCall(async (data) => {
 
 exports.setSPP = functions.https.onCall(async (data) => {
     const db = admin.database();
+    const sppCollRef = admin.firestore().collection("spp");
 
     try {
         await db.ref(`spp/${data.student_id}/${data.class}`).set(data.history);
+        Object.keys(data.history).forEach((month) => {
+            const spp = data.history[month];
+            const id = data.student_id + data.class + month;
+            if (!spp?.amount || !spp?.method || !spp?.pay_date) return;
+            sppCollRef.doc(id).set({
+                ...spp,
+                student_id: data.student_id,
+                month,
+                class: data.class,
+                pay_date_epoch: new Date(spp.pay_date),
+            });
+        });
+
         return { sucess: true };
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+//
+exports.getIncome = functions.https.onCall(async (data) => {
+    const sppCollRef = admin.firestore().collection("spp");
+    try {
+        const start = new Date(data.start_date);
+        const end = new Date(data.end_date);
+
+        const list = [];
+        const getSppToday = await sppCollRef.where("pay_date_epoch", ">=", start).where("pay_date_epoch", "<=", end).get();
+        getSppToday?.forEach((doc) => {
+            list.push({
+                id: doc.id,
+                ...doc.data(),
+            });
+        });
+        return list;
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
@@ -1032,3 +1066,21 @@ exports.getLatestAcademicYearUpdate = functions.https.onCall(async (data) => {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
 });
+
+exports.getAllAcademicYear = functions.https.onCall(async (data) => {
+    const academyYearCollRef = admin.firestore().collection("academicyear");
+    try {
+        const years = [];
+        const req = await academyYearCollRef.get();
+        req?.forEach((doc) => {
+            years.push(doc.data().year);
+        });
+
+        if (years.length === 0) return null;
+        return years?.sort((a, b) => a - b);
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+///
