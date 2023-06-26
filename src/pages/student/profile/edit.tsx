@@ -1,6 +1,7 @@
-import { Alert, Button, Form, Image, Input, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
+import { Alert, Button, DatePicker, Form, Image, Input, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
 import StateRender from "components/common/state";
 import { UserContext } from "context/user";
+import dayjs from "dayjs";
 import { httpsCallable } from "firebase/functions";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Siswa } from "modules/datasiswa/table";
@@ -11,7 +12,7 @@ import { BiArrowBack } from "react-icons/bi";
 import { useMutation, useQuery } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { functionInstance, storageInstance } from "service/firebase-instance";
-import { DEFAULT_ERROR_MESSAGE, GENDER, IMAGE_FALLBACK, STAFF_PATH, STUDENT_PATH } from "utils/constant";
+import { DEFAULT_ERROR_MESSAGE, FORMAT_DATE_DAYJS, GENDER, IMAGE_FALLBACK, STAFF_PATH, STUDENT_PATH } from "utils/constant";
 
 function StudentProfileEdit() {
     const { state } = React.useContext(UserContext);
@@ -41,10 +42,15 @@ function StudentProfileEdit() {
     );
 
     const onFinish = async (values: any) => {
-        await editMutation.mutateAsync(values).then(() => {
-            message.success("edit profile berhasil");
-            navigate(-1);
-        });
+        await editMutation
+            .mutateAsync({
+                ...values,
+                tgl_lahir: values?.tgl_lahir ? dayjs(values?.tgl_lahir).format(FORMAT_DATE_DAYJS) : "",
+            })
+            .then(() => {
+                message.success("edit profile berhasil");
+                navigate(-1);
+            });
     };
 
     const uploadProps: UploadProps = {
@@ -93,6 +99,11 @@ function StudentProfileEdit() {
         showUploadList: false,
     };
 
+    const initialValues = {
+        ...(profileQuery.data || {}),
+        tgl_lahir: profileQuery.data?.tgl_lahir ? dayjs(profileQuery.data?.tgl_lahir) : null,
+    };
+
     return (
         <div className="">
             {contextHolder}
@@ -121,7 +132,7 @@ function StudentProfileEdit() {
                             </Button>
                         </Upload>
                     </div>
-                    <Form initialValues={profileQuery.data} onFinish={onFinish} autoComplete="off" layout="vertical" requiredMark={false}>
+                    <Form initialValues={initialValues} onFinish={onFinish} autoComplete="off" layout="vertical" requiredMark={false}>
                         <div className="grid w-full grid-cols-3 gap-x-5">
                             <Form.Item label="Nama" name="nama" rules={[{ required: true, message: "Nama harus diisi!" }]}>
                                 <Input />
@@ -152,6 +163,14 @@ function StudentProfileEdit() {
                             </Form.Item>
 
                             <Form.Item label="Wali / Orang tua" name="wali">
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item label="Tanggal Lahir" name="tgl_lahir">
+                                <DatePicker className="w-full" />
+                            </Form.Item>
+
+                            <Form.Item label="Tempat Lahir" name="tempat_lahir">
                                 <Input />
                             </Form.Item>
                         </div>

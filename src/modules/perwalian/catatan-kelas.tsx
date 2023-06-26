@@ -45,6 +45,7 @@ function CatatanKelas() {
                     {getNotesByTeacherQuery?.data?.map((note) => (
                         <CardNoteWithUpdateSeen fetcher={getNotesByTeacherQuery} note={note} key={note.id} roles="teacher" />
                     ))}
+                    {!getNotesByTeacherQuery.data?.length ? <h1>Tidak ada catatan</h1> : null}
                 </StateRender.Data>
                 <StateRender.Loading>
                     <Skeleton />

@@ -8,7 +8,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
-import { GENDER, IMAGE_FALLBACK, JENJANG, TEACHER_PATH } from "utils/constant";
+import { GENDER, IMAGE_FALLBACK, JENJANG, KEPEGAWAIAN, TEACHER_PATH } from "utils/constant";
 
 function TeacherProfile() {
     const { state } = useContext(UserContext);
@@ -41,6 +41,7 @@ function TeacherProfile() {
                     <Descriptions title="User Info" className="mt-10" bordered>
                         <Descriptions.Item label="Nama">{profileQuery.data?.nama}</Descriptions.Item>
                         <Descriptions.Item label="NUPTK">{profileQuery.data?.nuptk}</Descriptions.Item>
+                        <Descriptions.Item label="NIP">{profileQuery.data?.nip}</Descriptions.Item>
                         <Descriptions.Item label="Email">{profileQuery.data?.email}</Descriptions.Item>
                         <Descriptions.Item label="Handphone">{profileQuery.data?.hp}</Descriptions.Item>
                         <Descriptions.Item label="Jenis Kelamin">
@@ -49,7 +50,9 @@ function TeacherProfile() {
                         <Descriptions.Item label="Alamat">{profileQuery.data?.alamat}</Descriptions.Item>
                         <Descriptions.Item label="Tgl lahir">{profileQuery.data?.tgl_lahir}</Descriptions.Item>
                         <Descriptions.Item label="Tempat lahir">{profileQuery.data?.tempat_lahir}</Descriptions.Item>
-                        <Descriptions.Item label="Status kepegawaian">{profileQuery.data?.status_kepegawaian}</Descriptions.Item>
+                        <Descriptions.Item label="Status kepegawaian">
+                            {KEPEGAWAIAN.find((el) => el.value === profileQuery.data?.status_kepegawaian)?.label || ""}
+                        </Descriptions.Item>
                         <Descriptions.Item label="Jurusan">{profileQuery.data?.jurusan}</Descriptions.Item>
                         <Descriptions.Item label="Jenjang">{JENJANG.find((el) => el.value === profileQuery.data?.jenjang)?.label}</Descriptions.Item>
                     </Descriptions>

@@ -92,6 +92,8 @@ function StudentProfile() {
                         <Descriptions.Item label="Alamat">{profileQuery.data?.alamat}</Descriptions.Item>
                         <Descriptions.Item label="Wali / Orang tua">{profileQuery.data?.wali}</Descriptions.Item>
                         <Descriptions.Item label="Stambuk">{profileQuery.data?.stambuk}</Descriptions.Item>
+                        <Descriptions.Item label="Tgl lahir">{profileQuery.data?.tgl_lahir}</Descriptions.Item>
+                        <Descriptions.Item label="Tempat lahir">{profileQuery.data?.tempat_lahir}</Descriptions.Item>
                     </Descriptions>
                 </StateRender.Data>
                 <StateRender.Loading>
