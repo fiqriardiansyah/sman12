@@ -52,6 +52,8 @@ function ViewSppHistory({ kelas, studentId }: { kelas: any; studentId: any }) {
                         legalized: history ? history[month]?.legalized : "",
                         legalized_date:
                             history && history[month]?.legalized_date ? moment(history[month]?.legalized_date).format(FORMATE_DATE_TIME) : "",
+                        status: history ? history[month]?.status : "",
+                        reason: history ? history[month]?.reason : "",
                     })),
                 };
             });
@@ -120,7 +122,16 @@ function ViewSppHistory({ kelas, studentId }: { kelas: any; studentId: any }) {
             title: "Disahkan",
             dataIndex: "legalized",
             render: (text, record) => {
-                if (!text) return "";
+                if (!record?.status) return "";
+                if (record?.status === "pending") return <Tag color="yellow">Pending</Tag>;
+                if (record?.status === "rejected")
+                    return (
+                        <p className="m-0 text-red-400 text-xs">
+                            <Tag color="red">Rejected</Tag>
+                            <br />
+                            {record?.reason}
+                        </p>
+                    );
                 return (
                     <div className="flex items-center">
                         <HiBadgeCheck className="text-green-400 text-xl mr-2" />

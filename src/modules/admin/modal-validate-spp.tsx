@@ -1,4 +1,4 @@
-import { Button, List, Popconfirm, message } from "antd";
+import { Button, List, Popconfirm, Space, message } from "antd";
 import Table, { ColumnsType } from "antd/es/table";
 import ModalTemplate, { HandlerProps } from "components/modal/template";
 import { UserContext } from "context/user";
@@ -11,6 +11,7 @@ import { useMutation, useQuery } from "react-query";
 import { functionInstance } from "service/firebase-instance";
 import { FORMAT_DATE_DAYJS, SPP_PAYMENT_METHOD } from "utils/constant";
 import { useContext } from "react";
+import ModalRejectSpp from "./modal-reject-spp";
 
 type Props = {
     children: (data: HandlerProps) => void;
@@ -20,14 +21,27 @@ const getNotLegalizeSpp = httpsCallable(functionInstance, "getNotLegalizeSpp");
 const getStaffs = httpsCallable(functionInstance, "getStaffs");
 const getStudents = httpsCallable(functionInstance, "getStudents");
 const setLegalizeSpp = httpsCallable(functionInstance, "setLegalizeSpp");
+const setRejectSpp = httpsCallable(functionInstance, "setRejectSpp");
 
 function ModalValidateSpp({ children }: Props) {
     const { state } = useContext(UserContext);
 
     const setLegalizeSppMutate = useMutation(
-        ["setLegalizeSpp"],
+        ["set-legalize-spp"],
         async (data: any) => {
             return (await setLegalizeSpp(data)).data;
+        },
+        {
+            onError(e: any) {
+                message.error(e?.message);
+            },
+        }
+    );
+
+    const setRejectSppMutate = useMutation(
+        ["set-reject-spp"],
+        async (data: any) => {
+            return (await setRejectSpp(data)).data;
         },
         {
             onError(e: any) {
@@ -57,6 +71,22 @@ function ModalValidateSpp({ children }: Props) {
                     class: spp.class,
                     month: spp.month,
                     legalized: state?.user?.id,
+                })
+                .then(() => {
+                    getNotLegalizeSppQuery.refetch();
+                });
+        };
+    };
+
+    const onReject = (spp: SppTable) => {
+        return (val: { reason: string }) => {
+            setRejectSppMutate
+                .mutateAsync({
+                    id: spp.id,
+                    student_id: spp.student_id,
+                    class: spp.class,
+                    month: spp.month,
+                    reason: val.reason,
                 })
                 .then(() => {
                     getNotLegalizeSppQuery.refetch();
@@ -106,9 +136,18 @@ function ModalValidateSpp({ children }: Props) {
             title: "Aksi",
             dataIndex: "-",
             render: (_, record) => (
-                <Popconfirm title="Sahkan pembayaran spp?" onConfirm={onConfirm(record)} okText="Ya" cancelText="Batal">
-                    <Button type="primary">Sahkan</Button>
-                </Popconfirm>
+                <Space>
+                    <Popconfirm title="Sahkan pembayaran spp?" onConfirm={onConfirm(record)} okText="Ya" cancelText="Batal">
+                        <Button type="primary">Sahkan</Button>
+                    </Popconfirm>
+                    <ModalRejectSpp onSubmit={onReject(record)}>
+                        {(ctrl) => (
+                            <Button type="primary" danger onClick={ctrl.openModal}>
+                                Tolak
+                            </Button>
+                        )}
+                    </ModalRejectSpp>
+                </Space>
             ),
         },
     ];
@@ -122,7 +161,7 @@ function ModalValidateSpp({ children }: Props) {
                         size="small"
                         columns={columns}
                         dataSource={getNotLegalizeSppQuery.data || []}
-                        loading={getNotLegalizeSppQuery.isLoading || setLegalizeSppMutate.isLoading}
+                        loading={getNotLegalizeSppQuery.isLoading || setLegalizeSppMutate.isLoading || setRejectSppMutate.isLoading}
                         className="w-full"
                     />
                 </div>

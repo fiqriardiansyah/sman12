@@ -1,23 +1,28 @@
 import { Alert, Button, DatePicker, Form, Image, Input, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
 import StateRender from "components/common/state";
+import { HandlerProps } from "components/modal/template";
+import configFirebase from "config/firebase";
 import { UserContext } from "context/user";
 import dayjs from "dayjs";
+import { getAuth } from "firebase/auth";
 import { httpsCallable } from "firebase/functions";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { Siswa } from "modules/datasiswa/table";
-import { Staff } from "modules/datastaff/table";
+import ModalReauthentication from "modules/modal-reauthentication";
 import React from "react";
 import { AiOutlineUpload } from "react-icons/ai";
 import { BiArrowBack } from "react-icons/bi";
 import { useMutation, useQuery } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { functionInstance, storageInstance } from "service/firebase-instance";
-import { DEFAULT_ERROR_MESSAGE, FORMAT_DATE_DAYJS, GENDER, IMAGE_FALLBACK, STAFF_PATH, STUDENT_PATH } from "utils/constant";
+import Utils from "utils";
+import { FORMAT_DATE_DAYJS, GENDER, IMAGE_FALLBACK, STUDENT_PATH } from "utils/constant";
 
 function StudentProfileEdit() {
     const { state } = React.useContext(UserContext);
     const getMyData = httpsCallable(functionInstance, "getUserWithEmail");
     const editUser = httpsCallable(functionInstance, "editUser");
+    const updateAccount = httpsCallable(functionInstance, "updateAccount");
 
     const [api, contextHolder] = notification.useNotification();
 
@@ -35,8 +40,20 @@ function StudentProfileEdit() {
             return (await editUser({ ...data, email: state?.user?.email })).data;
         },
         {
-            onError() {
-                message.error(DEFAULT_ERROR_MESSAGE);
+            onError(e: any) {
+                message.error(e?.message);
+            },
+        }
+    );
+
+    const updateAccountMutation = useMutation(
+        ["edit-account"],
+        async (data: any) => {
+            return (await updateAccount({ ...data, uid: state?.user?.uid, id: state?.user?.id })).data;
+        },
+        {
+            onError(e: any) {
+                message.error(e?.message);
             },
         }
     );
@@ -51,6 +68,14 @@ function StudentProfileEdit() {
                 message.success("edit profile berhasil");
                 navigate(-1);
             });
+    };
+
+    const onUpdateAccount = (ctrl: HandlerProps) => {
+        return (values: any) => {
+            const removeFalsy = Utils.CleanObj(values);
+            if (!Object.keys(removeFalsy).length) return;
+            ctrl.openModalWithData(removeFalsy);
+        };
     };
 
     const uploadProps: UploadProps = {
@@ -102,6 +127,19 @@ function StudentProfileEdit() {
     const initialValues = {
         ...(profileQuery.data || {}),
         tgl_lahir: profileQuery.data?.tgl_lahir ? dayjs(profileQuery.data?.tgl_lahir) : null,
+    };
+
+    const onSubmitAuth = (data: any) => {
+        updateAccountMutation.mutateAsync({ update: data }).then(() => {
+            message.success("Perbarui Akun berhasil");
+            setTimeout(() => {
+                getAuth(configFirebase.app)
+                    .signOut()
+                    .then(() => {
+                        window?.location?.reload();
+                    });
+            }, 2000);
+        });
     };
 
     return (
@@ -180,6 +218,26 @@ function StudentProfileEdit() {
                             </Button>
                         </Form.Item>
                     </Form>
+                    <h2 className="mt-10 text-gray-600">Perbarui Akun</h2>
+                    <div className="bg-white p-3 rounded-md mb-20 w-fit">
+                        <ModalReauthentication onSubmit={onSubmitAuth}>
+                            {(ctrl) => (
+                                <Form onFinish={onUpdateAccount(ctrl)} autoComplete="off" layout="inline" requiredMark={false}>
+                                    <Form.Item label="Email" name="email">
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item label="Password" name="password">
+                                        <Input.Password />
+                                    </Form.Item>
+                                    <Form.Item>
+                                        <Button loading={updateAccountMutation.isLoading} type="primary" htmlType="submit">
+                                            Update
+                                        </Button>
+                                    </Form.Item>
+                                </Form>
+                            )}
+                        </ModalReauthentication>
+                    </div>
                 </StateRender.Data>
                 <StateRender.Loading>
                     <Skeleton />

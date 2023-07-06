@@ -28,6 +28,7 @@ function TableSPP({ students, month, sppClass }: Props) {
     });
 
     const getHistory = (record: Siswa) => {
+        if (getStaffsQuery.isLoading) return null;
         const history = sppClass?.find((spp: any) => spp.id === record.id)?.history;
         if (!history) return "";
         return history[month];
@@ -93,7 +94,16 @@ function TableSPP({ students, month, sppClass }: Props) {
             dataIndex: "-",
             render: (text, record) => {
                 const history = getHistory(record);
-                if (!history?.legalized) return "";
+                if (!history || !history?.status) return "";
+                if (history?.status === "pending") return <Tag color="yellow">Pending</Tag>;
+                if (history?.status === "rejected")
+                    return (
+                        <p className="m-0 text-red-400 text-xs">
+                            <Tag color="red">Rejected</Tag>
+                            <br />
+                            {history?.reason}
+                        </p>
+                    );
                 return (
                     <div className="flex items-center">
                         <HiBadgeCheck className="text-green-400 text-xl mr-2" />

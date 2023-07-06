@@ -111,6 +111,9 @@ export const ADMIN_PATH = {
     },
     rekap: {
         index: "/rekap",
+        siswa: "/rekapsiswa",
+        guru: "/rekapguru",
+        staf: "/rekapstaf",
     },
 };
 

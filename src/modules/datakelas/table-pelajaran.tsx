@@ -13,6 +13,8 @@ export interface Roster {
     jam?: string;
 }
 
+export const istirahat = { label: <span className="text-red-500">Istirahat</span>, value: "istirahat" };
+
 type Props<T> = Omit<EditTableProps<T>, "isEditing" | "findIndexSave" | "rowKey" | "editInputType" | "columns">;
 
 const getSubjects = httpsCallable(functionInstance, "getSubjects");
@@ -21,7 +23,7 @@ export function editTableRoster<T extends Roster>(Component: ComponentType<EditT
     return function (props: Props<T>) {
         const subjectsQuery = useQuery(["get-subject"], async () => {
             return ((await getSubjects()).data as Pelajaran[])?.map((el) => ({
-                label: `${el.mata_pelajaran} - ${el.guru_nama}`?.CapitalizeEachFirstLetter(),
+                label: `${el.mata_pelajaran} ${el?.guru_nama ? ` - ${el?.guru_nama}` : ""}`?.CapitalizeEachFirstLetter(),
                 value: el.id,
             }));
         });
@@ -31,7 +33,12 @@ export function editTableRoster<T extends Roster>(Component: ComponentType<EditT
                 title: "Mata Pelajaran - Guru",
                 dataIndex: "mata_pelajaran",
                 ...{ editable: true },
-                render: (text) => <p className="m-0 capitalize">{text ? subjectsQuery.data?.find((el) => el.value === text)?.label : ""}</p>,
+                render: (text) => {
+                    if (text?.toLowerCase() === istirahat.value) {
+                        return <span className="text-red-500">Istirahat</span>;
+                    }
+                    return <p className="m-0 capitalize">{text ? subjectsQuery.data?.find((el) => el.value === text)?.label : ""}</p>;
+                },
             },
             {
                 title: "Jam",
@@ -58,7 +65,7 @@ export function editTableRoster<T extends Roster>(Component: ComponentType<EditT
                     maxNumber: 100,
                     minNumber: 0,
                     selectProps: {
-                        options: subjectsQuery.data || [],
+                        options: [...(subjectsQuery.data || []), istirahat],
                         className: "!w-[300px]",
                         placeholder: "pilih",
                         loading: subjectsQuery.isLoading,

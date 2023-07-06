@@ -5,7 +5,7 @@ export type HandlerProps = {
     data: any;
     isModalOpen: boolean;
     openModal: () => void;
-    openModalWithData: (data: any) => void;
+    openModalWithData: (data: any) => any;
     closeModal: () => void;
 };
 
@@ -38,6 +38,7 @@ function ModalTemplate({ children, handler, handlerInComponent, handlerDataChang
     const openModalWithData = (dt: any) => {
         setData(dt);
         openModal();
+        return dt;
     };
 
     const childrenData: HandlerProps = {

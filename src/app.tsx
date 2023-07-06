@@ -5,7 +5,16 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { ADMIN_PATH, STAFF_PATH, STUDENT_PATH, TEACHER_PATH } from "utils/constant";
 
 // staff
+import findAnim from "assets/animation/find.json";
+import waitingAnim from "assets/animation/waiting.json";
+import LaporanSPP from "pages/admin/laporan-spp";
+import RecapGuru from "pages/admin/recap-guru";
+import RecapSiswa from "pages/admin/recap-siswa";
+import RecapStaf from "pages/admin/recap-staf";
+import PergantianTahunAjar from "pages/admin/tahun-ajar";
 import Login from "pages/auth/login";
+import Alumni from "pages/staff/alumni";
+import AlumniView from "pages/staff/alumni/view";
 import InfoSiswaAbsensi from "pages/staff/infosiswa/absensisiswa";
 import InfoSiswaAbsensiEdit from "pages/staff/infosiswa/absensisiswa/edit";
 import InfoSiswaNilai from "pages/staff/infosiswa/nilaisiswa";
@@ -18,6 +27,9 @@ import MasterDataGuruEdit from "pages/staff/masterdata/dataguru/edit";
 import MasterDataKelas from "pages/staff/masterdata/datakelas";
 import MasterDataKelasAdd from "pages/staff/masterdata/datakelas/add";
 import MasterDataKelasEdit from "pages/staff/masterdata/datakelas/edit";
+import MasterDataPelajaran from "pages/staff/masterdata/datapelajaran";
+import MasterDataPelajaranAdd from "pages/staff/masterdata/datapelajaran/add";
+import MasterDataPelajaranEdit from "pages/staff/masterdata/datapelajaran/edit";
 import MasterDataSiswa from "pages/staff/masterdata/datasiswa";
 import MasterDataSiswaAdd from "pages/staff/masterdata/datasiswa/add";
 import MasterDataSiswaEdit from "pages/staff/masterdata/datasiswa/edit";
@@ -33,29 +45,19 @@ import StudentAbsensi from "pages/student/absensi";
 import StudentMataPelajaran from "pages/student/mata-pelajaran";
 import StudentNilai from "pages/student/nilai";
 import StudentPengumuman from "pages/student/pengumuman";
+import StudentPengumumanDetail from "pages/student/pengumuman/detail";
 import StudentProfile from "pages/student/profile";
 import StudentProfileEdit from "pages/student/profile/edit";
 import StudentSPP from "pages/student/spp";
 import TeacherPengumuman from "pages/teacher/pengumuman";
+import TeacherPengumumanDetail from "pages/teacher/pengumuman/detail";
 import TeacherPerwalian from "pages/teacher/perwalian";
 import TeacherProfile from "pages/teacher/profile";
 import TeacherProfileEdit from "pages/teacher/profile/edit";
 import TeacherDaftarSiswa from "pages/teacher/siswa";
-import configFirebase from "config/firebase";
-import StudentPengumumanDetail from "pages/student/pengumuman/detail";
-import TeacherPengumumanDetail from "pages/teacher/pengumuman/detail";
 import TeacherDaftarSiswaDetail from "pages/teacher/siswa/detail";
-import MasterDataPelajaran from "pages/staff/masterdata/datapelajaran";
-import MasterDataPelajaranAdd from "pages/staff/masterdata/datapelajaran/add";
-import MasterDataPelajaranEdit from "pages/staff/masterdata/datapelajaran/edit";
 import Lottie from "react-lottie";
-import waitingAnim from "assets/animation/waiting.json";
-import findAnim from "assets/animation/find.json";
-import LaporanSPP from "pages/admin/laporan-spp";
-import PergantianTahunAjar from "pages/admin/tahun-ajar";
-import Alumni from "pages/staff/alumni";
-import AlumniView from "pages/staff/alumni/view";
-import Rekap from "pages/admin/recap";
+import ForgotPassword from "pages/auth/forgotpassword";
 
 const waitingOptions = {
     loop: true,
@@ -100,6 +102,7 @@ function App() {
             {!state?.user && !state?.loading && (
                 <Routes>
                     <Route path="/" element={<Login />} />
+                    <Route path="/forgotpassword" element={<ForgotPassword />} />
                     <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
             )}
@@ -111,7 +114,9 @@ function App() {
                                 <>
                                     <Route path={ADMIN_PATH.laporanspp.index} element={<LaporanSPP />} />
                                     <Route path={ADMIN_PATH.tahunajar.index} element={<PergantianTahunAjar />} />
-                                    <Route path={ADMIN_PATH.rekap.index} element={<Rekap />} />
+                                    <Route path={ADMIN_PATH.rekap.siswa} element={<RecapSiswa />} />
+                                    <Route path={ADMIN_PATH.rekap.guru} element={<RecapGuru />} />
+                                    <Route path={ADMIN_PATH.rekap.staf} element={<RecapStaf />} />
                                 </>
                             )}
 

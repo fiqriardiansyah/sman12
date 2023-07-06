@@ -1,3 +1,4 @@
+/* eslint-disable no-return-assign */
 /* eslint-disable no-redeclare */
 /* eslint-disable no-plusplus */
 /* eslint-disable guard-for-in */
@@ -82,6 +83,9 @@ const Utils = {
         );
         const data = new Blob([excelBuffer], { type: fileType });
         FileSaver.saveAs(data, fileName + fileExtension);
+    },
+    CleanObj(obj: Object) {
+        return Object.entries(obj).reduce((a: any, [k, v]) => (v ? ((a[k] = v), a) : a), {});
     },
 };
 

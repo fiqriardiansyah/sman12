@@ -9,6 +9,8 @@ import { IoMdArrowBack } from "react-icons/io";
 import { useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
+import Utils from "utils";
+import { CLASSES_SEMESTER } from "utils/constant";
 
 const getDataUser = httpsCallable(functionInstance, "getUserWithId");
 const getCountSemesterGrade = httpsCallable(functionInstance, "getCountSemesterGrade");
@@ -46,6 +48,10 @@ function InfoSiswaNilaiEdit() {
         navigate(-1);
     };
 
+    const maxCurrSemester = dataUserQuery.data?.kelas
+        ? CLASSES_SEMESTER.filter((el) => Utils.SplitStrKelas(dataUserQuery.data?.kelas) === el).length
+        : semester;
+
     if (!id) return <Alert type="error" message="Data tidak ditemukan" />;
 
     return (
@@ -57,7 +63,7 @@ function InfoSiswaNilaiEdit() {
                     </Link>
                     <h1 className="m-0">Edit Nilai Siwa</h1>
                 </Space>
-                <Button onClick={onClickNewSemester} disabled={semester === 6}>
+                <Button onClick={onClickNewSemester} disabled={semester === 6 || semester >= maxCurrSemester}>
                     Semester Baru
                 </Button>
             </div>

@@ -32,6 +32,17 @@ exports.getUserWithId = functions.https.onCall(async (data) => {
     };
 });
 
+exports.updateAccount = functions.https.onCall(async (data) => {
+    try {
+        await admin.auth().updateUser(data.uid, data.update);
+        if (data.update?.email) {
+            await admin.firestore().collection("users").doc(data.id).update({ email: data.update.email });
+        }
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
 exports.editUser = functions.https.onCall(async (data) => {
     const fullDataUser = await admin.firestore().collection("users").where("email", "==", data.email).get();
     const db = admin.firestore();
@@ -149,6 +160,18 @@ exports.getAlumni = functions.https.onCall(async (data) => {
             st?.nis?.toString()?.includes(data?.query)
         );
     });
+});
+
+exports.getAllStudent = functions.https.onCall(async () => {
+    const req = await admin.firestore().collection("users").where("role", "==", "student").get();
+    const students = [];
+    req?.forEach((student) => {
+        students.push({
+            ...student.data(),
+            id: student.id,
+        });
+    });
+    return students;
 });
 
 exports.createStudent = functions.https.onCall(async (data) => {
@@ -833,7 +856,7 @@ exports.getNotLegalizeSpp = functions.https.onCall(async (data) => {
                 ...doc.data(),
             });
         });
-        return list?.filter((el) => !el?.legalized);
+        return list?.filter((el) => el?.status === "pending");
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
@@ -843,10 +866,22 @@ exports.setLegalizeSpp = functions.https.onCall(async (data) => {
     const db = admin.database();
     const sppCollRef = admin.firestore().collection("spp");
     try {
-        await sppCollRef.doc(data.id).update({ legalized: data.legalized, legalized_date: new Date().getTime() });
+        await sppCollRef.doc(data.id).update({ legalized: data.legalized, legalized_date: new Date().getTime(), status: "approve" });
         await db
             .ref(`spp/${data.student_id}/${data.class}/${data.month}`)
-            .update({ legalized: data.legalized, legalized_date: new Date().getTime() });
+            .update({ legalized: data.legalized, legalized_date: new Date().getTime(), status: "approve" });
+        return { success: true };
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.setRejectSpp = functions.https.onCall(async (data) => {
+    const db = admin.database();
+    const sppCollRef = admin.firestore().collection("spp");
+    try {
+        await sppCollRef.doc(data.id).update({ status: "rejected", reason: data.reason });
+        await db.ref(`spp/${data.student_id}/${data.class}/${data.month}`).update({ status: "rejected", reason: data.reason });
         return { success: true };
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);

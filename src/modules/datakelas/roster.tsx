@@ -2,7 +2,7 @@ import React from "react";
 import { TbPlaylistAdd } from "react-icons/tb";
 import { message } from "antd";
 import dayjs from "dayjs";
-import TableRoster, { Roster } from "./table-pelajaran";
+import TableRoster, { Roster, istirahat } from "./table-pelajaran";
 
 type Props = {
     day: string;
@@ -40,10 +40,19 @@ function RosterEdit({ day, onChange, rosters }: Props) {
     };
 
     const onEdit = (rs: Roster[], prevEditRow?: Roster | null) => {
-        const subjectSet = new Set([...rs]?.map((n) => n.mata_pelajaran as any));
         const hourSet = new Set([...rs]?.map((n) => dayjs(n.jam).format("HH:mm") as any));
 
-        if (subjectSet.size < rs.length) {
+        const removeIstirahat = rs?.reduce((a: any, b) => {
+            if (b.mata_pelajaran === istirahat.value) return a;
+            return {
+                ...a,
+                [b.mata_pelajaran as string]: !Object.keys(a).length ? 1 : (a[b.mata_pelajaran as any] || 0) + 1,
+            };
+        }, {});
+
+        const duplicateSubject = Object.keys(removeIstirahat)?.find((key) => removeIstirahat[key] > 1);
+
+        if (duplicateSubject) {
             message.error("Mata pelajaran tidak boleh duplikat");
             setRoster((prev) => prev?.filter((el) => el.id !== prevEditRow?.id));
             return;

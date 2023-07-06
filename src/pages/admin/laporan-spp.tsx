@@ -14,12 +14,12 @@ import { FaFileDownload } from "react-icons/fa";
 import { useQuery } from "react-query";
 import { functionInstance } from "service/firebase-instance";
 import Utils from "utils";
-import { FORMATE_DATE_TIME, FORMAT_DATE, SPP_PAYMENT_METHOD } from "utils/constant";
+import { FORMATE_DATE_TIME, SPP_PAYMENT_METHOD } from "utils/constant";
 
 ChartJS.register(...registerables);
 
 const getIncome = httpsCallable(functionInstance, "getIncome");
-const getStudents = httpsCallable(functionInstance, "getStudents");
+const getAllStudent = httpsCallable(functionInstance, "getAllStudent");
 const getStaffs = httpsCallable(functionInstance, "getStaffs");
 const getNotLegalizeSpp = httpsCallable(functionInstance, "getNotLegalizeSpp");
 
@@ -27,7 +27,7 @@ function LaporanSPP() {
     const [year, setYear] = useState<any>(new Date().getFullYear());
 
     const studentQuery = useQuery(["get-student"], async () => {
-        return (await getStudents()).data as Siswa[];
+        return (await getAllStudent()).data as Siswa[];
     });
 
     const staffQuery = useQuery(["get-staffs"], async () => {

@@ -23,6 +23,8 @@ export interface SppTable {
     legalized_date?: any;
     student_id?: any;
     class?: any;
+    status?: "pending" | "approved" | "rejected";
+    reason?: string;
 }
 
 type Props<T> = Omit<EditTableProps<T>, "editRow" | "setEditRow" | "isEditing" | "findIndexSave" | "rowKey" | "editInputType" | "columns"> & {
@@ -93,7 +95,16 @@ export function editTableSppMonth<T extends SppTable>(Component: ComponentType<E
                 title: "Disahkan",
                 dataIndex: "legalized",
                 render: (text, record) => {
-                    if (!text) return "";
+                    if (!record?.status) return "";
+                    if (record?.status === "pending") return <Tag color="yellow">Pending</Tag>;
+                    if (record?.status === "rejected")
+                        return (
+                            <p className="m-0 text-red-400 text-xs">
+                                <Tag color="red">Rejected</Tag>
+                                <br />
+                                {record?.reason}
+                            </p>
+                        );
                     return (
                         <div className="flex items-center">
                             <HiBadgeCheck className="text-green-400 text-xl mr-2" />

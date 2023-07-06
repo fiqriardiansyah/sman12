@@ -4,6 +4,7 @@ import { LoginData } from "models";
 import { useMutation } from "react-query";
 import { authInstance } from "service/firebase-instance";
 import logoSman12 from "assets/images/logosman12.png";
+import { Link } from "react-router-dom";
 
 function Login() {
     const signInMutation = useMutation(
@@ -28,7 +29,7 @@ function Login() {
                 <img src={logoSman12} alt="SMAN 12" className="w-[150px] mx-auto" />
                 <h1>SMA NEGERI 12 MEDAN</h1>
             </div>
-            <Form name="basic" initialValues={{ remember: true }} onFinish={onFinish} requiredMark={false} className="w-[300px]">
+            <Form onFinish={onFinish} requiredMark={false} className="w-[300px]">
                 <Form.Item
                     name="email"
                     rules={[
@@ -52,9 +53,12 @@ function Login() {
                     <Input.Password placeholder="Password" />
                 </Form.Item>
                 <Form.Item>
-                    <Button loading={signInMutation.isLoading} type="primary" htmlType="submit">
-                        Login
-                    </Button>
+                    <div className="flex items-center justify-between">
+                        <Button loading={signInMutation.isLoading} type="primary" htmlType="submit">
+                            Login
+                        </Button>
+                        <Link to="/forgotpassword">Lupa password?</Link>
+                    </div>
                 </Form.Item>
             </Form>
         </div>

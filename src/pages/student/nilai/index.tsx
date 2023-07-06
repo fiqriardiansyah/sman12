@@ -9,7 +9,7 @@ import { Staff } from "modules/datastaff/table";
 import { Nilai } from "modules/nilaisiswa/table-nilai";
 import { Pelajaran } from "pages/staff/masterdata/datapelajaran/add";
 import { useContext } from "react";
-import { Bar } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 import Lottie from "react-lottie";
 import { useQuery } from "react-query";
 import { functionInstance } from "service/firebase-instance";
@@ -68,34 +68,22 @@ function StudentNilai() {
         }
     );
 
-    const getLabelsChart = () => {
-        if (!getMyGradesQuery.data || !subjectsQuery.data) return [];
-        const labels = getMyGradesQuery.data?.map((grade) =>
-            grade.grades?.map((g) => subjectsQuery.data?.find((sub) => sub.value === g.mata_pelajaran)?.label)
-        );
-        const labelsSet = new Set(labels.flat(1));
-        return Array.from(labelsSet) || [];
-    };
-
     const dataChart = {
-        labels: getLabelsChart(),
-        datasets: getMyGradesQuery.data?.map((grade) => ({
-            label: `Semester ${grade.semester}`,
-            data: grade?.grades?.map((g) => ({
-                x: subjectsQuery.data?.find((sub) => sub.value === g.mata_pelajaran)?.label,
-                y: g.nilai,
-            })),
-            fill: true,
-            lineTension: 0.5,
-        })),
-    };
-
-    const options = {
-        title: {
-            display: true,
-            text: "Bagan nilai siswa",
-        },
-        responsive: true,
+        labels: [...new Array(6)].map((_, i) => `Semester ${i + 1}`),
+        datasets: [
+            {
+                label: "Rata-Rata nilai semester",
+                data: getMyGradesQuery.data?.map((grade) => ({
+                    x: `Semester ${grade.semester}`,
+                    y: (grade?.grades?.reduce((a, b) => a + b.nilai, 0) || 0) / (grade?.grades?.length || 1),
+                })),
+                fill: true,
+                lineTension: 0.5,
+                pointStyle: "circle",
+                pointRadius: 10,
+                pointHoverRadius: 15,
+            },
+        ],
     };
 
     const columns: ColumnsType<Nilai> = [
@@ -130,6 +118,20 @@ function StudentNilai() {
                 columns={columns as any}
                 dataSource={grade.grades}
                 pagination={{ position: ["none" as any], pageSize: 100 }}
+                summary={() => (
+                    <Table.Summary>
+                        <Table.Summary.Row>
+                            <Table.Summary.Cell index={0}>
+                                <span className="font-semibold">Rata-Rata</span>{" "}
+                            </Table.Summary.Cell>
+                            <Table.Summary.Cell index={1}>
+                                <span className="font-semibold">
+                                    {(grade?.grades?.reduce((a, b) => a + b.nilai, 0) || 0) / (grade?.grades?.length || 1)}
+                                </span>
+                            </Table.Summary.Cell>
+                        </Table.Summary.Row>
+                    </Table.Summary>
+                )}
             />
         ),
     }));
@@ -139,11 +141,20 @@ function StudentNilai() {
             <h1 className="m-0 mb-10 pt-4">Nilai akhir siswa</h1>
             <StateRender data={getMyGradesQuery.data} isLoading={getMyGradesQuery.isLoading} isError={getMyGradesQuery.isError}>
                 <StateRender.Data>
-                    {getLabelsChart().length ? (
-                        <Card>
-                            <Bar data={dataChart as any} options={options as any} />
-                        </Card>
-                    ) : null}
+                    <Card>
+                        <Line
+                            data={dataChart as any}
+                            options={{
+                                responsive: true,
+                                scales: {
+                                    y: {
+                                        min: 0,
+                                        max: 100,
+                                    },
+                                },
+                            }}
+                        />
+                    </Card>
                     <div className="grid w-full grid-cols-1 gap-10 mt-10">
                         {getMyGradesQuery.data?.length ? (
                             <Tabs type="card" items={items} />

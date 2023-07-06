@@ -79,7 +79,7 @@ function Sidebar() {
     };
 
     const teacherMenuItems: MenuItem[] = [
-        { label: "Profile", key: TEACHER_PATH.profile.index, icon: <CgProfile /> },
+        { label: "Profil", key: TEACHER_PATH.profile.index, icon: <CgProfile /> },
         { label: "Daftar Siswa", key: TEACHER_PATH.siswa.index, icon: <MdOutlineSupervisedUserCircle /> },
         { label: "Pengumuman", key: TEACHER_PATH.pengumuman.index, icon: <GrAnnounce /> },
         {
@@ -99,7 +99,7 @@ function Sidebar() {
     ];
 
     const staffMenuItems: MenuItem[] = [
-        { label: "Profile", key: STAFF_PATH.profile.index, icon: <CgProfile /> },
+        { label: "Profil", key: STAFF_PATH.profile.index, icon: <CgProfile /> },
         {
             label: "Master Data",
             key: "masterdata",
@@ -129,7 +129,7 @@ function Sidebar() {
         {
             label: (
                 <div className="flex justify-between items-center">
-                    Profile{" "}
+                    Profil
                     {totalUnseenNoteStudent ? (
                         <Tag className="h-fit" color="red" title={`${totalUnseenNoteStudent} Catatan Baru`}>
                             {totalUnseenNoteStudent}
@@ -151,7 +151,7 @@ function Sidebar() {
         {
             label: (
                 <div className="flex justify-between items-center">
-                    Laporan SPP{" "}
+                    Laporan SPP
                     {totalNotLegalizedSpp ? (
                         <Tag className="h-fit" color="red" title={`${totalNotLegalizedSpp} Pembayaran Baru`}>
                             {totalNotLegalizedSpp}
@@ -163,9 +163,14 @@ function Sidebar() {
             icon: <BiMoney />,
         },
         {
-            label: "Rekap",
+            label: "Rekapitulasi",
             key: ADMIN_PATH.rekap.index,
             icon: <BsClipboard2DataFill />,
+            children: [
+                { label: "Siswa", key: ADMIN_PATH.rekap.siswa },
+                { label: "Guru", key: ADMIN_PATH.rekap.guru },
+                { label: "Staf", key: ADMIN_PATH.rekap.staf },
+            ],
         },
         {
             label: "Pergantian Tahun Ajar",
@@ -174,7 +179,7 @@ function Sidebar() {
         },
         ...(staffMenuItems as any).map((menu: any) =>
             menu?.key === "masterdata"
-                ? { ...menu, children: [...menu.children, { label: "Data Staff", key: STAFF_PATH.masterdata.datastaff.index }] } // tambah master data staff
+                ? { ...menu, children: [...menu.children, { label: "Data Staf", key: STAFF_PATH.masterdata.datastaff.index }] } // tambah master data staff
                 : menu
         ),
     ];

@@ -1,3 +1,5 @@
+/* eslint-disable no-nested-ternary */
+/* eslint-disable prettier/prettier */
 import { Skeleton } from "antd";
 import dayjs from "dayjs";
 import { httpsCallable } from "firebase/functions";
@@ -40,6 +42,8 @@ function TableDetailSpp({ cls, currentCls, studentId }: Props) {
                                 legalized: data ? data[m]?.legalized : "",
                                 legalized_date: data && data[m]?.legalized_date ? moment(data[m]?.legalized_date).format(FORMATE_DATE_TIME) : "",
                                 hideEditAction: data ? data[m]?.legalized : false,
+                                status: data ? data[m]?.status : "",
+                                reason: data ? data[m]?.reason : "",
                             } as SppTable)
                     )
                 );
@@ -63,6 +67,7 @@ function TableDetailSpp({ cls, currentCls, studentId }: Props) {
                         pay_date: item.pay_date ? dayjs(item.pay_date).format(FORMAT_DATE_DAYJS) : "",
                         legalized_date: item.pay_date ? dayjs(item.legalized_date).format(FORMAT_DATE_DAYJS) : "",
                         author_id: prevEditRow?.month === item.month ? state?.user?.id : item.author_id,
+                        status: prevEditRow?.month === item.month ? (item.status === "rejected" ? "pending" : item.status) : item.status,
                         legalized: item.legalized,
                     },
                 }),
