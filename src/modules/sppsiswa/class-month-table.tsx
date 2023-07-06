@@ -67,7 +67,7 @@ function TableDetailSpp({ cls, currentCls, studentId }: Props) {
                         pay_date: item.pay_date ? dayjs(item.pay_date).format(FORMAT_DATE_DAYJS) : "",
                         legalized_date: item.pay_date ? dayjs(item.legalized_date).format(FORMAT_DATE_DAYJS) : "",
                         author_id: prevEditRow?.month === item.month ? state?.user?.id : item.author_id,
-                        status: prevEditRow?.month === item.month ? (item.status === "rejected" ? "pending" : item.status) : item.status,
+                        status: prevEditRow?.month === item.month ? "pending" : item.status,
                         legalized: item.legalized,
                     },
                 }),

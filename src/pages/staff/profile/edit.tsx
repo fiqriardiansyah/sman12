@@ -1,22 +1,28 @@
 import { Alert, Button, DatePicker, Form, Image, Input, Select, Skeleton, Space, Upload, UploadProps, message, notification } from "antd";
 import StateRender from "components/common/state";
+import { HandlerProps } from "components/modal/template";
+import configFirebase from "config/firebase";
 import { UserContext } from "context/user";
 import dayjs from "dayjs";
+import { getAuth } from "firebase/auth";
 import { httpsCallable } from "firebase/functions";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Staff } from "modules/datastaff/table";
+import ModalReauthentication from "modules/modal-reauthentication";
 import React from "react";
 import { AiOutlineUpload } from "react-icons/ai";
 import { BiArrowBack } from "react-icons/bi";
 import { useMutation, useQuery } from "react-query";
 import { Link, useNavigate } from "react-router-dom";
 import { functionInstance, storageInstance } from "service/firebase-instance";
+import Utils from "utils";
 import { DEFAULT_ERROR_MESSAGE, FORMAT_DATE_DAYJS, GENDER, IMAGE_FALLBACK, JENJANG, KEPEGAWAIAN, STAFF_PATH } from "utils/constant";
 
 function ProfileEdit() {
     const { state } = React.useContext(UserContext);
     const getMyData = httpsCallable(functionInstance, "getUserWithEmail");
     const editUser = httpsCallable(functionInstance, "editUser");
+    const updateAccount = httpsCallable(functionInstance, "updateAccount");
 
     const [api, contextHolder] = notification.useNotification();
 
@@ -50,6 +56,39 @@ function ProfileEdit() {
                 message.success("edit profile berhasil");
                 navigate(-1);
             });
+    };
+
+    const updateAccountMutation = useMutation(
+        ["edit-account"],
+        async (data: any) => {
+            return (await updateAccount({ ...data, uid: state?.user?.uid, id: state?.user?.id })).data;
+        },
+        {
+            onError(e: any) {
+                message.error(e?.message);
+            },
+        }
+    );
+
+    const onUpdateAccount = (ctrl: HandlerProps) => {
+        return (values: any) => {
+            const removeFalsy = Utils.CleanObj(values);
+            if (!Object.keys(removeFalsy).length) return;
+            ctrl.openModalWithData(removeFalsy);
+        };
+    };
+
+    const onSubmitAuth = (data: any) => {
+        updateAccountMutation.mutateAsync({ update: data }).then(() => {
+            message.success("Perbarui Akun berhasil");
+            setTimeout(() => {
+                getAuth(configFirebase.app)
+                    .signOut()
+                    .then(() => {
+                        window?.location?.reload();
+                    });
+            }, 2000);
+        });
     };
 
     const uploadProps: UploadProps = {
@@ -187,6 +226,26 @@ function ProfileEdit() {
                             </Button>
                         </Form.Item>
                     </Form>
+                    <h2 className="mt-10 text-gray-600">Perbarui Akun</h2>
+                    <div className="bg-white p-3 rounded-md mb-20 w-fit">
+                        <ModalReauthentication onSubmit={onSubmitAuth}>
+                            {(ctrl) => (
+                                <Form onFinish={onUpdateAccount(ctrl)} autoComplete="off" layout="inline" requiredMark={false}>
+                                    <Form.Item label="Email" name="email">
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item label="Password" name="password">
+                                        <Input.Password />
+                                    </Form.Item>
+                                    <Form.Item>
+                                        <Button loading={updateAccountMutation.isLoading} type="primary" htmlType="submit">
+                                            Update
+                                        </Button>
+                                    </Form.Item>
+                                </Form>
+                            )}
+                        </ModalReauthentication>
+                    </div>
                 </StateRender.Data>
                 <StateRender.Loading>
                     <Skeleton />
