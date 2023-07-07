@@ -28,6 +28,9 @@ type Props = {
     fetcher: UseQueryResult<Siswa[], unknown>;
 };
 
+export const mandatoryHeaderSiswa = ["nama", "nisn"];
+export const optionHeaderSiswa = ["nis", "hp", "alamat", "wali", "hp_wali"];
+
 function TableSiswa({ fetcher }: Props) {
     const columns: ColumnsType<Siswa> = [
         {

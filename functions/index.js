@@ -1,9 +1,27 @@
+/* eslint-disable no-plusplus */
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 
 const GMAIL = "@gmail.com";
 
 admin.initializeApp();
+
+const lowerize = (obj) =>
+    Object.keys(obj).reduce((acc, k) => {
+        acc[k.toLowerCase()] = obj[k];
+        return acc;
+    }, {});
+
+function genPassword() {
+    const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const passwordLength = 12;
+    let password = "";
+    for (let i = 0; i <= passwordLength; i++) {
+        const randomNumber = Math.floor(Math.random() * chars.length);
+        password += chars.substring(randomNumber, randomNumber + 1);
+    }
+    return password;
+}
 
 // USER
 exports.getUserWithEmail = functions.https.onCall(async (data) => {
@@ -189,11 +207,12 @@ exports.createStudent = functions.https.onCall(async (data) => {
             if (e?.message === "already-exists") {
                 throw new functions.https.HttpsError("already-exists", `siswa dengan nisn ${data.nisn} sudah terdaftar`);
             }
-            const userRecord = await admin.auth().createUser({
+            const dt = {
                 email,
-                password: data.nisn,
+                password: genPassword(),
                 displayName: data.nama,
-            });
+            };
+            const userRecord = await admin.auth().createUser(dt);
             const userData = await admin
                 .firestore()
                 .collection("users")
@@ -203,32 +222,44 @@ exports.createStudent = functions.https.onCall(async (data) => {
                     email,
                     role: "student",
                 });
-            return { success: true };
+            return { ...data, status: "SUKSES", error: "", password: dt.password, email: dt.email };
         });
 });
 
 exports.createStudents = functions.https.onCall(async (data) => {
-    const prepareDate = data?.map((user) => ({
-        email: user.nisn + GMAIL,
-        password: user.nisn?.toString(),
-        displayName: user.nama,
-    }));
-
-    if (!prepareDate.length) {
+    if (!data?.length) {
         throw new functions.https.HttpsError("resource-exhausted", "please input data");
     }
 
+    const lowerCaseData = data?.map((el) => lowerize(el));
+
+    const prepareData = [...lowerCaseData]?.map((user) => {
+        return {
+            email: user.nisn + GMAIL,
+            password: genPassword(),
+            displayName: user.nama,
+        };
+    });
+
     try {
-        const createUsers = prepareDate?.map((user) => admin.auth().createUser(user));
-        const usersAccount = await Promise.all(createUsers).then((result) => result.map((usr) => usr));
+        const createUsers = prepareData?.map((user) => admin.auth().createUser(user));
+        const results = await Promise.all(createUsers.map((req) => req.catch((e) => e))).then((result) => result.map((res) => res));
 
         const usersCollRef = admin.firestore().collection("users");
 
-        usersAccount?.forEach((user) => {
-            const dataUser = data.find((dt) => dt.nisn + GMAIL === user.email);
-            usersCollRef.add({ ...dataUser, role: "student", email: dataUser.nisn + GMAIL, uid: user.uid });
+        const generateRes = [];
+
+        results?.forEach((res, i) => {
+            if (!res?.uid) {
+                generateRes.push({ ...lowerCaseData[i], status: "GAGAL", error: res?.message, password: "", email: prepareData[i].email });
+            } else {
+                const dataUser = lowerCaseData.find((dt) => dt.nisn + GMAIL === res.email);
+                generateRes.push({ ...lowerCaseData[i], status: "SUKSES", error: "", password: prepareData[i].password, email: res.email });
+                usersCollRef.add({ ...dataUser, role: "student", email: dataUser.nisn + GMAIL, uid: res.uid });
+            }
         });
-        return { success: true };
+
+        return { generateRes };
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
@@ -270,11 +301,13 @@ exports.createTeacherClass = functions.https.onCall(async (data) => {
             if (e?.message === "already-exists") {
                 throw new functions.https.HttpsError("already-exists", `guru dengan nuptk ${data.nuptk} sudah terdaftar`);
             }
-            const userRecord = await admin.auth().createUser({
+            const dt = {
                 email,
-                password: data.nuptk,
+                password: genPassword(),
                 displayName: data.nama,
-            });
+            };
+
+            const userRecord = await admin.auth().createUser(dt);
             const userData = await admin
                 .firestore()
                 .collection("users")
@@ -284,9 +317,49 @@ exports.createTeacherClass = functions.https.onCall(async (data) => {
                     email,
                     role: "teacher",
                 });
-            return { success: true };
+            return { ...data, status: "SUKSES", error: "", password: dt.password, email: dt.email };
         });
 });
+
+exports.createTeachers = functions.https.onCall(async (data) => {
+    if (!data?.length) {
+        throw new functions.https.HttpsError("resource-exhausted", "please input data");
+    }
+
+    const lowerCaseData = data?.map((el) => lowerize(el));
+
+    const prepareData = [...lowerCaseData]?.map((user) => {
+        return {
+            email: user.nuptk + GMAIL,
+            password: genPassword(),
+            displayName: user.nama,
+        };
+    });
+
+    try {
+        const createUsers = prepareData?.map((user) => admin.auth().createUser(user));
+        const results = await Promise.all(createUsers.map((req) => req.catch((e) => e))).then((result) => result.map((res) => res));
+
+        const usersCollRef = admin.firestore().collection("users");
+
+        const generateRes = [];
+
+        results?.forEach((res, i) => {
+            if (!res?.uid) {
+                generateRes.push({ ...lowerCaseData[i], status: "GAGAL", error: res?.message, password: "", email: prepareData[i].email });
+            } else {
+                const dataUser = lowerCaseData.find((dt) => dt.nuptk + GMAIL === res.email);
+                generateRes.push({ ...lowerCaseData[i], status: "SUKSES", error: "", password: prepareData[i].password, email: res.email });
+                usersCollRef.add({ ...dataUser, role: "teacher", email: dataUser.nuptk + GMAIL, uid: res.uid });
+            }
+        });
+
+        return { generateRes };
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
 //
 // SUBJECT
 exports.createSubject = functions.https.onCall(async (data) => {
@@ -382,11 +455,13 @@ exports.createStaff = functions.https.onCall(async (data) => {
             if (e?.message === "already-exists") {
                 throw new functions.https.HttpsError("already-exists", `staff dengan nuptk ${data.nuptk} sudah terdaftar`);
             }
-            const userRecord = await admin.auth().createUser({
+            const dt = {
                 email,
-                password: data.nuptk,
+                password: genPassword(),
                 displayName: data.nama,
-            });
+            };
+
+            const userRecord = await admin.auth().createUser(dt);
             const userData = await admin
                 .firestore()
                 .collection("users")
@@ -396,7 +471,7 @@ exports.createStaff = functions.https.onCall(async (data) => {
                     email,
                     role: "staff",
                 });
-            return { success: true };
+            return { ...data, status: "SUKSES", error: "", password: dt.password, email: dt.email };
         });
 });
 

@@ -8,6 +8,7 @@ import { IoMdArrowBack } from "react-icons/io";
 import { useMutation } from "react-query";
 import { functionInstance } from "service/firebase-instance";
 import { FORMAT_DATE_DAYJS, GENDER, JENJANG, KEPEGAWAIAN, STAFF_PATH } from "utils/constant";
+import Utils from "utils";
 
 function MasterDataStaffAdd() {
     const createStaff = httpsCallable(functionInstance, "createStaff");
@@ -19,7 +20,26 @@ function MasterDataStaffAdd() {
             return (await createStaff({ ...data })).data;
         },
         {
-            onSuccess(data) {
+            onSuccess(data: any) {
+                Utils.ExportToExcel(`Data staf baru - ${data?.nama}`, [
+                    {
+                        Nama: data?.nama,
+                        NUPTK: data?.nuptk,
+                        HP: data?.hp || "",
+                        Alamat: data?.alamat || "",
+                        "Jenis Kelamin": data?.kelamin,
+                        "Tempat Lahir": data?.tempat_lahir,
+                        "Tgl Lahir": data?.tgl_lahir,
+                        Posisi: data?.posisi,
+                        "Status Kepegawaian": KEPEGAWAIAN?.find((el) => el.value === data?.status_kepegawaian)?.label,
+                        Jurusan: data?.jurusan,
+                        Jenjang: JENJANG.find((el) => el.value === data?.jenjang)?.label,
+                        Status: data?.status || "",
+                        "Alasan Gagal": data?.error || "",
+                        Email: data?.email || "",
+                        Password: data?.password || "",
+                    },
+                ]);
                 navigate(-1);
                 message.success("Berhasil menambahkan data");
             },

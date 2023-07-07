@@ -1,13 +1,14 @@
 import { Alert, Image } from "antd";
 import ModalTemplate, { HandlerProps } from "components/modal/template";
-import ImportSiswaFileImg from "assets/images/siswaimport.png";
-import { mandatoryHeader, optionHeader } from "./modal-import";
 
 type Props = {
+    mandatoryHeader?: string[];
+    optionHeader?: string[];
+    imageImport?: any;
     children: (data: HandlerProps) => void;
 };
 
-function ModalInfoImport({ children }: Props) {
+function ModalInfoImport({ children, mandatoryHeader, optionHeader, imageImport }: Props) {
     return (
         <ModalTemplate title="Aturan Import File" handlerInComponent={children} footer={null}>
             {(ctrl) => (
@@ -23,7 +24,7 @@ function ModalInfoImport({ children }: Props) {
                         }
                     />
                     <span>Contoh: </span>
-                    <Image src={ImportSiswaFileImg} className="w-full" alt="Import Siswa" />
+                    <Image src={imageImport} className="w-full" alt="Import" />
                 </div>
             )}
         </ModalTemplate>

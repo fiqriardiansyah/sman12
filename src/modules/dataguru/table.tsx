@@ -16,7 +16,6 @@ export interface Guru {
     kelas?: string;
     kelas_id?: string;
     kelamin?: any;
-
     tgl_lahir?: string;
     tempat_lahir?: string;
     status_kepegawaian?: any;
@@ -27,6 +26,9 @@ export interface Guru {
 type Props = {
     fetcher: UseQueryResult<Guru[], unknown>;
 };
+
+export const mandatoryHeaderGuru = ["nama", "nuptk"];
+export const optionHeaderGuru = ["nip", "hp", "alamat"];
 
 function TableGuru({ fetcher }: Props) {
     const columns: ColumnsType<Guru> = [

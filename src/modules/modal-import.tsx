@@ -6,30 +6,31 @@ import { BiImageAdd } from "react-icons/bi";
 import { SiMicrosoftexcel } from "react-icons/si";
 import readXlsxFile from "read-excel-file";
 import { ColumnsType } from "antd/es/table";
-import { Siswa } from "./table";
+import { Guru } from "modules/dataguru/table";
+import { Siswa } from "./datasiswa/table";
 
 type Props = {
     children: (data: HandlerProps) => void;
-    onSave: (rowSiswa: Partial<Siswa>[]) => void;
+    onSave: (rowData: Partial<Siswa | Guru>[]) => void;
+    mandatoryHeader?: string[];
 };
 
-export const mandatoryHeader = ["nama", "nisn"];
-export const optionHeader = ["nis", "hp", "alamat", "wali"];
-
-function ModalImportSiswa({ children, onSave }: Props) {
+function ModalImport({ children, onSave, mandatoryHeader }: Props) {
     const [file, setFile] = useState<File | null>(null);
-    const [rowSiswa, setRowSiswa] = useState<Partial<Siswa>[]>([]);
+    const [rowData, setRowData] = useState<Partial<Siswa | Guru>[]>([]);
 
     const handleChange = (fl: File | null) => {
         readXlsxFile(fl as any).then((rows) => {
-            const headers = rows[0]; // ["name", "nisn", ....];
+            const headers = rows[0]; // ["nama", "nisn", ....];
             if (!headers || rows.length === 1) {
                 message.error("Data tidak ditemukan");
                 return;
             }
-            const notFoundHeaders = mandatoryHeader.filter((el) => !headers.includes(el));
-            if (notFoundHeaders.length) {
-                message.error(`Data Kolom " ${notFoundHeaders.join(", ")} " tidak ditemukan`);
+            const notFoundHeaders = mandatoryHeader?.filter((el) => !headers?.map((h) => h?.toString()?.toLowerCase()).includes(el));
+            if (notFoundHeaders?.length) {
+                message.error(
+                    `Data Kolom " ${notFoundHeaders?.map((el) => el?.toString()?.CapitalizeEachFirstLetter()).join(", ")} " tidak ditemukan`
+                );
                 return;
             }
             const transformData = rows?.splice(1)?.map((row) => {
@@ -42,7 +43,7 @@ function ModalImportSiswa({ children, onSave }: Props) {
                 );
             });
             setFile(fl);
-            setRowSiswa(transformData);
+            setRowData(transformData);
         });
     };
 
@@ -50,19 +51,19 @@ function ModalImportSiswa({ children, onSave }: Props) {
 
     const onTypeError = (err: any) => message.error(err);
 
-    const columns: ColumnsType<any> = Object.keys(rowSiswa[0] || {})?.map((row) => ({
+    const columns: ColumnsType<any> = Object.keys(rowData[0] || {})?.map((row) => ({
         title: row?.CapitalizeEachFirstLetter(),
-        dataIndex: row?.toLowerCase(),
+        dataIndex: row,
         render: (text) => <p className="m-0 capitalize">{text}</p>,
     }));
 
     const clearRow = () => {
-        setRowSiswa([]);
+        setRowData([]);
         setFile(null);
     };
 
     return (
-        <ModalTemplate width={800} title="Import Siswa" handlerInComponent={children} footer={null} afterClose={clearRow}>
+        <ModalTemplate width={800} title="Import Data" handlerInComponent={children} footer={null} afterClose={clearRow}>
             {(ctrl) => (
                 <div className="flex flex-col gap-5">
                     <FileUploader types={["xlsx"]} multiple={false} onTypeError={onTypeError} onSizeError={onSizeError} handleChange={handleChange}>
@@ -80,20 +81,14 @@ function ModalImportSiswa({ children, onSave }: Props) {
                             </div>
                         )}
                     </FileUploader>
-                    {rowSiswa.length ? (
-                        <Table
-                            size="small"
-                            columns={columns}
-                            dataSource={rowSiswa || []}
-                            className="w-full"
-                            pagination={{ showSizeChanger: false }}
-                        />
+                    {rowData.length ? (
+                        <Table size="small" columns={columns} dataSource={rowData || []} className="w-full" pagination={{ showSizeChanger: false }} />
                     ) : null}
-                    {rowSiswa.length ? (
+                    {rowData.length ? (
                         <Button
                             onClick={() => {
                                 ctrl.closeModal();
-                                onSave(rowSiswa);
+                                onSave(rowData);
                             }}
                             type="primary"
                             className="!w-fit"
@@ -107,4 +102,4 @@ function ModalImportSiswa({ children, onSave }: Props) {
     );
 }
 
-export default ModalImportSiswa;
+export default ModalImport;
