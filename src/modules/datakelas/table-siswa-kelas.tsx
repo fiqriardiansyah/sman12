@@ -14,12 +14,12 @@ function TableSiswaKelas({ siswa }: Props) {
             render: (text) => <p className="m-0 capitalize">{text}</p>,
         },
         {
-            title: "Nis",
+            title: "NIS",
             dataIndex: "nis",
             render: (text) => <p className="m-0">{text}</p>,
         },
         {
-            title: "Nisn",
+            title: "NISN",
             dataIndex: "nisn",
             render: (text) => <p className="m-0">{text}</p>,
         },

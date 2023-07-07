@@ -62,7 +62,7 @@ function AlumniView() {
                         <Descriptions.Item label="NISN">{profileQuery.data?.nisn}</Descriptions.Item>
                         <Descriptions.Item label="NIS">{profileQuery.data?.nis}</Descriptions.Item>
                         <Descriptions.Item label="Email">{profileQuery.data?.email}</Descriptions.Item>
-                        <Descriptions.Item label="Handphone">{profileQuery.data?.hp}</Descriptions.Item>
+                        <Descriptions.Item label="Telepon">{profileQuery.data?.hp}</Descriptions.Item>
                         <Descriptions.Item label="Jenis Kelamin">
                             {GENDER.find((el) => el.value === profileQuery?.data?.kelamin)?.label}
                         </Descriptions.Item>

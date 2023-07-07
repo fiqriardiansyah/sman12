@@ -63,7 +63,7 @@ function InfoSiswaNilaiEdit() {
                     </Link>
                     <h1 className="m-0">Edit Nilai Siwa</h1>
                 </Space>
-                <Button onClick={onClickNewSemester} disabled={semester === 6 || semester >= maxCurrSemester}>
+                <Button onClick={onClickNewSemester} disabled={semester === 6}>
                     Semester Baru
                 </Button>
             </div>
@@ -80,7 +80,7 @@ function InfoSiswaNilaiEdit() {
                             <Descriptions.Item label="NISN">{dataUserQuery.data?.nisn}</Descriptions.Item>
                             <Descriptions.Item label="Kelas">{dataUserQuery.data?.kelas}</Descriptions.Item>
                             <Descriptions.Item label="Alamat">{dataUserQuery.data?.alamat}</Descriptions.Item>
-                            <Descriptions.Item label="Handphone">{dataUserQuery.data?.hp}</Descriptions.Item>
+                            <Descriptions.Item label="Telepon">{dataUserQuery.data?.hp}</Descriptions.Item>
                         </Descriptions>
                     </Card>
                     {[...new Array(semester)]?.map((_, i) => (

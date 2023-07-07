@@ -188,7 +188,7 @@ function TeacherProfileEdit() {
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Handphone" name="hp">
+                            <Form.Item label="Telepon" name="hp">
                                 <Input />
                             </Form.Item>
 

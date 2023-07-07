@@ -27,7 +27,7 @@ function RecapStaf() {
     const downloadStaff = () => {
         if (!staffQuery.data?.length) return;
         Utils.ExportToExcel(
-            "Daftar Staff",
+            "Daftar Staf",
             staffQuery.data?.map((st) => ({
                 Nama: st?.nama,
                 NUPTK: st?.nuptk,

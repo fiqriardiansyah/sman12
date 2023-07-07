@@ -30,6 +30,10 @@ export function editTableRoster<T extends Roster>(Component: ComponentType<EditT
 
         const columns: ColumnsType<T> = [
             {
+                title: "Les",
+                render: (t, r, i) => i + 1,
+            },
+            {
                 title: "Mata Pelajaran - Guru",
                 dataIndex: "mata_pelajaran",
                 ...{ editable: true },

@@ -85,12 +85,13 @@ function StudentProfile() {
                         <Descriptions.Item label="NISN">{profileQuery.data?.nisn}</Descriptions.Item>
                         <Descriptions.Item label="NIS">{profileQuery.data?.nis}</Descriptions.Item>
                         <Descriptions.Item label="Email">{profileQuery.data?.email}</Descriptions.Item>
-                        <Descriptions.Item label="Handphone">{profileQuery.data?.hp}</Descriptions.Item>
+                        <Descriptions.Item label="Telepon">{profileQuery.data?.hp}</Descriptions.Item>
                         <Descriptions.Item label="Jenis Kelamin">
                             {GENDER.find((el) => el.value === profileQuery?.data?.kelamin)?.label}
                         </Descriptions.Item>
                         <Descriptions.Item label="Alamat">{profileQuery.data?.alamat}</Descriptions.Item>
-                        <Descriptions.Item label="Wali / Orang tua">{profileQuery.data?.wali}</Descriptions.Item>
+                        <Descriptions.Item label="Wali/Orang tua">{profileQuery.data?.wali}</Descriptions.Item>
+                        <Descriptions.Item label="Telepon Wali/Orang tua">{profileQuery.data?.hp_wali}</Descriptions.Item>
                         <Descriptions.Item label="Stambuk">{profileQuery.data?.stambuk}</Descriptions.Item>
                         <Descriptions.Item label="Tgl lahir">{profileQuery.data?.tgl_lahir}</Descriptions.Item>
                         <Descriptions.Item label="Tempat lahir">{profileQuery.data?.tempat_lahir}</Descriptions.Item>

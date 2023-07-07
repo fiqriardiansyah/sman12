@@ -2,7 +2,7 @@ import { Button, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { UseQueryResult } from "react-query";
 import { Link } from "react-router-dom";
-import { STAFF_PATH } from "utils/constant";
+import { KEPEGAWAIAN, STAFF_PATH } from "utils/constant";
 
 export interface Guru {
     id?: string;
@@ -51,9 +51,9 @@ function TableGuru({ fetcher }: Props) {
             render: (text) => <p className="m-0">{text}</p>,
         },
         {
-            title: "Handphone",
-            dataIndex: "hp",
-            render: (text) => <p className="m-0">{text}</p>,
+            title: "Status kepegawaian",
+            dataIndex: "status_kepegawaian",
+            render: (text) => <p className="m-0">{text ? KEPEGAWAIAN.find((el) => el.value === text)?.label : ""}</p>,
         },
         {
             width: "80px",

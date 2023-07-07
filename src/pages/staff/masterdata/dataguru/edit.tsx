@@ -194,7 +194,7 @@ function MasterDataGuruEdit() {
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Handphone" name="hp" rules={[{ required: true, message: "Nomor hp harus diisi!" }]}>
+                            <Form.Item label="Telepon" name="hp" rules={[{ required: true, message: "Nomor hp harus diisi!" }]}>
                                 <Input />
                             </Form.Item>
 

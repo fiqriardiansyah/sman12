@@ -101,7 +101,11 @@ function MasterDataSiswaAdd() {
                         <Input />
                     </Form.Item>
 
-                    <Form.Item label="Nisn" name="nisn" rules={[{ required: true, message: "NISN harus diisi!" }]}>
+                    <Form.Item label="NISN" name="nisn" rules={[{ required: true, message: "NISN harus diisi!" }]}>
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item label="NIS" name="nis">
                         <Input />
                     </Form.Item>
 
@@ -109,19 +113,19 @@ function MasterDataSiswaAdd() {
                         <Select options={GENDER} />
                     </Form.Item>
 
-                    <Form.Item label="Nis" name="nis">
-                        <Input />
-                    </Form.Item>
-
                     <Form.Item label="Alamat" name="alamat">
                         <Input />
                     </Form.Item>
 
-                    <Form.Item label="Handphone" name="hp">
+                    <Form.Item label="Telepon" name="hp">
                         <Input />
                     </Form.Item>
 
                     <Form.Item label="Wali / Orang tua" name="wali">
+                        <Input />
+                    </Form.Item>
+
+                    <Form.Item label="Telepon Wali/Orang tua" name="hp_wali">
                         <Input />
                     </Form.Item>
 

@@ -109,7 +109,7 @@ function MasterDataStaffEdit() {
                     <Link to=".." onClick={clickGoBack}>
                         <IoMdArrowBack className="text-lg m-0 mt-1 cursor-pointer" />
                     </Link>
-                    <h1 className="m-0">Edit Staff</h1>
+                    <h1 className="m-0">Edit Staf</h1>
                 </Space>
             </div>
             <StateRender data={dataUserQuery.data} isLoading={dataUserQuery.isLoading} isError={dataUserQuery.isError}>
@@ -160,7 +160,7 @@ function MasterDataStaffEdit() {
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Handphone" name="hp" rules={[{ required: true, message: "Handphone harus diisi!" }]}>
+                            <Form.Item label="Telepon" name="hp" rules={[{ required: true, message: "Telepon harus diisi!" }]}>
                                 <Input />
                             </Form.Item>
 

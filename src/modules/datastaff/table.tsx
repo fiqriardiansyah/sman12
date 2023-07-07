@@ -40,7 +40,7 @@ function TableStaff({ fetcher }: Props) {
             render: (text) => <p className="m-0">{text}</p>,
         },
         {
-            title: "Handphone",
+            title: "Telepon",
             dataIndex: "hp",
             render: (text) => <p className="m-0">{text}</p>,
         },

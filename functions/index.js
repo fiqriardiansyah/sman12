@@ -68,12 +68,14 @@ exports.deleteUserWithEmail = functions.https.onCall(async (data) => {
         let ifTeacherSubject = null;
 
         findUid.forEach(async (usr) => {
-            if (usr.data()?.role === "student" && usr.data()?.kelas_id) {
-                const classStudentCollRef = classCollRef.doc(usr.data()?.kelas_id).collection("students");
-                const getMyClass = await classStudentCollRef.where("uid", "==", usr.data().uid).get();
-                getMyClass.forEach(async (st) => {
-                    await classStudentCollRef.doc(st.id).delete();
-                });
+            if (usr.data()?.role === "student") {
+                if (usr.data()?.kelas_id) {
+                    const classStudentCollRef = classCollRef.doc(usr.data()?.kelas_id).collection("students");
+                    const getMyClass = await classStudentCollRef.where("uid", "==", usr.data().uid).get();
+                    getMyClass.forEach(async (st) => {
+                        await classStudentCollRef.doc(st.id).delete();
+                    });
+                }
                 userCollRef.doc(usr.id).delete();
                 await admin.auth().deleteUser(usr.data().uid);
             }

@@ -83,7 +83,7 @@ function InfoSiswaSppEdit() {
                             <Descriptions.Item label="NISN">{dataUserQuery.data?.nisn}</Descriptions.Item>
                             <Descriptions.Item label="Kelas">{dataUserQuery.data?.kelas}</Descriptions.Item>
                             <Descriptions.Item label="Alamat">{dataUserQuery.data?.alamat}</Descriptions.Item>
-                            <Descriptions.Item label="Handphone">{dataUserQuery.data?.hp}</Descriptions.Item>
+                            <Descriptions.Item label="Telepon">{dataUserQuery.data?.hp}</Descriptions.Item>
                         </Descriptions>
                     </Card>
                 </StateRender.Data>

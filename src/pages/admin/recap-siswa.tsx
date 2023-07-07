@@ -54,8 +54,8 @@ function RecapSiswa() {
             `Daftar siswa kelas X ${new Date().getFullYear()}`,
             getStudentsX?.map((st) => ({
                 Nama: st?.nama,
-                Nis: st?.nis,
-                Nisn: st?.nisn,
+                NIS: st?.nis,
+                NISN: st?.nisn,
                 "jenis kelamin": GENDER?.find((el) => el.value === st?.kelamin)?.label || "",
                 Alamat: st?.alamat,
                 Hp: st?.hp,
@@ -71,8 +71,8 @@ function RecapSiswa() {
             `Daftar siswa kelas XI ${new Date().getFullYear()}`,
             getStudentsXI?.map((st) => ({
                 Nama: st?.nama,
-                Nis: st?.nis,
-                Nisn: st?.nisn,
+                NIS: st?.nis,
+                NISN: st?.nisn,
                 "jenis kelamin": GENDER?.find((el) => el.value === st?.kelamin)?.label || "",
                 Alamat: st?.alamat,
                 Hp: st?.hp,
@@ -88,8 +88,8 @@ function RecapSiswa() {
             `Daftar siswa kelas XII ${new Date().getFullYear()}`,
             getStudentsXII?.map((st) => ({
                 Nama: st?.nama,
-                Nis: st?.nis,
-                Nisn: st?.nisn,
+                NIS: st?.nis,
+                NISN: st?.nisn,
                 "jenis kelamin": GENDER?.find((el) => el.value === st?.kelamin)?.label || "",
                 Alamat: st?.alamat,
                 Hp: st?.hp,
@@ -105,8 +105,8 @@ function RecapSiswa() {
             "Daftar alumni",
             getAlumnis?.map((st) => ({
                 Nama: st?.nama,
-                Nis: st?.nis,
-                Nisn: st?.nisn,
+                NIS: st?.nis,
+                NISN: st?.nisn,
                 "jenis kelamin": GENDER?.find((el) => el.value === st?.kelamin)?.label || "",
                 Alamat: st?.alamat,
                 Hp: st?.hp,

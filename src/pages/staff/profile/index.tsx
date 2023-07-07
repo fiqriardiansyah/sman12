@@ -42,7 +42,7 @@ function Profile() {
                         <Descriptions.Item label="Nama">{profileQuery.data?.nama}</Descriptions.Item>
                         <Descriptions.Item label="NUPTK">{profileQuery.data?.nuptk}</Descriptions.Item>
                         <Descriptions.Item label="Email">{profileQuery.data?.email}</Descriptions.Item>
-                        <Descriptions.Item label="Handphone">{profileQuery.data?.hp}</Descriptions.Item>
+                        <Descriptions.Item label="Telepon">{profileQuery.data?.hp}</Descriptions.Item>
                         <Descriptions.Item label="Jenis Kelamin">
                             {GENDER.find((el) => el.value === profileQuery?.data?.kelamin)?.label}
                         </Descriptions.Item>

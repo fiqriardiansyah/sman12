@@ -43,7 +43,7 @@ function TeacherProfile() {
                         <Descriptions.Item label="NUPTK">{profileQuery.data?.nuptk}</Descriptions.Item>
                         <Descriptions.Item label="NIP">{profileQuery.data?.nip}</Descriptions.Item>
                         <Descriptions.Item label="Email">{profileQuery.data?.email}</Descriptions.Item>
-                        <Descriptions.Item label="Handphone">{profileQuery.data?.hp}</Descriptions.Item>
+                        <Descriptions.Item label="Telepon">{profileQuery.data?.hp}</Descriptions.Item>
                         <Descriptions.Item label="Jenis Kelamin">
                             {GENDER.find((el) => el.value === profileQuery?.data?.kelamin)?.label}
                         </Descriptions.Item>

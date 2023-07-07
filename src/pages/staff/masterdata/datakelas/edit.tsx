@@ -23,12 +23,12 @@ const columns: ColumnsType<Siswa> = [
         render: (text) => <p className="m-0 capitalize">{text}</p>,
     },
     {
-        title: "Nis",
+        title: "NIS",
         dataIndex: "nis",
         render: (text) => <p className="m-0">{text}</p>,
     },
     {
-        title: "Nisn",
+        title: "NISN",
         dataIndex: "nisn",
         render: (text) => <p className="m-0">{text}</p>,
     },
@@ -105,7 +105,7 @@ function MasterDataKelasEdit() {
         try {
             DAYS.forEach((day) => {
                 if (!rosters[day] || !rosters[day].length) {
-                    throw new Error(`Roster hari ${day} belum diisi`);
+                    throw new Error(`Mata pelajaran hari ${day} belum diisi`);
                 }
             });
         } catch (e: any) {
@@ -241,7 +241,7 @@ function MasterDataKelasEdit() {
                             rightColumns={columns}
                         />
                         <div className="">
-                            <p className="mt-5">Roster</p>
+                            <p className="mt-5">Mata Pelajaran</p>
                             <Card>
                                 <Tabs items={items} />
                             </Card>

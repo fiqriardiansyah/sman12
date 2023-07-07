@@ -160,8 +160,12 @@ function MasterDataSiswaEdit() {
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Nisn" name="nisn">
+                            <Form.Item label="NISN" name="nisn">
                                 <Input disabled />
+                            </Form.Item>
+
+                            <Form.Item label="NIS" name="nis">
+                                <Input />
                             </Form.Item>
 
                             <Form.Item label="Email" name="email">
@@ -172,19 +176,19 @@ function MasterDataSiswaEdit() {
                                 <Select options={GENDER} />
                             </Form.Item>
 
-                            <Form.Item label="Nis" name="nis">
-                                <Input />
-                            </Form.Item>
-
                             <Form.Item label="Alamat" name="alamat">
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Handphone" name="hp">
+                            <Form.Item label="Telepon" name="hp">
                                 <Input />
                             </Form.Item>
 
                             <Form.Item label="Wali / Orang tua" name="wali">
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item label="Telepon Wali/Orang tua" name="hp_wali">
                                 <Input />
                             </Form.Item>
 

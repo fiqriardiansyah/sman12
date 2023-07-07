@@ -142,7 +142,7 @@ function TeacherPerwalian() {
                             <Descriptions.Item label="Kelas">{`${detailClassQuery?.data?.kelas}${detailClassQuery.data?.nomor_kelas}`}</Descriptions.Item>
                             <Descriptions.Item label="Jumlah Siswa">{detailClassQuery.data?.murid?.length}</Descriptions.Item>
                         </Descriptions>
-                        <p>Roster kelas</p>
+                        <p>Mata pelajaran kelas</p>
                         <Tabs type="card" items={items} />
                     </Card>
                     <Tabs className="mt-10" items={itemsProperty} />

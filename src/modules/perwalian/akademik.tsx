@@ -79,7 +79,7 @@ function Akademik({ kelas }: { kelas: any }) {
                 label: "Rata-Rata nilai semester",
                 data: getMyGradesQuery.data?.map((grade) => ({
                     x: `Semester ${grade.semester}`,
-                    y: (grade?.grades?.reduce((a, b) => a + b.nilai, 0) || 0) / (grade?.grades?.length || 1),
+                    y: parseFloat(((grade?.grades?.reduce((a, b) => a + b.nilai, 0) || 0) / (grade?.grades?.length || 1)).toFixed(1)),
                 })),
                 fill: true,
                 lineTension: 0.5,
@@ -88,6 +88,16 @@ function Akademik({ kelas }: { kelas: any }) {
                 pointHoverRadius: 15,
             },
         ],
+    };
+
+    const options = {
+        responsive: true,
+        scales: {
+            y: {
+                min: 0,
+                max: 100,
+            },
+        },
     };
 
     const columns: ColumnsType<Nilai> = [
@@ -113,6 +123,40 @@ function Akademik({ kelas }: { kelas: any }) {
         },
     ];
 
+    const columnsAverage: ColumnsType<any> = [
+        {
+            title: "Mata Pelajaran",
+            dataIndex: "mata_pelajaran",
+            render: (text) => <p className="m-0 capitalize">{text ? subjectsQuery.data?.find((el) => el.value === text)?.label : ""}</p>,
+        },
+        {
+            title: "Grafik Nilai",
+            dataIndex: "-",
+            render: (text, record) => {
+                const subject = subjectsQuery.data?.find((el) => el.value === record?.mata_pelajaran)?.label;
+                const data = {
+                    labels: [...new Array(6)].map((_, i) => `Semester ${i + 1}`),
+                    datasets: [
+                        {
+                            label: `Rata nilai ${subject}`,
+                            data: record?.summary?.map((sum: any) => ({
+                                x: `Semester ${sum?.semester}`,
+                                y: sum?.nilai,
+                            })),
+                            fill: true,
+                            lineTension: 0.5,
+                        },
+                    ],
+                };
+                return (
+                    <div className="h-[200px]">
+                        <Bar data={data as any} options={options} />
+                    </div>
+                );
+            },
+        },
+    ];
+
     const onChange = (key: string) => {
         setTabClass(key);
     };
@@ -123,29 +167,60 @@ function Akademik({ kelas }: { kelas: any }) {
         children: <MonthHistory cls={cls} studentId={id} />,
     }));
 
-    const items: TabsProps["items"] = getMyGradesQuery.data?.map((grade) => ({
+    const allGrades = (data: typeof getMyGradesQuery.data) => {
+        let grades: any[] = [];
+        data?.forEach((el) => {
+            el.grades?.forEach((g) => {
+                if (grades.find((gr) => gr.mata_pelajaran === g.mata_pelajaran)) {
+                    grades = grades.map((gr) => {
+                        if (gr.mata_pelajaran !== g.mata_pelajaran) return gr;
+                        return {
+                            mata_pelajaran: gr.mata_pelajaran,
+                            summary: [...(gr?.summary || []), { nilai: g.nilai, semester: el.semester }],
+                        };
+                    });
+                    return;
+                }
+                grades.push({ mata_pelajaran: g.mata_pelajaran, summary: [{ nilai: g.nilai, semester: el.semester }] });
+            });
+        });
+        return grades;
+    };
+
+    const addAverageGrades = getMyGradesQuery.data?.length
+        ? [...getMyGradesQuery.data, { semester: "rata-rata", grades: allGrades(getMyGradesQuery.data) }]
+        : [];
+
+    const items: TabsProps["items"] = addAverageGrades?.map((grade) => ({
         key: grade.semester,
-        label: `KELAS ${CLASSES_SEMESTER[Number(grade.semester) - 1]} - SEMESTER ${Number(grade.semester) % 2 !== 0 ? 1 : 2}`,
+        label:
+            grade.semester === "rata-rata"
+                ? "Rata - Rata"
+                : `KELAS ${CLASSES_SEMESTER[Number(grade.semester) - 1]} - SEMESTER ${Number(grade.semester) % 2 !== 0 ? 1 : 2}`,
         children: (
             <Table
                 rowKey={(i) => i.mata_pelajaran}
-                columns={columns as any}
+                columns={grade.semester === "rata-rata" ? columnsAverage : columns}
                 dataSource={grade.grades}
                 pagination={{ position: ["none" as any], pageSize: 100 }}
-                summary={() => (
-                    <Table.Summary>
-                        <Table.Summary.Row>
-                            <Table.Summary.Cell index={0}>
-                                <span className="font-semibold">Rata-Rata</span>
-                            </Table.Summary.Cell>
-                            <Table.Summary.Cell index={1}>
-                                <span className="font-semibold">
-                                    {(grade?.grades?.reduce((a, b) => a + b.nilai, 0) || 0) / (grade?.grades?.length || 1)}
-                                </span>
-                            </Table.Summary.Cell>
-                        </Table.Summary.Row>
-                    </Table.Summary>
-                )}
+                summary={
+                    grade.semester !== "rata-rata"
+                        ? () => (
+                              <Table.Summary>
+                                  <Table.Summary.Row>
+                                      <Table.Summary.Cell index={0}>
+                                          <span className="font-semibold">Rata-Rata</span>{" "}
+                                      </Table.Summary.Cell>
+                                      <Table.Summary.Cell index={1}>
+                                          <span className="font-semibold">
+                                              {((grade?.grades?.reduce((a, b) => a + b.nilai, 0) || 0) / (grade?.grades?.length || 1)).toFixed(1)}
+                                          </span>
+                                      </Table.Summary.Cell>
+                                  </Table.Summary.Row>
+                              </Table.Summary>
+                          )
+                        : undefined
+                }
             />
         ),
     }));
@@ -156,18 +231,7 @@ function Akademik({ kelas }: { kelas: any }) {
             <StateRender data={getMyGradesQuery.data} isLoading={getMyGradesQuery.isLoading} isError={getMyGradesQuery.isError}>
                 <StateRender.Data>
                     <Card>
-                        <Line
-                            data={dataChart as any}
-                            options={{
-                                responsive: true,
-                                scales: {
-                                    y: {
-                                        min: 0,
-                                        max: 100,
-                                    },
-                                },
-                            }}
-                        />
+                        <Line data={dataChart as any} options={options} />
                     </Card>
                     <div className="grid w-full grid-cols-1 gap-10 mt-10">
                         {getMyGradesQuery.data?.length ? (

@@ -21,6 +21,7 @@ export interface Siswa {
     lulus?: string;
     tgl_lahir?: any;
     tempat_lahir?: any;
+    hp_wali?: string;
 }
 
 type Props = {
@@ -40,12 +41,12 @@ function TableSiswa({ fetcher }: Props) {
             render: (text) => <p className="m-0">{text}</p>,
         },
         {
-            title: "Nis",
+            title: "NIS",
             dataIndex: "nis",
             render: (text) => <p className="m-0">{text}</p>,
         },
         {
-            title: "Nisn",
+            title: "NISN",
             dataIndex: "nisn",
             render: (text) => <p className="m-0">{text}</p>,
         },

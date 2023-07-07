@@ -188,7 +188,7 @@ function StudentProfileEdit() {
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Handphone" name="hp">
+                            <Form.Item label="Telepon" name="hp">
                                 <Input />
                             </Form.Item>
 
@@ -200,7 +200,11 @@ function StudentProfileEdit() {
                                 <Select options={GENDER} />
                             </Form.Item>
 
-                            <Form.Item label="Wali / Orang tua" name="wali">
+                            <Form.Item label="Wali/Orang tua" name="wali">
+                                <Input />
+                            </Form.Item>
+
+                            <Form.Item label="Telepon Wali/Orang tua" name="hp_wali">
                                 <Input />
                             </Form.Item>
 
