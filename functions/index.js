@@ -14,7 +14,7 @@ const lowerize = (obj) =>
 
 function genPassword() {
     const chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const passwordLength = 12;
+    const passwordLength = 8;
     let password = "";
     for (let i = 0; i <= passwordLength; i++) {
         const randomNumber = Math.floor(Math.random() * chars.length);
@@ -195,7 +195,7 @@ exports.getAllStudent = functions.https.onCall(async () => {
 });
 
 exports.createStudent = functions.https.onCall(async (data) => {
-    const email = data.nisn + GMAIL;
+    const email = data.nis + GMAIL;
 
     return admin
         .auth()
@@ -205,7 +205,7 @@ exports.createStudent = functions.https.onCall(async (data) => {
         })
         .catch(async (e) => {
             if (e?.message === "already-exists") {
-                throw new functions.https.HttpsError("already-exists", `siswa dengan nisn ${data.nisn} sudah terdaftar`);
+                throw new functions.https.HttpsError("already-exists", `siswa dengan nis ${data.nis} sudah terdaftar`);
             }
             const dt = {
                 email,
@@ -235,7 +235,7 @@ exports.createStudents = functions.https.onCall(async (data) => {
 
     const prepareData = [...lowerCaseData]?.map((user) => {
         return {
-            email: user.nisn + GMAIL,
+            email: user.nis + GMAIL,
             password: genPassword(),
             displayName: user.nama,
         };
@@ -253,9 +253,9 @@ exports.createStudents = functions.https.onCall(async (data) => {
             if (!res?.uid) {
                 generateRes.push({ ...lowerCaseData[i], status: "GAGAL", error: res?.message, password: "", email: prepareData[i].email });
             } else {
-                const dataUser = lowerCaseData.find((dt) => dt.nisn + GMAIL === res.email);
+                const dataUser = lowerCaseData.find((dt) => dt.nis + GMAIL === res.email);
                 generateRes.push({ ...lowerCaseData[i], status: "SUKSES", error: "", password: prepareData[i].password, email: res.email });
-                usersCollRef.add({ ...dataUser, role: "student", email: dataUser.nisn + GMAIL, uid: res.uid });
+                usersCollRef.add({ ...dataUser, role: "student", email: dataUser.nis + GMAIL, uid: res.uid });
             }
         });
 

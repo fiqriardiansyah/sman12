@@ -160,11 +160,11 @@ function MasterDataSiswaEdit() {
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="NISN" name="nisn">
+                            <Form.Item label="NIS" name="nis">
                                 <Input disabled />
                             </Form.Item>
 
-                            <Form.Item label="NIS" name="nis">
+                            <Form.Item label="NISN" name="nisn">
                                 <Input />
                             </Form.Item>
 

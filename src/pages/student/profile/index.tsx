@@ -82,8 +82,8 @@ function StudentProfile() {
                     </div>
                     <Descriptions title="User Info" className="mt-10" bordered>
                         <Descriptions.Item label="Nama">{profileQuery.data?.nama}</Descriptions.Item>
-                        <Descriptions.Item label="NISN">{profileQuery.data?.nisn}</Descriptions.Item>
                         <Descriptions.Item label="NIS">{profileQuery.data?.nis}</Descriptions.Item>
+                        <Descriptions.Item label="NISN">{profileQuery.data?.nisn}</Descriptions.Item>
                         <Descriptions.Item label="Email">{profileQuery.data?.email}</Descriptions.Item>
                         <Descriptions.Item label="Telepon">{profileQuery.data?.hp}</Descriptions.Item>
                         <Descriptions.Item label="Jenis Kelamin">

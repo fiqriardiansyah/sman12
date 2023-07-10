@@ -30,7 +30,7 @@ function MasterDataSiswaAdd() {
                     "Hasil import data siswa",
                     result?.generateRes?.map((st: any) => ({
                         Nama: st?.nama,
-                        NISN: st?.nisn,
+                        NISN: st?.nisn || "",
                         NIS: st?.nis || "",
                         HP: st?.hp || "",
                         Alamat: st?.alamat || "",
@@ -60,7 +60,7 @@ function MasterDataSiswaAdd() {
                 Utils.ExportToExcel(`Data siswa baru - ${data?.nama}`, [
                     {
                         Nama: data?.nama,
-                        NISN: data?.nisn,
+                        NISN: data?.nisn || "",
                         NIS: data?.nis || "",
                         HP: data?.hp || "",
                         Alamat: data?.alamat || "",
@@ -135,11 +135,11 @@ function MasterDataSiswaAdd() {
                         <Input />
                     </Form.Item>
 
-                    <Form.Item label="NISN" name="nisn" rules={[{ required: true, message: "NISN harus diisi!" }]}>
+                    <Form.Item label="NIS" name="nis" rules={[{ required: true, message: "NIS harus diisi!" }]}>
                         <Input />
                     </Form.Item>
 
-                    <Form.Item label="NIS" name="nis">
+                    <Form.Item label="NISN" name="nisn">
                         <Input />
                     </Form.Item>
 
