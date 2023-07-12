@@ -33,7 +33,23 @@ function ModalImport({ children, onSave, mandatoryHeader }: Props) {
                 );
                 return;
             }
-            const transformData = rows?.splice(1)?.map((row) => {
+
+            const validRow = rows?.splice(1);
+
+            const emptyColumn = validRow
+                ?.map((row) => {
+                    const empty = mandatoryHeader?.filter((_, i) => !row[i]);
+                    if (empty?.length) return row;
+                    return null;
+                })
+                .filter(Boolean);
+
+            if (emptyColumn?.length) {
+                message.error("Mohon periksa kembali, data wajib tidak boleh kosong");
+                return;
+            }
+
+            const transformData = validRow?.map((row) => {
                 return headers.reduce(
                     (obj: any, curr: any, i: number) => ({
                         ...obj,

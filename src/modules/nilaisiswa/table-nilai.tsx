@@ -18,13 +18,13 @@ export interface Nilai {
 
 type Props<T> = Omit<EditTableProps<T>, "isEditing" | "findIndexSave" | "rowKey" | "editInputType" | "columns">;
 
-const getSubjects = httpsCallable(functionInstance, "getSubjects");
+const getNoDuplicateSubjects = httpsCallable(functionInstance, "getNoDuplicateSubjects");
 const getStaffs = httpsCallable(functionInstance, "getStaffs");
 
 export function editTableNilai<T extends Nilai>(Component: ComponentType<EditTableProps<T>>) {
     return function (props: Props<T>) {
         const subjectsQuery = useQuery(["get-subject"], async () => {
-            return ((await getSubjects()).data as Pelajaran[])?.map((el) => ({
+            return ((await getNoDuplicateSubjects()).data as Pelajaran[])?.map((el) => ({
                 label: el.mata_pelajaran?.CapitalizeEachFirstLetter(),
                 value: el.id,
             }));
@@ -48,7 +48,7 @@ export function editTableNilai<T extends Nilai>(Component: ComponentType<EditTab
                 render: (text) => <p className="m-0">{text}</p>,
             },
             {
-                title: "Catatan",
+                title: "Capaian Kompetensi",
                 dataIndex: "catatan",
                 ...{ editable: true },
                 render: (text) => <p className="m-0">{text}</p>,
@@ -78,6 +78,9 @@ export function editTableNilai<T extends Nilai>(Component: ComponentType<EditTab
                     minNumber: 0,
                     selectProps: {
                         options: subjectsQuery.data || [],
+                        showSearch: true,
+                        optionFilterProp: "children",
+                        filterOption: (input, option) => (option?.label ?? "")?.toString()?.toLowerCase().includes(input?.toLowerCase()),
                         className: "!w-[300px]",
                         placeholder: "pilih",
                         loading: subjectsQuery.isLoading,

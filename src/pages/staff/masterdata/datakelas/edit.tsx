@@ -218,6 +218,9 @@ function MasterDataKelasEdit() {
 
                             <Form.Item label="Wali Kelas" name="wali" rules={[{ required: true, message: "Wali kelas harus diisi!" }]}>
                                 <Select
+                                    showSearch
+                                    optionFilterProp="children"
+                                    filterOption={(input, option) => (option?.label ?? "")?.toString()?.toLowerCase().includes(input?.toLowerCase())}
                                     options={teacherAvailableQuery.data
                                         ?.filter((t) => !t.kelas || t.id === detailClassQuery.data?.wali_id)
                                         ?.map((t) => ({ label: t.nama, value: t.id }))}

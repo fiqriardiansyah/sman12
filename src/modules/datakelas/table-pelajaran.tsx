@@ -35,7 +35,10 @@ export function editTableRoster<T extends Roster>(Component: ComponentType<EditT
         const columns: ColumnsType<T> = [
             {
                 title: "Les",
-                render: (t, r, i) => i + 1,
+                render: (t, record, i) => {
+                    if (record?.mata_pelajaran?.toLowerCase() !== istirahat.value) return i + 1;
+                    return "";
+                },
             },
             {
                 title: "Mata Pelajaran - Guru",
@@ -64,6 +67,10 @@ export function editTableRoster<T extends Roster>(Component: ComponentType<EditT
         const rowKey = (record: Roster) => record.id! as any;
         const editInputType: EditTableProps<Roster>["editInputType"] = { mata_pelajaran: "select", jam: "time" };
 
+        const subjectOptions = (
+            props.day === "senin" ? [upacara, ...(subjectsQuery.data || []), istirahat] : [...(subjectsQuery.data || []), istirahat]
+        )?.sort((a, b) => a.label?.toString()?.localeCompare(b.label as any));
+
         return (
             <Component
                 {...props}
@@ -76,11 +83,13 @@ export function editTableRoster<T extends Roster>(Component: ComponentType<EditT
                     maxNumber: 100,
                     minNumber: 0,
                     selectProps: {
-                        options:
-                            props.day === "senin" ? [upacara, ...(subjectsQuery.data || []), istirahat] : [...(subjectsQuery.data || []), istirahat],
+                        options: subjectOptions,
                         className: "!w-[300px]",
                         placeholder: "pilih",
                         loading: subjectsQuery.isLoading,
+                        showSearch: true,
+                        optionFilterProp: "children",
+                        filterOption: (input, option) => (option?.label ?? "")?.toString()?.toLowerCase().includes(input?.toLowerCase()),
                     },
                 }}
             />

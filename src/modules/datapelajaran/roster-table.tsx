@@ -20,6 +20,13 @@ function RosterTable({ roster }: Props) {
 
     const columns: ColumnsType<any> = [
         {
+            title: "Les",
+            render: (t, record, i) => {
+                if (record?.mata_pelajaran?.toLowerCase() !== istirahat.value) return i + 1;
+                return "";
+            },
+        },
+        {
             title: "Mata Pelajaran",
             dataIndex: "mata_pelajaran",
             render: (text) => (

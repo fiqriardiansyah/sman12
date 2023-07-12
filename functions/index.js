@@ -251,7 +251,7 @@ exports.createStudents = functions.https.onCall(async (data) => {
 
         results?.forEach((res, i) => {
             if (!res?.uid) {
-                generateRes.push({ ...lowerCaseData[i], status: "GAGAL", error: res?.message, password: "", email: prepareData[i].email });
+                generateRes.push({ ...lowerCaseData[i], status: "GAGAL", error: res?.message, password: "", email: "" });
             } else {
                 const dataUser = lowerCaseData.find((dt) => dt.nis + GMAIL === res.email);
                 generateRes.push({ ...lowerCaseData[i], status: "SUKSES", error: "", password: prepareData[i].password, email: res.email });
@@ -346,7 +346,7 @@ exports.createTeachers = functions.https.onCall(async (data) => {
 
         results?.forEach((res, i) => {
             if (!res?.uid) {
-                generateRes.push({ ...lowerCaseData[i], status: "GAGAL", error: res?.message, password: "", email: prepareData[i].email });
+                generateRes.push({ ...lowerCaseData[i], status: "GAGAL", error: res?.message, password: "", email: "" });
             } else {
                 const dataUser = lowerCaseData.find((dt) => dt.nuptk + GMAIL === res.email);
                 generateRes.push({ ...lowerCaseData[i], status: "SUKSES", error: "", password: prepareData[i].password, email: res.email });
@@ -360,11 +360,14 @@ exports.createTeachers = functions.https.onCall(async (data) => {
     }
 });
 
-//
 // SUBJECT
 exports.createSubject = functions.https.onCall(async (data) => {
     const db = admin.firestore().collection("subjects");
     try {
+        const getIdentic = await db.where("mata_pelajaran", "==", data?.mata_pelajaran?.toLowerCase()).where("guru_id", "==", data?.guru_id).get();
+        if (getIdentic.size) {
+            throw new functions.https.HttpsError("unknown", "Data Pelarajan dan guru yang sama sudah pernah dibuat");
+        }
         await db.add(data);
         return { success: true };
     } catch (e) {
@@ -395,9 +398,30 @@ exports.getSubjects = functions.https.onCall(async (data) => {
 
         if (data?.query) {
             return subjects?.filter(
-                (sbj) => sbj?.mata_pelajaran?.toLowerCase()?.includes(data?.query?.toLowerCase()) || sbj?.guru_nama?.toString()?.includes(data?.query)
+                (sbj) =>
+                    sbj?.mata_pelajaran?.toLowerCase()?.includes(data?.query?.toLowerCase()) ||
+                    sbj?.guru_nama?.toString()?.toLowerCase()?.includes(data?.query?.toLowerCase())
             );
         }
+
+        return subjects;
+    } catch (e) {
+        throw new functions.https.HttpsError("unknown", e?.message);
+    }
+});
+
+exports.getNoDuplicateSubjects = functions.https.onCall(async () => {
+    try {
+        const db = await admin.firestore().collection("subjects").get();
+        const subjects = [];
+        db.forEach((subject) => {
+            const data = subject.data();
+            if (subjects.find((s) => s.mata_pelajaran?.toLowerCase() === data.mata_pelajaran?.toLowerCase())) return;
+            subjects.push({
+                mata_pelajaran: data.mata_pelajaran?.toLowerCase(),
+                id: data.mata_pelajaran?.toLowerCase(),
+            });
+        });
 
         return subjects;
     } catch (e) {

@@ -48,10 +48,6 @@ function InfoSiswaNilaiEdit() {
         navigate(-1);
     };
 
-    const maxCurrSemester = dataUserQuery.data?.kelas
-        ? CLASSES_SEMESTER.filter((el) => Utils.SplitStrKelas(dataUserQuery.data?.kelas) === el).length
-        : semester;
-
     if (!id) return <Alert type="error" message="Data tidak ditemukan" />;
 
     return (

@@ -7,7 +7,6 @@ import { httpsCallable } from "firebase/functions";
 import MonthHistory from "modules/absensi[siswa]/mont-history";
 import { Staff } from "modules/datastaff/table";
 import { Nilai } from "modules/nilaisiswa/table-nilai";
-import { Pelajaran } from "pages/staff/masterdata/datapelajaran/add";
 import { useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
 import Lottie from "react-lottie";
@@ -20,7 +19,6 @@ import { CLASSES, CLASSES_SEMESTER } from "utils/constant";
 ChartJS.register(...registerables);
 
 const getMyGrades = httpsCallable(functionInstance, "getMyGrades");
-const getSubjects = httpsCallable(functionInstance, "getSubjects");
 const getStaffs = httpsCallable(functionInstance, "getStaffs");
 
 const defaultOptions = {
@@ -36,13 +34,6 @@ function Akademik({ kelas }: { kelas: any }) {
     const { id } = useParams();
 
     const [tabClass, setTabClass] = useState<string>(kelas === "LULUS" ? Utils.SplitStrKelas(kelas) : "XII");
-
-    const subjectsQuery = useQuery(["get-subject"], async () => {
-        return ((await getSubjects()).data as Pelajaran[])?.map((el) => ({
-            label: el.mata_pelajaran?.CapitalizeEachFirstLetter(),
-            value: el.id,
-        }));
-    });
 
     const getStaffsQuery = useQuery(["get-staff"], async () => {
         return (await getStaffs()).data as Staff[];
@@ -104,7 +95,7 @@ function Akademik({ kelas }: { kelas: any }) {
         {
             title: "Mata Pelajaran",
             dataIndex: "mata_pelajaran",
-            render: (text) => <p className="m-0 capitalize">{text ? subjectsQuery.data?.find((el) => el.value === text)?.label : ""}</p>,
+            render: (text) => <p className="m-0 capitalize">{text}</p>,
         },
         {
             title: "Nilai",
@@ -127,18 +118,18 @@ function Akademik({ kelas }: { kelas: any }) {
         {
             title: "Mata Pelajaran",
             dataIndex: "mata_pelajaran",
-            render: (text) => <p className="m-0 capitalize">{text ? subjectsQuery.data?.find((el) => el.value === text)?.label : ""}</p>,
+            render: (text) => <p className="m-0 capitalize">{text}</p>,
         },
         {
             title: "Grafik Nilai",
             dataIndex: "-",
             render: (text, record) => {
-                const subject = subjectsQuery.data?.find((el) => el.value === record?.mata_pelajaran)?.label;
+                const subject = (record?.mata_pelajaran as string)?.CapitalizeEachFirstLetter();
                 const data = {
                     labels: [...new Array(6)].map((_, i) => `Semester ${i + 1}`),
                     datasets: [
                         {
-                            label: `Rata nilai ${subject}`,
+                            label: subject?.CapitalizeEachFirstLetter(),
                             data: record?.summary?.map((sum: any) => ({
                                 x: `Semester ${sum?.semester}`,
                                 y: sum?.nilai,
@@ -153,6 +144,13 @@ function Akademik({ kelas }: { kelas: any }) {
                         <Bar data={data as any} options={options} />
                     </div>
                 );
+            },
+        },
+        {
+            title: "Rata nilai",
+            render: (_, record) => {
+                const grade = (record?.summary?.reduce((a: any, b: any) => a + b.nilai, 0) || 1) / (record?.summary?.length || 1);
+                return <p className="m-0 capitalize">{(grade as number)?.toFixed(1)}</p>;
             },
         },
     ];
@@ -230,12 +228,14 @@ function Akademik({ kelas }: { kelas: any }) {
             <h1 className="m-0 mb-10 pt-4">Nilai akhir siswa</h1>
             <StateRender data={getMyGradesQuery.data} isLoading={getMyGradesQuery.isLoading} isError={getMyGradesQuery.isError}>
                 <StateRender.Data>
-                    <Card>
-                        <Line data={dataChart as any} options={options} />
-                    </Card>
                     <div className="grid w-full grid-cols-1 gap-10 mt-10">
                         {getMyGradesQuery.data?.length ? (
-                            <Tabs type="card" items={items} />
+                            <>
+                                <Card>
+                                    <Line data={dataChart as any} options={options} />
+                                </Card>
+                                <Tabs type="card" items={items} />
+                            </>
                         ) : (
                             <div className="col-span-2 flex flex-col items-center justify-center h-[400px]">
                                 <Lottie options={defaultOptions} height={400} width={400} isClickToPauseDisabled={false} />

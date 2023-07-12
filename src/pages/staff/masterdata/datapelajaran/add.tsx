@@ -66,6 +66,8 @@ function MasterDataPelajaranAdd() {
                     <Form.Item label="Guru Pengajar" name="guru">
                         <Select
                             showSearch
+                            optionFilterProp="children"
+                            filterOption={(input, option) => (option?.label ?? "")?.toString()?.toLowerCase().includes(input?.toLowerCase())}
                             options={teacherAvailableQuery.data?.map((t) => ({ label: t.nama, value: t.id }))}
                             loading={teacherAvailableQuery.isLoading}
                         />
