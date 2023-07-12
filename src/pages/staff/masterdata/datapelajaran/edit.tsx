@@ -7,7 +7,6 @@ import { Guru } from "modules/dataguru/table";
 import { IoMdArrowBack } from "react-icons/io";
 import { useMutation, useQuery } from "react-query";
 import { functionInstance } from "service/firebase-instance";
-import { STAFF_PATH } from "utils/constant";
 import { Pelajaran } from "./add";
 
 function MasterDataPelajaranEdit() {
@@ -47,8 +46,8 @@ function MasterDataPelajaranEdit() {
             id,
             update: {
                 mata_pelajaran: values.nama,
-                guru_id: values.guru,
-                guru_nama: teacherAvailableQuery.data?.find((guru) => guru.id === values.guru)?.nama,
+                guru_id: values?.guru || "",
+                guru_nama: teacherAvailableQuery.data?.find((guru) => guru.id === values.guru)?.nama || "",
             },
         });
     };
@@ -88,7 +87,7 @@ function MasterDataPelajaranEdit() {
                                 <Input />
                             </Form.Item>
 
-                            <Form.Item label="Guru Pengajar" name="guru" rules={[{ required: true, message: "Guru pengajar belum dipilih" }]}>
+                            <Form.Item label="Guru Pengajar" name="guru">
                                 <Select
                                     showSearch
                                     options={teacherAvailableQuery.data?.map((t) => ({ label: t.nama, value: t.id }))}

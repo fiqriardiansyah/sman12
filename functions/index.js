@@ -688,7 +688,7 @@ exports.deleteClass = functions.https.onCall(async (data) => {
     }
 });
 
-// ROSTER ///
+// ROSTER
 exports.getMyRoster = functions.https.onCall(async (data) => {
     const db = admin.database();
     try {
@@ -778,7 +778,7 @@ exports.deleteNews = functions.https.onCall(async (data) => {
     }
 });
 
-// ABSENCE
+// ABSENCE //
 exports.getAttendanceHistory = functions.https.onCall(async (data) => {
     const { students, month, cls } = data;
     const db = admin.database();

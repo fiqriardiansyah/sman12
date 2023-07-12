@@ -92,7 +92,13 @@ function MasterDataGuruAdd() {
     };
 
     const onImportGuru = (guru: Partial<Guru>[]) => {
-        createTeachersMutate.mutate(guru);
+        createTeachersMutate.mutate(
+            guru?.map((g) => ({
+                ...g,
+                status_kepegawaian: g?.status_kepegawaian?.toString().toLowerCase(),
+                jenjang: g?.jenjang?.toString()?.toLowerCase(),
+            }))
+        );
     };
 
     return (

@@ -108,6 +108,11 @@ function ModalValidateSpp({ children }: Props) {
             },
         },
         {
+            title: "Bulan",
+            dataIndex: "month",
+            render: (text) => <p className="m-0 capitalize">{text}</p>,
+        },
+        {
             title: "Tanggal Bayar",
             dataIndex: "pay_date",
             render: (text) => <p className="m-0">{text ? dayjs(text).format(FORMAT_DATE_DAYJS) : ""}</p>,
@@ -153,7 +158,7 @@ function ModalValidateSpp({ children }: Props) {
     ];
 
     return (
-        <ModalTemplate width={1000} title="Pengesahan pembayaran spp" handlerInComponent={children} footer={null}>
+        <ModalTemplate width={1200} title="Pengesahan pembayaran spp" handlerInComponent={children} footer={null}>
             {(ctrl) => (
                 <div className="flex flex-col gap-5 mt-5">
                     <Table

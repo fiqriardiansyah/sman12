@@ -43,8 +43,8 @@ function MasterDataPelajaranAdd() {
     const onSaveSubject = (values: any) => {
         createSubjectMutate.mutate({
             mata_pelajaran: values.nama,
-            guru_id: values.guru,
-            guru_nama: teacherAvailableQuery.data?.find((guru) => guru.id === values.guru)?.nama,
+            guru_id: values?.guru || "",
+            guru_nama: teacherAvailableQuery.data?.find((guru) => guru.id === values.guru)?.nama || "",
         });
     };
 
@@ -63,8 +63,7 @@ function MasterDataPelajaranAdd() {
                     <Form.Item label="Nama pelajaran" name="nama" rules={[{ required: true, message: "Nama pelajaran harus diisi!" }]}>
                         <Input />
                     </Form.Item>
-
-                    <Form.Item label="Guru Pengajar" name="guru" rules={[{ required: true, message: "Guru pengajar belum dipilih" }]}>
+                    <Form.Item label="Guru Pengajar" name="guru">
                         <Select
                             showSearch
                             options={teacherAvailableQuery.data?.map((t) => ({ label: t.nama, value: t.id }))}

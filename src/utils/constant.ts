@@ -51,38 +51,38 @@ export const GENDER = [
 
 export const KEPEGAWAIAN = [
     {
-        value: 1,
+        value: "pns",
         label: "PNS",
     },
     {
-        value: 2,
+        value: "honorer",
         label: "Honorer",
     },
 ];
 
 export const JENJANG = [
     {
-        value: 1,
+        value: "sma",
         label: "SMA/SEDERAJAT",
     },
     {
-        value: 2,
+        value: "d3",
         label: "D3",
     },
     {
-        value: 3,
+        value: "d4",
         label: "D4",
     },
     {
-        value: 4,
+        value: "s1",
         label: "S1",
     },
     {
-        value: 5,
+        value: "s2",
         label: "S2",
     },
     {
-        value: 6,
+        value: "s3",
         label: "S3",
     },
 ];

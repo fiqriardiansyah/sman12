@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 import type { ColumnsType } from "antd/es/table";
 import EditTable, { Props as EditTableProps } from "components/table/editable-table";
 import dayjs from "dayjs";
@@ -14,8 +15,11 @@ export interface Roster {
 }
 
 export const istirahat = { label: <span className="text-red-500">Istirahat</span>, value: "istirahat" };
+export const upacara = { label: <span className="text-blue-500">Upacara</span>, value: "upacara" };
 
-type Props<T> = Omit<EditTableProps<T>, "isEditing" | "findIndexSave" | "rowKey" | "editInputType" | "columns">;
+type Props<T> = Omit<EditTableProps<T>, "isEditing" | "findIndexSave" | "rowKey" | "editInputType" | "columns"> & {
+    day: string;
+};
 
 const getSubjects = httpsCallable(functionInstance, "getSubjects");
 
@@ -39,7 +43,10 @@ export function editTableRoster<T extends Roster>(Component: ComponentType<EditT
                 ...{ editable: true },
                 render: (text) => {
                     if (text?.toLowerCase() === istirahat.value) {
-                        return <span className="text-red-500">Istirahat</span>;
+                        return istirahat.label;
+                    }
+                    if (text?.toLowerCase() === upacara.value) {
+                        return upacara.label;
                     }
                     return <p className="m-0 capitalize">{text ? subjectsQuery.data?.find((el) => el.value === text)?.label : ""}</p>;
                 },
@@ -69,7 +76,8 @@ export function editTableRoster<T extends Roster>(Component: ComponentType<EditT
                     maxNumber: 100,
                     minNumber: 0,
                     selectProps: {
-                        options: [...(subjectsQuery.data || []), istirahat],
+                        options:
+                            props.day === "senin" ? [upacara, ...(subjectsQuery.data || []), istirahat] : [...(subjectsQuery.data || []), istirahat],
                         className: "!w-[300px]",
                         placeholder: "pilih",
                         loading: subjectsQuery.isLoading,

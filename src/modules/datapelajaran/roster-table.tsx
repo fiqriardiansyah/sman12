@@ -1,6 +1,7 @@
 import Table, { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { httpsCallable } from "firebase/functions";
+import { istirahat, upacara } from "modules/datakelas/table-pelajaran";
 import { Pelajaran } from "pages/staff/masterdata/datapelajaran/add";
 import { useQuery } from "react-query";
 import { functionInstance } from "service/firebase-instance";
@@ -21,7 +22,14 @@ function RosterTable({ roster }: Props) {
         {
             title: "Mata Pelajaran",
             dataIndex: "mata_pelajaran",
-            render: (text) => <p className="m-0 capitalize">{text ? subjectsQuery.data?.find((el) => el.id === text)?.mata_pelajaran : ""}</p>,
+            render: (text) => (
+                <p className="m-0 capitalize">
+                    {text
+                        ? subjectsQuery.data?.find((el) => el.id === text)?.mata_pelajaran ||
+                          [upacara, istirahat]?.find((el) => el.value === text)?.label
+                        : ""}
+                </p>
+            ),
         },
         {
             title: "Guru",

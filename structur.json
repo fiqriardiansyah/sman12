@@ -1,0 +1,109 @@
+{
+    "tahun_akademik": {
+        "id:string": {
+            "tahun": "number"
+        }
+    },
+    "kelas": {
+        "id:string": {
+            "nama_kelas": "string",
+            "nomor_kelas": "number",
+            "stambuk": "number",
+            "wali_id": "string"
+        }
+    },
+    "berita": {
+        "id:string": {
+            "judul": "string",
+            "isi": "string",
+            "kategori": "string",
+            "dibuat_oleh": "string",
+            "tanggal_dibuat": "date",
+            "diedit_oleh": "string",
+            "tanggal_diedit": "date"
+        }
+    },
+    "catatan": {
+        "id:string": {
+            "catatan": "string",
+            "tanggal_kirim": "date",
+            "guru_id": "string",
+            "siswa_id": "string"
+        }
+    },
+    "spp": {
+        "id:string": {
+            "jumlah": "number",
+            "staf_id": "string",
+            "kelas": "string",
+            "disahkan_oleh": "string",
+            "tanggal_disahkan": "date",
+            "status": "string",
+            "metode_bayar": "string",
+            "bulan": "string",
+            "catatan": "string",
+            "tanggal_bayar": "string",
+            "siswa_id": "string"
+        }
+    },
+    "mata_pelajaran": {
+        "id:string": {
+            "guru_id": "string",
+            "mata_pelajaran": "string"
+        }
+    },
+    "user": {
+        "id:string": {
+            "nama": "string",
+            "email": "string",
+            "hp": "string",
+            "jenis_kelamin": "string",
+            "role": "string",
+            "tanggal_lahir": "date",
+            "tempat_lahir": "string",
+            "nisn(role=siswa)": "string",
+            "nis(role=siswa)": "string",
+            "kelas_id(role=siswa,guru)": "string",
+            "nuptk(role=guru,staf)": "string",
+            "nip(role=guru,staf)": "string",
+            "jenjang(role=guru,staf)": "string",
+            "jurusan(role=guru,staf)": "string",
+            "status_kepegawaian(role=guru,staf)": "string"
+        }
+    },
+    "jadwal_pelajaran": {
+        "id_jadwal_pelajaran:string": {
+            "hari:string": [
+                {
+                    "id": "string",
+                    "jam": "string",
+                    "mata_pelajaran_id": "string"
+                }
+            ]
+        }
+    },
+    "nilai": {
+        "id_nilai:string": {
+            "semester:number": {
+                "id:string": {
+                    "staf_id:string": "string",
+                    "catatan": "string",
+                    "mata_pelajaran_id": "string",
+                    "nilai": "number"
+                }
+            }
+        }
+    },
+    "absensi": {
+        "id_absensi:string": {
+            "kelas:string": {
+                "bulan:string": {
+                    "tanggal:number": {
+                        "deskripsi": "string",
+                        "status": "string"
+                    }
+                }
+            }
+        }
+    }
+}

@@ -28,7 +28,7 @@ type Props = {
 };
 
 export const mandatoryHeaderGuru = ["nama", "nuptk"];
-export const optionHeaderGuru = ["nip", "hp", "alamat"];
+export const optionHeaderGuru = ["nip", "hp", "alamat", "status_kepegawaian", "jenjang", "jurusan"];
 
 function TableGuru({ fetcher }: Props) {
     const columns: ColumnsType<Guru> = [
