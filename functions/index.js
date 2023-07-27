@@ -3,7 +3,6 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 
 const GMAIL = "@gmail.com";
-
 admin.initializeApp();
 
 const lowerize = (obj) =>
@@ -1321,5 +1320,4 @@ exports.getAllAcademicYear = functions.https.onCall(async (data) => {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
 });
-
 //
