@@ -12,7 +12,8 @@ import { FaRegEdit } from "react-icons/fa";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Link } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
-import { GENDER, IMAGE_FALLBACK, STUDENT_PATH } from "utils/constant";
+import { FORMATE_DATE_TIME, FORMAT_DATE, GENDER, IMAGE_FALLBACK, STUDENT_PATH } from "utils/constant";
+import moment from "moment";
 
 const getNoteByStudent = httpsCallable(functionInstance, "getNoteByStudent");
 const noteSeenByStudent = httpsCallable(functionInstance, "noteSeenByStudent");
@@ -93,7 +94,9 @@ function StudentProfile() {
                         <Descriptions.Item label="Wali/Orang tua">{profileQuery.data?.wali}</Descriptions.Item>
                         <Descriptions.Item label="Telepon Wali/Orang tua">{profileQuery.data?.hp_wali}</Descriptions.Item>
                         <Descriptions.Item label="Stambuk">{profileQuery.data?.stambuk}</Descriptions.Item>
-                        <Descriptions.Item label="Tgl lahir">{profileQuery.data?.tgl_lahir}</Descriptions.Item>
+                        <Descriptions.Item label="Tgl lahir">
+                            {profileQuery.data?.tgl_lahir ? moment(profileQuery.data?.tgl_lahir, FORMATE_DATE_TIME).format(FORMAT_DATE) : ""}
+                        </Descriptions.Item>
                         <Descriptions.Item label="Tempat lahir">{profileQuery.data?.tempat_lahir}</Descriptions.Item>
                     </Descriptions>
                 </StateRender.Data>

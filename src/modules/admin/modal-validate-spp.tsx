@@ -166,7 +166,13 @@ function ModalValidateSpp({ children }: Props) {
                         size="small"
                         columns={columns}
                         dataSource={getNotLegalizeSppQuery.data || []}
-                        loading={getNotLegalizeSppQuery.isLoading || setLegalizeSppMutate.isLoading || setRejectSppMutate.isLoading}
+                        loading={
+                            getStaffsQuery.isLoading ||
+                            studentQuery.isLoading ||
+                            getNotLegalizeSppQuery.isLoading ||
+                            setLegalizeSppMutate.isLoading ||
+                            setRejectSppMutate.isLoading
+                        }
                         className="w-full"
                     />
                 </div>

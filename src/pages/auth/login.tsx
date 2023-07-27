@@ -39,7 +39,7 @@ function Login() {
                         },
                     ]}
                 >
-                    <Input placeholder="Email" />
+                    <Input placeholder="Email" className="border-2 border-gray-500 border-solid placeholder:text-gray-500" />
                 </Form.Item>
                 <Form.Item
                     name="password"
@@ -50,7 +50,7 @@ function Login() {
                         },
                     ]}
                 >
-                    <Input.Password placeholder="Password" />
+                    <Input.Password placeholder="Password" className="border-2 border-gray-500 border-solid placeholder:text-gray-500" />
                 </Form.Item>
                 <Form.Item>
                     <div className="flex items-center justify-between">

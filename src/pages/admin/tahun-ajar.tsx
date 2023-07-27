@@ -51,7 +51,12 @@ function PergantianTahunAjar() {
         },
         {
             onSuccess(data) {
-                setDataChanges(data?.sort((a, b) => Number(b.kelas?.length) - Number(a.kelas?.length)) || []);
+                const sortData = data?.sort((a, b) => {
+                    if (a.kelas! < b.kelas!) return -1;
+                    if (a.kelas! > b.kelas!) return 1;
+                    return 0;
+                });
+                setDataChanges(sortData || []);
             },
             refetchInterval: false,
             refetchOnWindowFocus: false,

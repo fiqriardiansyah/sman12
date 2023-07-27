@@ -36,10 +36,16 @@ function TableAbsence({ month, students, cls, canInteract = true }: Props) {
         }
     );
 
-    const tAttendances = attendancesQuery.data?.map((el) => ({
-        ...el,
-        name: students?.find((st) => st.id === el.id)?.nama,
-    }));
+    const tAttendances = attendancesQuery.data
+        ?.map((el) => ({
+            ...el,
+            name: students?.find((st) => st.id === el.id)?.nama || "",
+        }))
+        ?.sort((a, b) => {
+            if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+            if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+            return 0;
+        });
 
     const onChangeAttendance = (id: any) => {
         return (data: any) => {

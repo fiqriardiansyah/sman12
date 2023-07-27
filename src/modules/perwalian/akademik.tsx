@@ -141,7 +141,7 @@ function Akademik({ kelas }: { kelas: any }) {
                 };
                 return (
                     <div className="h-[200px]">
-                        <Bar data={data as any} options={options} />
+                        <Line data={data as any} options={options} />
                     </div>
                 );
             },

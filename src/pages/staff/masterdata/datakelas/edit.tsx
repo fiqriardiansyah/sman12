@@ -228,21 +228,25 @@ function MasterDataKelasEdit() {
                                 />
                             </Form.Item>
                         </div>
-                        <TableTransfer
-                            titles={[studentAvailableQuery.isLoading ? "Mengambil data..." : "Seluruh Siswa SMAN 12", "Kelas"]}
-                            rowKey={(s: any) => s.id}
-                            dataSource={studentAvailableQuery.data as any}
-                            targetKeys={targetKeys}
-                            showSearch
-                            onChange={onChange}
-                            filterOption={(inputValue, item) =>
-                                item?.nama?.toLowerCase().indexOf(inputValue?.toLowerCase()) !== -1 ||
-                                item.nis?.toString().indexOf(inputValue) !== -1 ||
-                                item.nisn?.toString().indexOf(inputValue) !== -1
-                            }
-                            leftColumns={columns}
-                            rightColumns={columns}
-                        />
+                        <form action="">
+                            <TableTransfer
+                                titles={[studentAvailableQuery.isLoading ? "Mengambil data..." : "Seluruh Siswa SMAN 12", "Kelas"]}
+                                rowKey={(s: any) => s.id}
+                                dataSource={studentAvailableQuery.data as any}
+                                targetKeys={targetKeys}
+                                showSearch
+                                onChange={onChange}
+                                filterOption={(inputValue, item) => {
+                                    return (
+                                        item?.nama?.toLowerCase().indexOf(inputValue?.toLowerCase()) !== -1 ||
+                                        item?.nis?.toString().indexOf(inputValue?.toString()) !== -1 ||
+                                        item?.nisn?.toString().indexOf(inputValue?.toString()) !== -1
+                                    );
+                                }}
+                                leftColumns={columns}
+                                rightColumns={columns}
+                            />
+                        </form>
                         <div className="">
                             <p className="mt-5">Mata Pelajaran</p>
                             <Card>

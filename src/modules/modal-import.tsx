@@ -1,4 +1,4 @@
-import { Button, Table, message } from "antd";
+import { Alert, Button, Table, message } from "antd";
 import ModalTemplate, { HandlerProps } from "components/modal/template";
 import { FileUploader } from "react-drag-drop-files";
 import { useState } from "react";
@@ -82,6 +82,7 @@ function ModalImport({ children, onSave, mandatoryHeader }: Props) {
         <ModalTemplate width={800} title="Import Data" handlerInComponent={children} footer={null} afterClose={clearRow}>
             {(ctrl) => (
                 <div className="flex flex-col gap-5">
+                    <Alert showIcon message="Penting" type="error" description="Harap mengunduh file excel hasil import data!" />
                     <FileUploader types={["xlsx"]} multiple={false} onTypeError={onTypeError} onSizeError={onSizeError} handleChange={handleChange}>
                         {file ? (
                             <div className="flex items-center text-xl cursor-pointer my-4">

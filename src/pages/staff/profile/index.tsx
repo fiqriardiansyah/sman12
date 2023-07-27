@@ -3,12 +3,13 @@ import StateRender from "components/common/state";
 import { UserContext } from "context/user";
 import { httpsCallable } from "firebase/functions";
 import { Staff } from "modules/datastaff/table";
+import moment from "moment";
 import { useContext } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { functionInstance } from "service/firebase-instance";
-import { GENDER, IMAGE_FALLBACK, JENJANG, KEPEGAWAIAN, STAFF_PATH } from "utils/constant";
+import { FORMATE_DATE_TIME, FORMAT_DATE, GENDER, IMAGE_FALLBACK, JENJANG, KEPEGAWAIAN, STAFF_PATH } from "utils/constant";
 
 function Profile() {
     const { state } = useContext(UserContext);
@@ -48,7 +49,9 @@ function Profile() {
                         </Descriptions.Item>
                         <Descriptions.Item label="Alamat">{profileQuery.data?.alamat}</Descriptions.Item>
                         <Descriptions.Item label="Posisi">{profileQuery.data?.posisi}</Descriptions.Item>
-                        <Descriptions.Item label="Tgl lahir">{profileQuery.data?.tgl_lahir}</Descriptions.Item>
+                        <Descriptions.Item label="Tgl lahir">
+                            {profileQuery.data?.tgl_lahir ? moment(profileQuery.data?.tgl_lahir, FORMATE_DATE_TIME).format(FORMAT_DATE) : ""}
+                        </Descriptions.Item>
                         <Descriptions.Item label="Tempat lahir">{profileQuery.data?.tempat_lahir}</Descriptions.Item>
                         <Descriptions.Item label="Status kepegawaian">
                             {KEPEGAWAIAN.find((el) => el.value === profileQuery.data?.status_kepegawaian)?.label || ""}

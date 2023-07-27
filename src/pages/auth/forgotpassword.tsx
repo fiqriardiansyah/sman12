@@ -36,7 +36,7 @@ function ForgotPassword() {
                         },
                     ]}
                 >
-                    <Input placeholder="Masukkan email" />
+                    <Input placeholder="Masukkan email" className="border-2 border-gray-500 border-solid placeholder:text-gray-500" />
                 </Form.Item>
                 <Form.Item>
                     <Button loading={loading} type="primary" htmlType="submit">

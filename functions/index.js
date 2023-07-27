@@ -156,10 +156,21 @@ exports.getStudents = functions.https.onCall(async (data) => {
                 if (data?.kelas === "no_class") return !student?.kelas;
                 return student?.kelas === data.kelas;
             })
-            .filter((student) => student?.kelas !== "LULUS");
+            .filter((student) => student?.kelas !== "LULUS")
+            .sort((a, b) => {
+                if (a.nama?.toLowerCase() < b.nama?.toLowerCase()) return -1;
+                if (a.nama?.toLowerCase() > b.nama?.toLowerCase()) return 1;
+                return 0;
+            });
     }
 
-    return students?.filter((st) => st?.kelas !== "LULUS");
+    return students
+        ?.filter((st) => st?.kelas !== "LULUS")
+        .sort((a, b) => {
+            if (a.nama?.toLowerCase() < b.nama?.toLowerCase()) return -1;
+            if (a.nama?.toLowerCase() > b.nama?.toLowerCase()) return 1;
+            return 0;
+        });
 });
 
 exports.getAlumni = functions.https.onCall(async (data) => {
@@ -172,14 +183,20 @@ exports.getAlumni = functions.https.onCall(async (data) => {
         });
     });
 
-    return students?.filter((st) => {
-        if (!data?.query) return st;
-        return (
-            st?.nama?.toLowerCase()?.includes(data?.query?.toLowerCase()) ||
-            st?.nisn?.toString()?.includes(data?.query) ||
-            st?.nis?.toString()?.includes(data?.query)
-        );
-    });
+    return students
+        ?.filter((st) => {
+            if (!data?.query) return st;
+            return (
+                st?.nama?.toLowerCase()?.includes(data?.query?.toLowerCase()) ||
+                st?.nisn?.toString()?.includes(data?.query) ||
+                st?.nis?.toString()?.includes(data?.query)
+            );
+        })
+        .sort((a, b) => {
+            if (a.nama?.toLowerCase() < b.nama?.toLowerCase()) return -1;
+            if (a.nama?.toLowerCase() > b.nama?.toLowerCase()) return 1;
+            return 0;
+        });
 });
 
 exports.getAllStudent = functions.https.onCall(async () => {
@@ -191,7 +208,11 @@ exports.getAllStudent = functions.https.onCall(async () => {
             id: student.id,
         });
     });
-    return students;
+    return students.sort((a, b) => {
+        if (a.nama?.toLowerCase() < b.nama?.toLowerCase()) return -1;
+        if (a.nama?.toLowerCase() > b.nama?.toLowerCase()) return 1;
+        return 0;
+    });
 });
 
 exports.createStudent = functions.https.onCall(async (data) => {
@@ -277,15 +298,25 @@ exports.getTeachers = functions.https.onCall(async (data) => {
     });
 
     if (data?.query) {
-        return teachers?.filter(
-            (teacher) =>
-                teacher?.nama?.toLowerCase()?.includes(data?.query?.toLowerCase()) ||
-                teacher?.nuptk?.toString()?.includes(data?.query) ||
-                teacher?.kelas?.toLowerCase()?.includes(data?.query)
-        );
+        return teachers
+            ?.filter(
+                (teacher) =>
+                    teacher?.nama?.toLowerCase()?.includes(data?.query?.toLowerCase()) ||
+                    teacher?.nuptk?.toString()?.includes(data?.query) ||
+                    teacher?.kelas?.toLowerCase()?.includes(data?.query)
+            )
+            .sort((a, b) => {
+                if (a.nama?.toLowerCase() < b.nama?.toLowerCase()) return -1;
+                if (a.nama?.toLowerCase() > b.nama?.toLowerCase()) return 1;
+                return 0;
+            });
     }
 
-    return teachers;
+    return teachers.sort((a, b) => {
+        if (a.nama?.toLowerCase() < b.nama?.toLowerCase()) return -1;
+        if (a.nama?.toLowerCase() > b.nama?.toLowerCase()) return 1;
+        return 0;
+    });
 });
 
 exports.createTeacherClass = functions.https.onCall(async (data) => {
@@ -397,14 +428,24 @@ exports.getSubjects = functions.https.onCall(async (data) => {
         });
 
         if (data?.query) {
-            return subjects?.filter(
-                (sbj) =>
-                    sbj?.mata_pelajaran?.toLowerCase()?.includes(data?.query?.toLowerCase()) ||
-                    sbj?.guru_nama?.toString()?.toLowerCase()?.includes(data?.query?.toLowerCase())
-            );
+            return subjects
+                ?.filter(
+                    (sbj) =>
+                        sbj?.mata_pelajaran?.toLowerCase()?.includes(data?.query?.toLowerCase()) ||
+                        sbj?.guru_nama?.toString()?.toLowerCase()?.includes(data?.query?.toLowerCase())
+                )
+                .sort((a, b) => {
+                    if (a.mata_pelajaran?.toLowerCase() < b.mata_pelajaran?.toLowerCase()) return -1;
+                    if (a.mata_pelajaran?.toLowerCase() > b.mata_pelajaran?.toLowerCase()) return 1;
+                    return 0;
+                });
         }
 
-        return subjects;
+        return subjects.sort((a, b) => {
+            if (a.mata_pelajaran?.toLowerCase() < b.mata_pelajaran?.toLowerCase()) return -1;
+            if (a.mata_pelajaran?.toLowerCase() > b.mata_pelajaran?.toLowerCase()) return 1;
+            return 0;
+        });
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
@@ -423,7 +464,11 @@ exports.getNoDuplicateSubjects = functions.https.onCall(async () => {
             });
         });
 
-        return subjects;
+        return subjects.sort((a, b) => {
+            if (a.mata_pelajaran?.toLowerCase() < b.mata_pelajaran?.toLowerCase()) return -1;
+            if (a.mata_pelajaran?.toLowerCase() > b.mata_pelajaran?.toLowerCase()) return 1;
+            return 0;
+        });
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
@@ -458,12 +503,20 @@ exports.getStaffs = functions.https.onCall(async (data) => {
     });
 
     if (data?.query) {
-        return staffs?.filter(
-            (staff) => staff?.nama?.toLowerCase()?.includes(data?.query?.toLowerCase()) || staff?.nuptk?.toString()?.includes(data?.query)
-        );
+        return staffs
+            ?.filter((staff) => staff?.nama?.toLowerCase()?.includes(data?.query?.toLowerCase()) || staff?.nuptk?.toString()?.includes(data?.query))
+            .sort((a, b) => {
+                if (a.nama?.toLowerCase() < b.nama?.toLowerCase()) return -1;
+                if (a.nama?.toLowerCase() > b.nama?.toLowerCase()) return 1;
+                return 0;
+            });
     }
 
-    return staffs;
+    return staffs.sort((a, b) => {
+        if (a.nama?.toLowerCase() < b.nama?.toLowerCase()) return -1;
+        if (a.nama?.toLowerCase() > b.nama?.toLowerCase()) return 1;
+        return 0;
+    });
 });
 
 exports.createStaff = functions.https.onCall(async (data) => {
@@ -518,7 +571,11 @@ exports.getClasses = functions.https.onCall(async (data) => {
         );
     }
 
-    return classes;
+    return classes.sort((a, b) => {
+        if (a.nama_kelas < b.nama_kelas) return -1;
+        if (a.nama_kelas > b.nama_kelas) return 1;
+        return 0;
+    });
 });
 
 exports.createClass = functions.https.onCall(async (data) => {
@@ -760,10 +817,19 @@ exports.getNews = functions.https.onCall(async (data) => {
                 .filter((ns) => {
                     if (!data?.category) return ns;
                     return Number(ns?.category) === Number(data?.category);
+                })
+                .sort((a, b) => {
+                    if (a.tanggal_dibuat < b.tanggal_dibuat) return -1;
+                    if (a.tanggal_dibuat > b.tanggal_dibuat) return 1;
+                    return 0;
                 });
         }
-
-        return news;
+        ///
+        return news.sort((a, b) => {
+            if (a.tanggal_dibuat < b.tanggal_dibuat) return -1;
+            if (a.tanggal_dibuat > b.tanggal_dibuat) return 1;
+            return 0;
+        });
     } catch (e) {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
@@ -1183,17 +1249,23 @@ exports.newAcademicYear = functions.https.onCall(async (data) => {
         await Promise.all(queries.map((q) => q.update({ kelas: null, kelas_id: null })));
         // ////
 
+        const queriesGraduate = [];
+
         // set new class/graduate to students
         allStudents?.forEach(async (doc) => {
             const student = doc.data();
             const myClass = data?.list?.find((cls) => cls.id === student.kelas_id);
             if (!myClass) return;
-            await userCollRef.doc(doc.id).update({
-                kelas: myClass.kelas_baru === "LULUS" ? "LULUS" : myClass.kelas_baru + myClass.nomor_kelas,
-                lulus: myClass.kelas_baru === "LULUS" ? new Date().getFullYear() : null,
-            });
+
+            const dispatch = async () => {
+                await userCollRef.doc(doc.id).update({
+                    kelas: myClass.kelas_baru === "LULUS" ? "LULUS" : myClass.kelas_baru + myClass.nomor_kelas,
+                    lulus: myClass.kelas_baru === "LULUS" ? new Date().getFullYear() : null,
+                });
+            };
+            queriesGraduate.push(dispatch);
         });
-        ///
+        await Promise.all(queriesGraduate.map((q) => q()));
 
         /// update/delete data class
         data?.list?.forEach(async (cls) => {
@@ -1210,7 +1282,7 @@ exports.newAcademicYear = functions.https.onCall(async (data) => {
             await userCollRef.doc(cls.wali_id_baru).update({ kelas: cls.kelas_baru, kelas_id: cls.id });
         });
 
-        academyYearCollRef.add({ year: new Date().getFullYear() });
+        await academyYearCollRef.add({ year: new Date().getFullYear() });
 
         return { success: true };
     } catch (e) {
@@ -1249,3 +1321,5 @@ exports.getAllAcademicYear = functions.https.onCall(async (data) => {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
 });
+
+//
