@@ -22,7 +22,7 @@ function genPassword() {
     return password;
 }
 
-// USER
+// USER//
 exports.getUserWithEmail = functions.https.onCall(async (data) => {
     const users = await admin.firestore().collection("users").where("email", "==", data.email).get();
     const user = [];
@@ -73,17 +73,17 @@ exports.editUser = functions.https.onCall(async (data) => {
         throw new functions.https.HttpsError("unknown", e?.message);
     }
 });
-
+//
 exports.deleteUserWithEmail = functions.https.onCall(async (data) => {
     try {
         const userCollRef = admin.firestore().collection("users");
         const classCollRef = admin.firestore().collection("classes");
         const subjectCollRef = admin.firestore().collection("subjects");
-
+        //
         const findUid = await userCollRef.where("email", "==", data.email).get();
         let ifTeacher = null;
         let ifTeacherSubject = null;
-
+        //
         findUid.forEach(async (usr) => {
             if (usr.data()?.role === "student") {
                 if (usr.data()?.kelas_id) {

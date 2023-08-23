@@ -24,7 +24,7 @@ function Profile() {
     return (
         <div>
             <div className="w-full flex items-center justify-between">
-                <h1>Profil</h1>
+                <h1 style={{ color: "white" }}>Profil Admin</h1>
                 <Link to={STAFF_PATH.profile.edit}>
                     <FaRegEdit title="edit profil" className="cursor-pointer text-lg" />
                 </Link>

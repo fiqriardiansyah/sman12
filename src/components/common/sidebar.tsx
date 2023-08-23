@@ -173,7 +173,7 @@ function Sidebar() {
             ],
         },
         {
-            label: "Pergantian Tahun Ajar",
+            label: "Kenaikan kelas",
             key: ADMIN_PATH.tahunajar.index,
             icon: <MdSchool />,
         },

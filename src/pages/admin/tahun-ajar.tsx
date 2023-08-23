@@ -100,13 +100,13 @@ function PergantianTahunAjar() {
     };
 
     return (
-        <Blocker isBlock={isBlockUpdateNewYear} text="Pergantian tahun ajar sudah dilakukan, sampai jumpa ditahun depan 👋">
+        <Blocker isBlock={isBlockUpdateNewYear} text="Kenaikan kelas sudah dilakukan, sampai jumpa ditahun depan 👋">
             <div className="flex flex-col gap-5 pb-10">
                 <div className="w-full flex items-center justify-between mt-5 mb-1s0">
-                    <h1 className="m-0">Pergantian Tahun Ajar</h1>
+                    <h1 className="m-0">Kenaikan kelas</h1>
                     {dataChanges?.length ? (
                         <Popconfirm
-                            title="Tahun Ajaran Baru"
+                            title="Kenaikan kelas"
                             description="Mulai proses?"
                             onConfirm={confirm}
                             okText="Ya"

@@ -172,7 +172,7 @@ function MasterDataSiswaAdd() {
                     </Form.Item>
                 </div>
                 <Form.Item>
-                    <Button loading={createStudentMutate.isLoading} type="primary" htmlType="submit">
+                    <Button className="!bg-green-500" loading={createStudentMutate.isLoading} type="primary" htmlType="submit">
                         Submit
                     </Button>
                 </Form.Item>

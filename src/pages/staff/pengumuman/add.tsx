@@ -55,7 +55,12 @@ function StaffPengumumanAdd() {
                     <Form.Item label="Judul" name="judul" rules={[{ required: true, message: "Judul harus diisi!" }]} className="w-full">
                         <Input />
                     </Form.Item>
-                    <Form.Item label="Kategori" name="category" rules={[{ required: true, message: "Kategori harus diisi!" }]} className="w-[200px]">
+                    <Form.Item
+                        label={<p className="text-blue-500 m-0">kategori</p>}
+                        name="category"
+                        rules={[{ required: true, message: "Kategori harus diisi!" }]}
+                        className="w-[200px]"
+                    >
                         <Select options={CATEGORY_NEWS} placeholder="pilih" />
                     </Form.Item>
                 </div>

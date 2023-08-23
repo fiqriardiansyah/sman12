@@ -33,7 +33,7 @@ function ModalReauthentication({ children, onSubmit }: Props) {
     };
 
     return (
-        <ModalTemplate title="Autentikasi akun" handlerInComponent={children} footer={null}>
+        <ModalTemplate title="Autentikasi wkwkwk" handlerInComponent={children} footer={null}>
             {(ctrl) => (
                 <div className="flex">
                     <Form onFinish={onFinish(ctrl)} requiredMark={false} className="w-full">
